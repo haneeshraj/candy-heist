@@ -1,0 +1,31 @@
+/* Global styles */
+
+/* Import Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Six+Caps&display=swap");
+
+:root {
+  --font-sixcaps: "Six Caps", sans-serif; /* Display/heading font */
+  --font-poppins: "Poppins", sans-serif; /* Body font */
+}
+
+/* Reset styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-poppins);
+  background-color: #0f0f0f;
+  color: #fff;
+}
