@@ -2,27 +2,27 @@ const navItems = [
   {
     name: "work",
     href: "/work",
-    status: "active",
+    active: false,
   },
   {
     name: "discography",
     href: "/discography",
-    status: "inactive",
+    active: false,
   },
   {
     name: "collaborators",
     href: "/collaborators",
-    status: "inactive",
+    active: false,
   },
   {
     name: "about",
     href: "/about",
-    status: "active",
+    active: true,
   },
   {
     name: "contact",
     href: "/contact",
-    status: "inactive",
+    active: true,
   },
 ];
 
