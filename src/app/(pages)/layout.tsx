@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
-import { Toaster } from "sonner";
 
-import "./globals.scss";
-import Navbar from "@/components/Navbar/Navbar";
-import SmoothScroller from "@/components/SmoothScroll/SmoothScroll";
+import styles from "./styles.module.scss";
 
 export const metadata: Metadata = {
   title: "Candy Heist",
@@ -18,9 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Navbar />
-        <Toaster closeButton position="bottom-right" theme="dark" />
-        <SmoothScroller>{children}</SmoothScroller>
+        <div className={styles["container"]}>{children}</div>
       </body>
     </html>
   );

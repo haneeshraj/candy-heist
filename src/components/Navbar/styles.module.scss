@@ -1,4 +1,11 @@
-@use "./responsive-mixins.scss" as *;
+@use "../../styles/responsive-mixins.scss" as *;
+
+.logo {
+  position: absolute;
+  top: 3rem;
+  left: 4rem;
+  z-index: 1002;
+}
 
 .hamburger {
   position: fixed;
@@ -126,10 +133,7 @@
       }
 
       @include respond-to(sm) {
-        font-size: 10rem;
-      }
-      @include respond-to(xs) {
-        font-size: 9rem;
+        font-size: clamp(7rem, 10vw, 10rem);
       }
 
       &:hover {
