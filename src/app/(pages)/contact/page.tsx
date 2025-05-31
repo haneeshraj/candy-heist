@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import styles from "./styles.module.scss";
 import LetterAnimation from "@/components/LetterAnimation/LetterAnimation";
+import WordAnimation from "@/components/WordAnimation/WordAnimation";
+import Form from "@/components/Form/Form";
 
 export const metadata: Metadata = {
   title: "Candy Heist",
@@ -11,11 +13,21 @@ export const metadata: Metadata = {
 const Contact = () => {
   return (
     <main className={styles["main"]}>
-      <LetterAnimation
-        text="CONTACT"
-        element="h1"
-        className={styles["heading"]}
-      />
+      <div className={styles["header"]}>
+        <LetterAnimation
+          text="CONTACT"
+          element="h1"
+          className={styles["heading"]}
+        />
+        <WordAnimation
+          text="Lorem ipsum dolor sit amet consectetur adipisicing elit."
+          element="p"
+          className={styles["subheading"]}
+        />
+      </div>
+      <div className={styles["content"]}>
+        <Form />
+      </div>
     </main>
   );
 };

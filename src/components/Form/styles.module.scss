@@ -1,0 +1,68 @@
+.progress-bar {
+  max-width: 50rem;
+  width: 70%;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.node {
+  aspect-ratio: 1;
+  min-height: 100%;
+  border: 1px solid red;
+  border-radius: 0.4rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  &--active {
+    background-color: #fff;
+  }
+
+  &::after {
+    position: absolute;
+    top: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  &--1 {
+    &::after {
+      content: "bruh";
+    }
+  }
+  &--2 {
+    &::after {
+      content: "big";
+    }
+  }
+  &--3 {
+    &::after {
+      content: "boom";
+    }
+  }
+  &--4 {
+    &::after {
+      content: "moment";
+    }
+  }
+}
+.line {
+  width: 100%;
+  height: 0.2rem;
+  background-color: red;
+
+  &--active {
+    background-color: #fff;
+  }
+}
+
+.form {
+  background-color: green;
+  width: 90%;
+  height: 50rem;
+  max-width: 120rem;
+}
