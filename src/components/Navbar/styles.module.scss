@@ -19,7 +19,7 @@
     left: 50%;
     width: 60%;
     height: 2px;
-    background-color: red;
+    background-color: #eaeaea;
 
     &--1 {
       transform: translate(-50%, -50%) rotate(45deg);
@@ -32,7 +32,7 @@
   &__bar {
     width: 60%;
     height: 2px;
-    background-color: red;
+    background-color: #eaeaea;
     position: absolute;
     left: 50%;
     transform: translate(-50%, -50%);

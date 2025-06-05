@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Navbar />
-        <Toaster closeButton position="bottom-right" theme="dark" />
+        <Toaster closeButton position="bottom-right" theme="dark" richColors />
         <SmoothScroller>{children}</SmoothScroller>
       </body>
     </html>
