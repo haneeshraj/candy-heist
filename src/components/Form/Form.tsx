@@ -3,6 +3,7 @@
 import clsx from "clsx";
 import styles from "./styles.module.scss";
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 
 interface FormData {
   firstName: string;
@@ -15,7 +16,7 @@ interface FormData {
 }
 
 const Form = () => {
-  const [stepNumber, setStepNumber] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -33,8 +34,9 @@ const Form = () => {
           className={clsx(
             styles["node"],
             styles["node--1"],
-            stepNumber >= 0 && styles["node--active"]
+            styles["node--active"]
           )}
+          onClick={() => setSubmitted(!submitted)}
         >
           <svg
             width="20"
@@ -53,84 +55,25 @@ const Form = () => {
             />
           </svg>
         </div>
-        <div
-          className={clsx(
-            styles["line"],
-            styles["line--1"],
-            stepNumber > 0 && styles["line--active"]
-          )}
-        ></div>
+        <div className={clsx(styles["line"], styles["line--1"])}>
+          <AnimatePresence>
+            {submitted && (
+              <motion.div
+                className={clsx(styles["line"], styles["line--anim"])}
+                initial={{ scaleX: 0, transformOrigin: "left" }}
+                animate={{ scaleX: 1 }}
+                exit={{ scaleX: 0 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+              ></motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
         <div
           className={clsx(
             styles["node"],
             styles["node--2"],
-            stepNumber > 0 && styles["node--active"]
-          )}
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 400 400"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M400 200.001C400 167.77 346.117 140.311 270.403 129.597C259.689 53.8826 232.23 0 199.999 0C167.769 0 140.311 53.8826 129.597 129.597C53.8826 140.311 0 167.77 0 200.001C0 232.231 53.8826 259.689 129.597 270.403C140.311 346.117 167.769 400 199.999 400C232.23 400 259.689 346.117 270.403 270.403C346.117 259.689 400 232.231 400 200.001Z"
-              fill="#109D82"
-            />
-          </svg>
-        </div>
-        <div
-          className={clsx(
-            styles["line"],
-            styles["line--2"],
-            stepNumber > 1 && styles["line--active"]
-          )}
-        ></div>
-        <div
-          className={clsx(
-            styles["node"],
-            styles["node--3"],
-            stepNumber > 1 && styles["node--active"]
-          )}
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 400 400"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M199.999 200L278.252 32.9601C255.797 12.128 228.916 0 199.999 0C171.082 0 144.201 12.1575 121.746 32.9601L199.999 200Z"
-              fill="#F297A4"
-            />
-            <path
-              d="M199.999 200L121.746 367.041C144.201 387.873 171.082 400 199.999 400C228.916 400 255.797 387.843 278.252 367.041L199.999 200Z"
-              fill="#F297A4"
-            />
-            <path
-              d="M200 199.999L367.041 278.253C387.873 255.798 400 228.916 400 199.999C400 171.082 387.843 144.201 367.041 121.746L200 199.999Z"
-              fill="#F297A4"
-            />
-            <path
-              d="M200 199.999L32.9593 121.746C12.1272 144.201 0 171.082 0 199.999C0 228.916 12.1567 255.798 32.9593 278.253L200 199.999Z"
-              fill="#F297A4"
-            />
-          </svg>
-        </div>
-        <div
-          className={clsx(
-            styles["line"],
-            styles["line--2"],
-            stepNumber > 2 && styles["line--active"]
-          )}
-        ></div>
-        <div
-          className={clsx(
-            styles["node"],
-            styles["node--4"],
-            stepNumber > 2 && styles["node--active"]
+            submitted && styles["node--active"]
           )}
         >
           <svg

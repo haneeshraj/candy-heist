@@ -46,7 +46,7 @@ function LetterAnimation({
             }}
             style={{ display: "inline-block" }}
           >
-            {letter}
+            {letter === " " ? "\u00A0" : letter}
           </motion.span>
         </span>
       ))}

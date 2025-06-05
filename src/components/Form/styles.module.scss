@@ -1,5 +1,5 @@
 .progress-bar {
-  max-width: 50rem;
+  max-width: 30rem;
   width: 70%;
   height: 4rem;
   display: flex;
@@ -39,24 +39,19 @@
       content: "big";
     }
   }
-  &--3 {
-    &::after {
-      content: "boom";
-    }
-  }
-  &--4 {
-    &::after {
-      content: "moment";
-    }
-  }
 }
 .line {
   width: 100%;
   height: 0.2rem;
   background-color: red;
+  transition: background-color 0.3s ease-in-out;
+
+  &--anim {
+    background-color: pink;
+  }
 
   &--active {
-    background-color: #fff;
+    background-color: transparent;
   }
 }
 
