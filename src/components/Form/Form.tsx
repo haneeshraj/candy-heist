@@ -2,30 +2,30 @@
 
 import clsx from "clsx";
 import styles from "./styles.module.scss";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
-interface FormData {
-  firstName: string;
-  lastName: string;
-  organisation: string;
-  email: string;
-  phone: string;
-  subject: string;
-  message: string;
-}
+// interface FormData {
+//   firstName: string;
+//   lastName: string;
+//   organisation: string;
+//   email: string;
+//   phone: string;
+//   subject: string;
+//   message: string;
+// }
 
 const Form = () => {
   const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    organisation: "",
-    email: "",
-    phone: "",
-    subject: "",
-    message: "",
-  });
+  // const [formData, setFormData] = useState({
+  //   firstName: "",
+  //   lastName: "",
+  //   organisation: "",
+  //   email: "",
+  //   phone: "",
+  //   subject: "",
+  //   message: "",
+  // });
 
   return (
     <>

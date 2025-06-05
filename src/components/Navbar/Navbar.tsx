@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+// !TODO: Make sure you have the no-unused-vars rule enabled before pushing to production
 "use client";
 
 import { useState, useEffect } from "react";
