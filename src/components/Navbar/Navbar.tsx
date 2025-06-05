@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -29,6 +30,80 @@ const Navbar = () => {
     title: "Updates Title",
     description: "Description about the updates here.",
   });
+
+  const animateNavItems = async (index: number) => {
+    const baseDelay = 0.4 + index * 0.1;
+    const revealSelector = `div[data-index="reveal__${index}"]`;
+    const textSelector = `div[data-index="text__${index}"]`;
+
+    await Promise.all([
+      animate(
+        revealSelector,
+        { scaleX: 0, transformOrigin: "left" },
+        { duration: 0 }
+      ),
+      animate(textSelector, { visibility: "hidden", x: -20 }, { duration: 0 }),
+    ]);
+
+    // Wait for the base delay
+    await new Promise((resolve) => setTimeout(resolve, baseDelay * 1000));
+
+    // First grow the reveal from left
+    await animate(
+      revealSelector,
+      { scaleX: 1 },
+      {
+        duration: 0.8,
+        ease: [0.65, 0.05, 0, 1],
+      }
+    );
+
+    // Change transform origin to right for the reveal
+    await animate(
+      revealSelector,
+      { transformOrigin: "right" },
+      { duration: 0 }
+    );
+
+    // Start shrinking the reveal while simultaneously showing and moving the text
+    const shrinkPromise = animate(
+      revealSelector,
+      { scaleX: 0 },
+      {
+        duration: 0.8,
+        ease: [0.65, 0.05, 0, 1],
+        delay: 0.2,
+      }
+    );
+
+    // As the reveal starts to shrink, show the text and animate it
+    const textPromise = animate(
+      textSelector,
+      { visibility: "visible", x: 0 },
+      {
+        duration: 1,
+        ease: [0.65, 0.05, 0, 1],
+        delay: 0.3, // Slightly delayed to start when the reveal is partially shrunk
+      }
+    );
+
+    // Wait for both animations to finish
+    await Promise.all([shrinkPromise, textPromise]);
+
+    // Fade in Coming Soon badge if navItem is disabled
+    if (!navItems[index].active) {
+      const link = document.querySelector(`a[data-nav-index="${index}"]`);
+      if (link) link.classList.add(styles["show-badge"]);
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      navItems.forEach((_, index) => {
+        animateNavItems(index);
+      });
+    }
+  }, [isOpen]);
 
   return (
     <>
@@ -353,7 +428,35 @@ const Navbar = () => {
                   </div>
                 </li>
               </ul>{" "}
-              <ul className={styles["navbar__list"]}></ul>
+              <ul className={styles["navbar__list"]}>
+                {navItems.map((item, index) => {
+                  return (
+                    <Link
+                      href={item.href}
+                      className={clsx(
+                        styles["navbar__link"],
+                        !item.active && styles["navbar__link--disabled"]
+                      )}
+                      key={item.name + "__" + index}
+                      data-nav-index={index}
+                      onClick={() => {
+                        setIsOpen(false);
+                      }}
+                    >
+                      <div
+                        className={clsx(styles["navbar__text-reveal"])}
+                        data-index={`reveal__${index}`}
+                      ></div>
+                      <div
+                        data-index={`text__${index}`}
+                        className={styles["navbar__item"]}
+                      >
+                        {item.name}
+                      </div>
+                    </Link>
+                  );
+                })}
+              </ul>
             </div>
           </motion.nav>
         )}
