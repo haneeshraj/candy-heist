@@ -1,0 +1,38 @@
+.main {
+  margin-top: 10rem;
+  padding: 0 4rem;
+
+  min-height: 400vh;
+}
+
+.title {
+  font-size: clamp(8rem, 15vw, 24rem);
+  font-weight: 500;
+  font-family: var(--font-sixcaps);
+  line-height: 1;
+  margin-bottom: 10rem;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  height: 100rem;
+
+  .text {
+    width: 50rem;
+    text-align: justify;
+  }
+
+  .paragraph {
+    font-size: 1.6rem;
+    line-height: 2.4rem;
+  }
+}
+
+.image-container {
+  display: block;
+  margin: 0 auto;
+  width: 95%;
+  height: 1100px; /* Set whatever height you want */
+  overflow: hidden;
+}

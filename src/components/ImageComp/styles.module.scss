@@ -1,0 +1,12 @@
+.image-container {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: 100%; /* Takes full height of parent container */
+}
+
+.image-container > div {
+  position: relative;
+  width: 100%;
+  height: 120%; /* Slightly taller to accommodate parallax movement */
+}
