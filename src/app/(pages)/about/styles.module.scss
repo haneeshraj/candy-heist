@@ -93,6 +93,7 @@
 
   @media (max-width: 900px) {
     margin-top: 10rem;
+    margin-bottom: 10rem;
   }
   &__text {
     font-size: clamp(8rem, 10vw, 12rem);
@@ -199,6 +200,13 @@
   &__image-container {
     height: 90%;
     width: 80%;
+    border-radius: 6px;
+    overflow: hidden;
+
+    @media (max-width: 900px) {
+      height: 100%;
+      width: 100%;
+    }
   }
 
   &__img img {
@@ -211,6 +219,10 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    @media (max-width: 900px) {
+      padding: 2rem 1rem;
+    }
   }
 
   &__paragraph {
@@ -218,5 +230,10 @@
     max-width: 50rem;
     text-align: justify;
     margin-bottom: 1rem;
+    font-weight: 300;
+
+    @media (max-width: 900px) {
+      font-size: 1.4rem;
+    }
   }
 }
