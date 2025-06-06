@@ -18,7 +18,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "sass": "^1.88.0",
-    "sonner": "^2.0.3"
+    "sonner": "^2.0.3",
+    "use-scramble": "^2.2.15"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import "./globals.scss";
 import Navbar from "@/components/Navbar/Navbar";
 import SmoothScroller from "@/components/SmoothScroll/SmoothScroll";
+import Footer from "@/components/Footer/Footer";
 
 export const metadata: Metadata = {
   title: "Candy Heist",
@@ -20,7 +21,9 @@ export default function RootLayout({
       <body>
         <Navbar />
         <Toaster closeButton position="bottom-right" theme="dark" richColors />
-        <SmoothScroller>{children}</SmoothScroller>
+        <SmoothScroller>{children}
+          <Footer />
+        </SmoothScroller>
       </body>
     </html>
   );
