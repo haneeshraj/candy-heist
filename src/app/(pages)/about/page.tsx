@@ -21,10 +21,22 @@ const About = () => {
             letterDelay={0.03}
             duration={1}
           />
+
+          <WordAnimation
+            text="Lorem ipsum dolor sit amet consectetur."
+            element="p"
+            className={styles["paragraph"]}
+            letterDelay={0.03}
+            duration={1}
+          />
         </div>
         <div className={styles["image"]}>
           <div className={styles["image-container"]}>
-            <ImageComp alt="About Image" img="/images/me.png" />
+            <ImageComp
+              alt="About Image"
+              img="/images/me.png"
+              className={styles["content__image"]}
+            />
           </div>
         </div>
       </section>
@@ -133,6 +145,29 @@ const About = () => {
             title="Title Three"
             desc="Lorem ipsum dolor sit amet consectetur. Eu nibh maecenas ac sed leo dolor. Vel sit eget laoreet arcu neque. Suspendisse massa aliquet nisi at."
           />
+        </div>
+      </section>
+
+      <section className={styles["details"]}>
+        <div className={styles["details__image"]}>
+          <div className={styles["details__image-container"]}>
+            <ImageComp
+              alt="Details Image"
+              img="/images/me.png"
+              className={styles["details__img"]}
+            />
+          </div>
+        </div>
+        <div className={styles["details__text"]}>
+          <div className={styles["details__text-container"]}>
+            <WordAnimation
+              text="Lorem ipsum dolor sit amet consectetur. Eu nibh maecenas ac sed leo dolor. Vel sit eget laoreet arcu neque. Suspendisse massa aliquet nisi at."
+              element="p"
+              className={styles["details__paragraph"]}
+              letterDelay={0.03}
+              duration={1}
+            />
+          </div>
         </div>
       </section>
     </main>

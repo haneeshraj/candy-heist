@@ -4,10 +4,16 @@ import React, { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import styles from "./styles.module.scss";
+import clsx from "clsx";
 
 export default function ImageComp({
   img = "/default-image.jpg",
   alt = "Parallax image",
+  className,
+}: {
+  img?: string;
+  alt?: string;
+  className?: string;
 }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -19,7 +25,7 @@ export default function ImageComp({
 
   return (
     <motion.div
-      className={styles["image-container"]}
+      className={clsx(styles["image-container"], className)}
       ref={ref}
       initial={{ filter: "blur(30px)", opacity: 0, y: "10%" }}
       animate={{ filter: "blur(0px)", opacity: 1, y: "0%" }}
