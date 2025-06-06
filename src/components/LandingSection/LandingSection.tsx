@@ -55,7 +55,7 @@ const LandingSection = () => {
     gsap.set(firstText.current, { xPercent: xPercent });
     gsap.set(secondText.current, { xPercent: xPercent });
     requestAnimationFrame(animate);
-    xPercent += 0.1 * direction.current;
+    xPercent += 0.2 * direction.current;
   };
 
   return (
@@ -70,6 +70,47 @@ const LandingSection = () => {
       >
         <source src="/videos/intro.mp4" type="video/mp4" />
       </motion.video>
+
+      <div className={styles["details"]}>
+        <div className={styles["details__logo"]}>
+          <svg
+            style={{ scale: "-1 1" }}
+            width="36"
+            height="36"
+            viewBox="0 0 400 400"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M200.271 0H199.728C144.571 0 94.6236 22.3378 58.5126 58.5126C22.3378 94.6236 0 144.571 0 199.728C0 310.011 89.4145 399.457 199.728 399.457H400V199.728C400 89.4145 310.586 0 200.271 0ZM200.016 345.994C119.23 345.994 53.7192 280.483 53.7192 199.697C53.7192 118.911 119.23 53.4321 200.016 53.4321C280.803 53.4321 346.282 118.911 346.282 199.697C346.282 280.483 280.803 345.994 200.016 345.994Z"
+              fill="#ddd"
+            />
+            <path
+              d="M284.636 199.699C284.636 246.452 246.735 284.351 200.015 284.351C153.294 284.351 115.394 246.451 115.394 199.73C115.426 152.946 153.263 115.109 200.015 115.109C246.767 115.109 284.604 152.947 284.636 199.699Z"
+              fill="#ddd"
+            />
+          </svg>
+        </div>
+        <div className={styles["details__text"]}>
+          <LetterAnimation
+            text="Based in"
+            element="p"
+            className={styles["details__text-1"]}
+          />
+          <LetterAnimation
+            text="Halifax, Nova Scotia"
+            element="p"
+            className={styles["details__text-2"]}
+          />
+        </div>
+      </div>
+
+      <div className={styles["info"]}>
+        <div className={styles["info__text"]}>
+          <LetterAnimation text="Independent" element="p" />
+          <LetterAnimation text="Producer & DJ" element="p" />
+        </div>
+      </div>
 
       <div className={styles["slider-container"]}>
         <div ref={slider} className={styles["slider"]}>
