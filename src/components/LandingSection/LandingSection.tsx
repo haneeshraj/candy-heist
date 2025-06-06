@@ -105,13 +105,6 @@ const LandingSection = () => {
         </div>
       </div>
 
-      <div className={styles["info"]}>
-        <div className={styles["info__text"]}>
-          <LetterAnimation text="Independent" element="p" />
-          <LetterAnimation text="Producer & DJ" element="p" />
-        </div>
-      </div>
-
       <div className={styles["slider-container"]}>
         <div ref={slider} className={styles["slider"]}>
           <p ref={firstText}>
