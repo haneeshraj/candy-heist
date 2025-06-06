@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import Image from "next/image";
 import styles from "./styles.module.scss";
 import clsx from "clsx";
@@ -20,6 +20,7 @@ export default function ImageComp({
     target: ref,
     offset: ["start end", "end start"],
   });
+  const isInView = useInView(ref, { once: true });
 
   const translateY = useTransform(scrollYProgress, [0, 1], ["0%", "-10%"]);
 
@@ -28,7 +29,11 @@ export default function ImageComp({
       className={clsx(styles["image-container"], className)}
       ref={ref}
       initial={{ filter: "blur(30px)", opacity: 0, y: "10%" }}
-      animate={{ filter: "blur(0px)", opacity: 1, y: "0%" }}
+      animate={
+        isInView
+          ? { filter: "blur(0px)", opacity: 1, y: "0%" }
+          : { filter: "blur(30px)", opacity: 0, y: "10%" }
+      }
       transition={{ duration: 1.4, ease: [0.56, 0, 0, 1] }}
     >
       <motion.div style={{ translateY: translateY }}>
