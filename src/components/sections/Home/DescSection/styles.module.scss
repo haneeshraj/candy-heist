@@ -5,12 +5,15 @@
   justify-content: center;
 
   @media (max-width: 768px) {
-    height: 50dvh;
+    height: 70dvh;
   }
 
   &__container {
     width: 60%;
     font-size: clamp(1.6rem, 2vw, 4rem);
+    @media (max-width: 768px) {
+      width: 80%;
+    }
   }
 }
 

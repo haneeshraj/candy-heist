@@ -45,6 +45,19 @@ const DescSection = () => {
   };
 
   const createAnimation = () => {
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile) {
+      // Set opacity of letters to 1 immediately on mobile
+      letterRefs.current.forEach((letter) => {
+        if (letter) {
+          letter.style.opacity = "1";
+        }
+      });
+
+      return; // Exit early, don't run animations on mobile
+    }
+
     gsap.to(letterRefs.current, {
       scrollTrigger: {
         trigger: containerRef.current,
