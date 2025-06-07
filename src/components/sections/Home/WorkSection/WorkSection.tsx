@@ -226,6 +226,9 @@ const WorkSection = () => {
           <p className={styles["preview__artists"]}>
             {hoveredWork?.artists.join(", ") || "Artists"}
           </p>
+          <p className={styles["preview__genres"]}>
+            {hoveredWork?.genres.join(", ") || "Genres"}
+          </p>
           <div className={styles["preview__platforms"]}>
             {hoveredWork?.platforms.map((platform, index) => (
               <Link
