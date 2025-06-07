@@ -50,7 +50,7 @@ const DescSection = () => {
         trigger: containerRef.current,
         scrub: true,
         start: "top-=50% top",
-        end: `+=${window.innerHeight / 1.6}`,
+        end: `+=${window.innerHeight / 1.54}`,
         markers: true,
       },
       opacity: 1,
