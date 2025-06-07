@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import gsap from "gsap";
+import { useState } from "react";
 import { motion } from "motion/react";
 
 import styles from "./styles.module.scss";
@@ -170,90 +168,68 @@ const WorkSection = () => {
   ];
   const [hoveredWork, setHoveredWork] = useState<Work | null>(null);
 
-  const sectionRef = useRef<HTMLElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
-    const section = sectionRef.current;
-    const container = containerRef.current;
-
-    ScrollTrigger.create({
-      trigger: section,
-      start: "top top",
-      end: "bottom bottom",
-      pin: container,
-    });
-  });
-
   return (
-    <section className={styles["section"]} ref={sectionRef}>
-      <div className={styles["container"]} ref={containerRef}>
-        <div className={styles["preview"]}>
-          <div className={styles["preview__image-container"]}>
-            <Image
-              src={hoveredWork?.image || "https://placehold.co/600x400"}
-              alt={hoveredWork?.trackName || "Preview Image"}
-              width={600}
-              height={400}
-              className={styles["preview__image"]}
-            />
-          </div>
-          <div className={styles["preview__info"]}>
-            <h2 className={styles["preview__track-name"]}>
-              {hoveredWork?.trackName || "Hover over a work"}
-            </h2>
-            <p className={styles["preview__artists"]}>
-              {hoveredWork?.artists.join(", ") || "Artists"}
-            </p>
-            <div className={styles["preview__platforms"]}>
-              {hoveredWork?.platforms.map((platform, index) => (
-                <Link
-                  key={index}
-                  href={platform.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles["preview__platform"]}
-                >
-                  {platform.name}
-                </Link>
-              ))}
-            </div>
+    <section className={styles["container"]}>
+      <div className={styles["preview"]}>
+        <div className={styles["preview__image-container"]}>
+          <Image
+            src={hoveredWork?.image || "https://placehold.co/600x400"}
+            alt={hoveredWork?.trackName || "Preview Image"}
+            width={600}
+            height={400}
+            className={styles["preview__image"]}
+          />
+        </div>
+        <div className={styles["preview__info"]}>
+          <h2 className={styles["preview__track-name"]}>
+            {hoveredWork?.trackName || "Hover over a work"}
+          </h2>
+          <p className={styles["preview__artists"]}>
+            {hoveredWork?.artists.join(", ") || "Artists"}
+          </p>
+          <div className={styles["preview__platforms"]}>
+            {hoveredWork?.platforms.map((platform, index) => (
+              <Link
+                key={index}
+                href={platform.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles["preview__platform"]}
+              >
+                {platform.name}
+              </Link>
+            ))}
           </div>
         </div>
-        <ul className={styles["works"]}>
-          <LetterAnimation text="Works" className={styles["works__title"]} />
-
-          {works.map((work, index) => (
-            <li
-              key={index}
-              className={styles["work"]}
-              onMouseEnter={() => {
-                setHoveredWork(work);
-              }}
-              onMouseLeave={() => setHoveredWork(null)}
-            >
-              {hoveredWork?.id === work.id && (
-                <motion.div
-                  className={styles["active"]}
-                  layoutId="work-active"
-                />
-              )}
-              <div className={styles["work__header"]}>
-                <WordAnimation
-                  text={work.trackName}
-                  className={styles["work__track-name"]}
-                />
-                <WordAnimation
-                  text={work.artists.join(" . ")}
-                  className={styles["work__artists"]}
-                />
-              </div>
-            </li>
-          ))}
-        </ul>
       </div>
+      <ul className={styles["works"]}>
+        <LetterAnimation text="Works" className={styles["works__title"]} />
+
+        {works.map((work, index) => (
+          <li
+            key={index}
+            className={styles["work"]}
+            onMouseEnter={() => {
+              setHoveredWork(work);
+            }}
+            onMouseLeave={() => setHoveredWork(null)}
+          >
+            {hoveredWork?.id === work.id && (
+              <motion.div className={styles["active"]} layoutId="work-active" />
+            )}
+            <div className={styles["work__header"]}>
+              <WordAnimation
+                text={work.trackName}
+                className={styles["work__track-name"]}
+              />
+              <WordAnimation
+                text={work.artists.join(" . ")}
+                className={styles["work__artists"]}
+              />
+            </div>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 };
