@@ -19,6 +19,12 @@ const InfoSection = () => {
   };
 
   useEffect(() => {
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile) {
+      return; // Exit early, don't run animations on mobile
+    }
+
     gsap.registerPlugin(ScrollTrigger);
 
     // Pin ScrollTrigger - starts when top of main hits top of viewport
@@ -91,7 +97,6 @@ const InfoSection = () => {
           </h2>
         </div>
       </main>
-      <div className={styles["test"]}>bruh momentum</div>
     </>
   );
 };

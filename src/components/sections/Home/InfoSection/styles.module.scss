@@ -1,6 +1,10 @@
 .question {
   min-height: 120dvh;
   overflow: hidden;
+
+  @media (max-width: 768px) {
+    min-height: 100dvh;
+  }
 }
 
 .container {
