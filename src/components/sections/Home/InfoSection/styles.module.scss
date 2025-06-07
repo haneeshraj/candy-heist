@@ -4,7 +4,7 @@
 }
 
 .container {
-  height: 80dvh;
+  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -12,7 +12,7 @@
 }
 
 .header {
-  font-size: 20rem;
+  font-size: clamp(10rem, 10vw, 20rem);
   font-weight: 400;
   font-family: var(--font-sixcaps);
   line-height: 1;

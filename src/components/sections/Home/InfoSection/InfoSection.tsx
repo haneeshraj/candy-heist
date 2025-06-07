@@ -25,7 +25,7 @@ const InfoSection = () => {
     ScrollTrigger.create({
       trigger: questionRef.current,
       start: "top top",
-      end: "bottom bottom-=30%",
+      end: "bottom bottom-=10%",
       pin: containerRef.current,
       pinSpacing: false,
     });
