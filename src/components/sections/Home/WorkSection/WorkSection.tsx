@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 
 import styles from "./styles.module.scss";
@@ -167,10 +167,49 @@ const WorkSection = () => {
     },
   ];
   const [hoveredWork, setHoveredWork] = useState<Work | null>(null);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = (work: Work) => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+
+    setHoveredWork(work);
+  };
+
+  const handleMouseLeave = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setHoveredWork(null);
+    }, 600);
+  };
+
+  const handlePreviewMouseEnter = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+  };
+
+  const handlePreviewMouseLeave = () => {
+    setHoveredWork(null);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <section className={styles["container"]}>
-      <div className={styles["preview"]}>
+      <div
+        className={styles["preview"]}
+        onMouseEnter={handlePreviewMouseEnter}
+        onMouseLeave={handlePreviewMouseLeave}
+      >
         <div className={styles["preview__image-container"]}>
           <Image
             src={hoveredWork?.image || "https://placehold.co/600x400"}
@@ -206,13 +245,12 @@ const WorkSection = () => {
         <LetterAnimation text="Works" className={styles["works__title"]} />
 
         {works.map((work, index) => (
-          <li
+          <Link
+            href={`/works/${work.id}`}
             key={index}
             className={styles["work"]}
-            onMouseEnter={() => {
-              setHoveredWork(work);
-            }}
-            onMouseLeave={() => setHoveredWork(null)}
+            onMouseEnter={() => handleMouseEnter(work)}
+            onMouseLeave={handleMouseLeave}
           >
             {hoveredWork?.id === work.id && (
               <motion.div className={styles["active"]} layoutId="work-active" />
@@ -227,7 +265,7 @@ const WorkSection = () => {
                 className={styles["work__artists"]}
               />
             </div>
-          </li>
+          </Link>
         ))}
       </ul>
     </section>
