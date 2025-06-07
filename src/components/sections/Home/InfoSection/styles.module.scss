@@ -1,0 +1,52 @@
+.question {
+  min-height: 120dvh;
+  overflow: hidden;
+}
+
+.container {
+  height: 80dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.header {
+  font-size: 20rem;
+  font-weight: 400;
+  font-family: var(--font-sixcaps);
+  line-height: 1;
+  padding-inline: 3rem;
+  text-align: center;
+  width: 100%;
+
+  &__overflow {
+    display: inline-block;
+    line-height: 1;
+    height: 1em;
+    overflow: hidden;
+  }
+
+  &__word {
+    display: inline-block;
+    line-height: 1;
+    height: min-content;
+  }
+}
+
+.circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  mix-blend-mode: difference;
+
+  & > svg {
+    fill: #fff;
+  }
+}
+
+.test {
+  min-height: 200dvh;
+}

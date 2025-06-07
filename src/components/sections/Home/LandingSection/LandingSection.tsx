@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 import styles from "./styles.module.scss";
-import LetterAnimation from "../LetterAnimation/LetterAnimation";
+import LetterAnimation from "../../../LetterAnimation/LetterAnimation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
