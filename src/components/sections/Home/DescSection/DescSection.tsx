@@ -51,7 +51,6 @@ const DescSection = () => {
         scrub: true,
         start: "top-=50% top",
         end: `+=${window.innerHeight / 1.54}`,
-        markers: true,
       },
       opacity: 1,
       ease: "none",
