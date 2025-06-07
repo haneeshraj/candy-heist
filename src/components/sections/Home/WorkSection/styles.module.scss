@@ -1,0 +1,64 @@
+.section {
+  height: 150dvh;
+  background-color: red;
+}
+
+.container {
+  height: 100dvh;
+  max-height: 100dvh;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr 1.5fr;
+  background-color: darkgrey;
+}
+
+.preview {
+  background-color: pink;
+}
+.list {
+}
+
+.works {
+  background-color: hotpink;
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__title {
+    font-size: 10rem;
+    text-transform: uppercase;
+    font-family: var(--font-sixcaps);
+    line-height: 1;
+    padding: 2rem 4rem;
+  }
+}
+.work {
+  flex: 1;
+  background-color: maroon;
+  position: relative;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    background-color: lightcoral;
+    height: 100%;
+    padding: 2rem;
+  }
+
+  &__track-name {
+    font-size: 3rem;
+    text-transform: uppercase;
+  }
+}
+.active {
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  mix-blend-mode: overlay;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
