@@ -35,8 +35,8 @@ const InfoSection = () => {
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: questionRef.current,
-        start: "top center-=40rem",
-        end: "bottom+=10% center+=70rem",
+        start: "top center-=5%",
+        end: "bottom+=10% center+=10%",
         scrub: 1,
         pinSpacing: false,
       },
