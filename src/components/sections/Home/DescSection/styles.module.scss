@@ -1,0 +1,20 @@
+.desc {
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &__container {
+    width: 60%;
+    font-size: clamp(2rem, 2vw, 4rem);
+  }
+}
+
+.word {
+  display: inline-block;
+  margin-right: 0.6ch;
+}
+
+.letter {
+  opacity: 0.1;
+}
