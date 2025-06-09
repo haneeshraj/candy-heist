@@ -1,6 +1,5 @@
 "use client";
 
-import LetterAnimation from "../LetterAnimation/LetterAnimation";
 
 import styles from "./styles.module.scss";
 
