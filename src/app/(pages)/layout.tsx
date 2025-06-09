@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import styles from "./styles.module.scss";
-import Footer from "@/components/Footer/Footer";
 
 export const metadata: Metadata = {
   title: "Candy Heist",
@@ -16,10 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className={styles["container"]}>
-          {children}
-          <Footer />
-        </div>
+        <div className={styles["container"]}>{children}</div>
       </body>
     </html>
   );

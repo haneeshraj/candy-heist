@@ -1,8 +1,8 @@
 const navItems = [
   {
-    name: "work",
-    href: "/work",
-    active: false,
+    name: "home",
+    href: "/",
+    active: true,
   },
   {
     name: "discography",

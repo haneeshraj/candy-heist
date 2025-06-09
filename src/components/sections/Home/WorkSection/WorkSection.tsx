@@ -5,9 +5,10 @@ import { motion } from "motion/react";
 
 import styles from "./styles.module.scss";
 import LetterAnimation from "@/components/LetterAnimation/LetterAnimation";
-import Image from "next/image";
 import WordAnimation from "@/components/WordAnimation/WordAnimation";
 import Link from "next/link";
+import ImageComp from "@/components/ImageComp/ImageComp";
+import Platform from "./Platform";
 
 const WorkSection = () => {
   type Work = {
@@ -27,27 +28,27 @@ const WorkSection = () => {
       genres: ["Genre 1", "Genre 2"],
       platforms: [
         {
-          name: "Spotify",
+          name: "spotify",
           url: "https://example.com/spotify",
         },
         {
-          name: "Apple Music",
+          name: "appleMusic",
           url: "https://example.com/apple-music",
         },
         {
-          name: "YouTube",
+          name: "youtube",
           url: "https://example.com/youtube",
         },
         {
-          name: "SoundCloud",
+          name: "soundCloud",
           url: "https://example.com/soundcloud",
         },
         {
-          name: "Amazon Music",
+          name: "amazonMusic",
           url: "https://example.com/amazon-music",
         },
       ],
-      image: "https://placehold.co/600x400", // Example image URL
+      image: "/images/me.png", // Example image URL
     },
     {
       id: 2,
@@ -56,27 +57,27 @@ const WorkSection = () => {
       genres: ["Genre A", "Genre B"],
       platforms: [
         {
-          name: "Spotify",
+          name: "spotify",
           url: "https://example.com/spotify",
         },
         {
-          name: "Apple Music",
+          name: "appleMusic",
           url: "https://example.com/apple-music",
         },
         {
-          name: "YouTube",
+          name: "youtube",
           url: "https://example.com/youtube",
         },
         {
-          name: "SoundCloud",
+          name: "soundCloud",
           url: "https://example.com/soundcloud",
         },
         {
-          name: "Amazon Music",
+          name: "amazonMusic",
           url: "https://example.com/amazon-music",
         },
       ],
-      image: "https://placehold.co/600x400", // Example image URL
+      image: "/images/me.png", // Example image URL
     },
     {
       id: 3,
@@ -85,27 +86,27 @@ const WorkSection = () => {
       genres: ["Sample Genre 1", "Sample Genre 2"],
       platforms: [
         {
-          name: "Spotify",
+          name: "spotify",
           url: "https://example.com/spotify",
         },
         {
-          name: "Apple Music",
+          name: "appleMusic",
           url: "https://example.com/apple-music",
         },
         {
-          name: "YouTube",
+          name: "youtube",
           url: "https://example.com/youtube",
         },
         {
-          name: "SoundCloud",
+          name: "soundCloud",
           url: "https://example.com/soundcloud",
         },
         {
-          name: "Amazon Music",
+          name: "amazonMusic",
           url: "https://example.com/amazon-music",
         },
       ],
-      image: "https://placehold.co/600x400", // Example image URL
+      image: "/images/me.png", // Example image URL
     },
     {
       id: 4,
@@ -114,27 +115,27 @@ const WorkSection = () => {
       genres: ["Demo Genre 1", "Demo Genre 2"],
       platforms: [
         {
-          name: "Spotify",
+          name: "spotify",
           url: "https://example.com/spotify",
         },
         {
-          name: "Apple Music",
+          name: "appleMusic",
           url: "https://example.com/apple-music",
         },
         {
-          name: "YouTube",
+          name: "youtube",
           url: "https://example.com/youtube",
         },
         {
-          name: "SoundCloud",
+          name: "soundCloud",
           url: "https://example.com/soundcloud",
         },
         {
-          name: "Amazon Music",
+          name: "amazonMusic",
           url: "https://example.com/amazon-music",
         },
       ],
-      image: "https://placehold.co/600x400", // Example image URL
+      image: "/images/me.png", // Example image URL
     },
     {
       id: 5,
@@ -143,27 +144,27 @@ const WorkSection = () => {
       genres: ["Featured Genre 1", "Featured Genre 2"],
       platforms: [
         {
-          name: "Spotify",
+          name: "spotify",
           url: "https://example.com/spotify",
         },
         {
-          name: "Apple Music",
+          name: "appleMusic",
           url: "https://example.com/apple-music",
         },
         {
-          name: "YouTube",
+          name: "youtube",
           url: "https://example.com/youtube",
         },
         {
-          name: "SoundCloud",
+          name: "soundCloud",
           url: "https://example.com/soundcloud",
         },
         {
-          name: "Amazon Music",
+          name: "amazonMusic",
           url: "https://example.com/amazon-music",
         },
       ],
-      image: "https://placehold.co/600x400", // Example image URL
+      image: "/images/me.png", // Example image URL
     },
   ];
   const [hoveredWork, setHoveredWork] = useState<Work | null>(null);
@@ -211,36 +212,73 @@ const WorkSection = () => {
         onMouseLeave={handlePreviewMouseLeave}
       >
         <div className={styles["preview__image-container"]}>
-          <Image
-            src={hoveredWork?.image || "https://placehold.co/600x400"}
+          <ImageComp
+            img="/images/back.png"
             alt={hoveredWork?.trackName || "Preview Image"}
-            width={600}
-            height={400}
             className={styles["preview__image"]}
           />
         </div>
         <div className={styles["preview__info"]}>
-          <h2 className={styles["preview__track-name"]}>
-            {hoveredWork?.trackName || "Hover over a work"}
-          </h2>
-          <p className={styles["preview__artists"]}>
-            {hoveredWork?.artists.join(", ") || "Artists"}
-          </p>
-          <p className={styles["preview__genres"]}>
-            {hoveredWork?.genres.join(", ") || "Genres"}
-          </p>
-          <div className={styles["preview__platforms"]}>
-            {hoveredWork?.platforms.map((platform, index) => (
-              <Link
-                key={index}
-                href={platform.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles["preview__platform"]}
-              >
-                {platform.name}
-              </Link>
+          <WordAnimation
+            text={hoveredWork?.trackName || "Hover over a work"}
+            className={styles["preview__track-name"]}
+          />
+          <div className={styles["preview__artists"]}>
+            {hoveredWork?.artists.map((artist, index) => (
+              <>
+                <WordAnimation
+                  key={index}
+                  text={artist}
+                  className={styles["preview__artist"]}
+                  delayOffset={index * 0.1}
+                />
+                {index < hoveredWork.artists.length - 1 && (
+                  // <span className={styles["preview__artist-separator"]}>•</span>
+                  <WordAnimation
+                    text="•"
+                    className={styles["preview__artist-separator"]}
+                    delayOffset={index * 0.1 + 0.2}
+                  />
+                )}
+              </>
             ))}
+          </div>
+          <div className={styles["preview__genres"]}>
+            {hoveredWork?.genres.map((genre, index) => (
+              <motion.span
+                key={index}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: index * 0.1 }}
+                className={styles["preview__genre-container"]}
+              >
+                <WordAnimation
+                  text={genre}
+                  className={styles["preview__genre"]}
+                  delayOffset={index * 0.1 + 0.5}
+                />
+              </motion.span>
+            )) || ""}
+          </div>
+          <div className={styles["preview__platforms"]}>
+            {hoveredWork?.platforms.map((platform, index) => {
+              const PlatformIcon =
+                Platform[platform.name as keyof typeof Platform];
+              if (!PlatformIcon) return null; // Skip if the platform icon is not defined
+              const IconComponent = PlatformIcon;
+
+              return (
+                <Link
+                  key={index}
+                  href={platform.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles["preview__platform"]}
+                >
+                  <IconComponent />
+                </Link>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -264,7 +302,7 @@ const WorkSection = () => {
                 className={styles["work__track-name"]}
               />
               <WordAnimation
-                text={work.artists.join(" . ")}
+                text={work.artists.join(" • ")}
                 className={styles["work__artists"]}
               />
             </div>
