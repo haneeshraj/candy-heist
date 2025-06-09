@@ -1,3 +1,50 @@
-.footer-container {
-  height: 40rem;
+.footer {
+  height: 60rem;
+  width: 100%;
+  background-color: red;
+
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(2, 1fr) 3rem;
+
+  grid-template-areas:
+    "logo logo contact contact contact contact"
+    "logo logo  nav nav socials socials"
+    "copyright copyright copyright copyright copyright copyright";
+  gap: 0.4rem;
+  padding: 1rem;
+  padding-bottom: 0;
+
+  &__logo,
+  &__contact,
+  &__nav,
+  &__socials,
+  &__copyright {
+    border-radius: 4px;
+  }
+
+  &__logo {
+    grid-area: logo;
+    background-color: burlywood;
+  }
+
+  &__contact {
+    grid-area: contact;
+    background-color: lightblue;
+  }
+
+  &__nav {
+    grid-area: nav;
+    background-color: lightgreen;
+  }
+
+  &__socials {
+    grid-area: socials;
+    background-color: lightcoral;
+  }
+
+  &__copyright {
+    grid-area: copyright;
+    background-color: lightgoldenrodyellow;
+  }
 }
