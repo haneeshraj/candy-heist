@@ -1,0 +1,13 @@
+// Design tokens shared across component-level SCSS modules, imported with a
+// relative `@use '../../../styles/tokens' as t;` from wherever a module
+// lives — Turbopack's Sass support doesn't honor next.config.ts's
+// sassOptions.includePaths the way webpack's sass-loader does, so a global
+// alias isn't reliable here. Colors live as CSS custom properties in
+// globals.scss instead, since those need to stay runtime-inspectable and
+// reachable from inline styles too.
+
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
+$query-tablet: '(min-width: #{$breakpoint-tablet})';
+$query-desktop: '(min-width: #{$breakpoint-desktop})';
+$ease-signature: cubic-bezier(0.64, 0, 0, 0.97);

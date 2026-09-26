@@ -1,0 +1,25 @@
+:root {
+  --color-obsidian: #0c0c0c;
+  --color-cream: #ddcfb2;
+  --color-gold: #b69e7c;
+  --color-gold-dim: #8f7d63;
+  --color-gold-hairline: rgb(210 169 97 / 40%);
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-family: var(--font-archivo), sans-serif;
+  background-color: var(--color-obsidian);
+  color: var(--color-cream);
+}

@@ -1,0 +1,22 @@
+// No display override here on purpose: the letters rely on the wrapper's
+// natural inline/block flow (wrapping like words, respecting letter-spacing)
+// rather than flex layout, which ignores letter-spacing between items
+// entirely, and rather than a forced display that would fight whatever tag
+// (h1, p, span, ...) the consumer passed via `as`.
+.mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  line-height: 1;
+}
+
+.letter {
+  display: inline-block;
+  transform: translateY(100%);
+  will-change: transform;
+}
+
+.space {
+  display: inline-block;
+  line-height: 1;
+}

@@ -1,15 +1,37 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
-import './globals.css';
+import {
+  Archivo,
+  Archivo_Black,
+  Archivo_Narrow,
+  IBM_Plex_Mono
+} from 'next/font/google';
+import './globals.scss';
+import SmoothScroll from '@/components/common/SmoothScroll';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin']
+const archivo = Archivo({
+  subsets: ['latin'],
+  variable: '--font-archivo',
+  display: 'swap'
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin']
+const archivoBlack = Archivo_Black({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-archivo-black',
+  display: 'swap'
+});
+
+const archivoNarrow = Archivo_Narrow({
+  subsets: ['latin'],
+  variable: '--font-archivo-narrow',
+  display: 'swap'
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  weight: ['500'],
+  subsets: ['latin'],
+  variable: '--font-ibm-plex-mono',
+  display: 'swap'
 });
 
 export const metadata: Metadata = {
@@ -19,8 +41,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body>{children}</body>
+    <html
+      lang="en"
+      className={`${archivo.variable} ${archivoBlack.variable} ${archivoNarrow.variable} ${ibmPlexMono.variable}`}
+    >
+      <body>
+        <SmoothScroll>{children}</SmoothScroll>
+      </body>
     </html>
   );
 }

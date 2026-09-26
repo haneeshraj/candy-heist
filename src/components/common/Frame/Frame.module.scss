@@ -1,0 +1,29 @@
+@use '../../../styles/tokens' as t;
+
+.frame {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+.inner {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+
+  // The scroll-parallax cushion only exists at the desktop breakpoint —
+  // mobile renders the child at an exact 1:1 fit, matching the Figma mobile
+  // spec, and CSS (not a client-only media query) decides this so there is
+  // no post-hydration layout jump.
+  @media #{t.$query-desktop} {
+    inset: calc(var(--frame-travel, 160px) * -0.5) 0;
+    height: calc(100% + var(--frame-travel, 160px));
+  }
+
+  > :global(*) {
+    width: 100%;
+    height: 100%;
+  }
+}

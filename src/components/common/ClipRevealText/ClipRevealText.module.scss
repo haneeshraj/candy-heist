@@ -1,0 +1,33 @@
+// Deliberately not display:flex — these letters rely on normal inline flow
+// (wrapping like words, respecting the container's letter-spacing) rather
+// than flex layout, which ignores letter-spacing between items entirely.
+// position:relative anchors the absolutely-positioned wipe overlay below.
+.wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  line-height: 1;
+}
+
+.letter {
+  display: inline-block;
+  transform: translateY(-100%);
+  will-change: transform;
+}
+
+.space {
+  display: inline-block;
+  line-height: 1;
+}
+
+.wipe {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  will-change: clip-path;
+}

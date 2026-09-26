@@ -1,0 +1,91 @@
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  overflow: hidden;
+  background-color: var(--color-obsidian);
+}
+
+.frame {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: linear-gradient(
+    180deg,
+    rgb(12 12 12 / 0%) 0%,
+    rgb(12 12 12 / 10%) 42.8%,
+    rgb(12 12 12 / 48%) 62%,
+    rgb(12 12 12 / 100%) 96%
+  );
+}
+
+.chrome {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-top: clamp(2.8rem, 1.91rem + 2.29vw, 5.2rem);
+  padding-inline: clamp(2.4rem, -0.27rem + 6.86vw, 9.6rem);
+}
+
+.chromeText {
+  margin: 0;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  color: var(--color-gold-dim);
+  white-space: nowrap;
+}
+
+.hairline {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: clamp(2rem, 1.7rem + 0.76vw, 2.8rem);
+  background-color: var(--color-gold-hairline);
+  transform: translateX(-50%);
+}
+
+.wordmark {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: auto;
+  gap: clamp(1.4rem, 0.95rem + 1.14vw, 2.6rem);
+  padding-bottom: clamp(4rem, 10.8rem + 0.48vw, 11.5rem);
+  padding-inline: 2rem;
+  text-align: center;
+}
+
+.heading {
+  margin: 0;
+  font-family: var(--font-archivo), sans-serif;
+  font-weight: 600;
+  font-size: clamp(3.2rem, 1.2rem + 5.14vw, 8.6rem);
+  letter-spacing: 0.3em;
+  line-height: 1;
+  color: var(--color-cream);
+}
+
+.subheading {
+  margin: 0;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: clamp(1.2rem, 1.16rem + 0.1vw, 1.3rem);
+  font-weight: 500;
+  letter-spacing: 0.44em;
+  line-height: 1;
+  color: var(--color-gold);
+}
