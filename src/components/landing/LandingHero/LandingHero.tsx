@@ -17,7 +17,7 @@ export default function LandingHero() {
     <section className={styles.hero}>
       <Frame className={styles.frame} travel={200}>
         <DepthImage
-          colorSrc="/img/home/landing-photo.png"
+          colorSrc="/img/home/landing-photo.jpeg"
           depthSrc="/img/home/landing-depth-map.jpeg"
           interactive={hasFinePointer && !reducedMotion}
           focalY={0.52}
