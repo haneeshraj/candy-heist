@@ -7,6 +7,7 @@ import type { DepthImageSettings } from './DepthImage.types';
 interface UseDepthSceneOptions extends DepthImageSettings {
   colorSrc: string;
   depthSrc: string;
+  enabled: boolean;
   interactive: boolean;
   frameZoom: number;
   focalX: number;
@@ -79,7 +80,7 @@ export function useDepthScene(
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return undefined;
+    if (!canvas || !options.enabled) return undefined;
 
     const gl = canvas.getContext('webgl2', {
       alpha: false,
@@ -335,7 +336,12 @@ export function useDepthScene(
     // Only the structural inputs re-create the GL scene; tunable numeric
     // settings are read live from optionsRef so they never tear it down.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [options.colorSrc, options.depthSrc, options.interactive]);
+  }, [
+    options.colorSrc,
+    options.depthSrc,
+    options.enabled,
+    options.interactive
+  ]);
 
   return { ready };
 }

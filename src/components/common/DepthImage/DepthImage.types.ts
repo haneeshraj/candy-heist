@@ -48,10 +48,20 @@ export interface DepthImageProps extends Partial<DepthImageSettings> {
   depthSrc: string;
   className?: string;
   /**
+   * When false, skips WebGL entirely — no context, no shader compile, no
+   * texture uploads, no depth-map fetch — and shows colorSrc as a plain
+   * cover-fit background image instead. Used to fully disable the effect on
+   * touch devices (phones, tablets), where there's no pointer to drive it
+   * and the GPU/memory cost isn't worth paying. Independent of `interactive`,
+   * which only matters once this is true.
+   * @default true
+   */
+  enabled?: boolean;
+  /**
    * When false, renders a single static frame at the focus position and
    * never starts an animation loop or attaches pointer listeners — used for
-   * touch devices and prefers-reduced-motion, where there's no cursor to
-   * drive the effect and running WebGL continuously would just burn battery.
+   * prefers-reduced-motion, where there's no cursor to drive the effect and
+   * running WebGL continuously would just burn battery.
    * @default true
    */
   interactive?: boolean;

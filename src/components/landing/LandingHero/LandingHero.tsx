@@ -19,6 +19,7 @@ export default function LandingHero() {
         <DepthImage
           colorSrc="/img/home/landing-photo.jpeg"
           depthSrc="/img/home/landing-depth-map.jpeg"
+          enabled={hasFinePointer}
           interactive={hasFinePointer && !reducedMotion}
           focalY={0.52}
           strength={3}
