@@ -1,0 +1,19 @@
+// Shared Sass helpers, imported with `@use '../../../styles/mixins' as m;`
+// (relative for the same Turbopack reason noted in _tokens.scss).
+
+// Design pixel: `m.dp(96)` is 96 px of the Figma frame the component was
+// drawn in, scaled by the `--dp` custom property the component sets for each
+// breakpoint (e.g. `min(100cqw / 1440, 1px)` for a 1440 desktop frame).
+@function dp($px) {
+  @return calc(#{$px} * var(--dp, 1px));
+}
+
+// Hidden visually, still read by assistive tech.
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

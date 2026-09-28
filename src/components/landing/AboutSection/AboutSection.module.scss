@@ -1,0 +1,613 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Everything is measured in design pixels (m.dp) against the Figma frames:
+// the 390 mobile frame below the desktop breakpoint (capped so tablets don't
+// balloon), the 1440 "Nave v3" frame from the desktop breakpoint up (capped
+// at 1:1 on wider screens). cqw keeps the scrollbar out of the maths.
+@mixin design-scale {
+  --dp: min(100cqw / 390, 1.2px);
+
+  @media #{t.$query-desktop} {
+    --dp: min(100cqw / 1440, 1px);
+  }
+}
+
+.about {
+  position: relative;
+  overflow: hidden;
+  container-type: inline-size;
+  background-color: var(--color-obsidian);
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+// ---- Backdrop: rose field + dust
+
+.backdrop {
+  @include design-scale;
+
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  // The rose field is centred near the top, so its rings and spokes run
+  // past the section edge and would be cut flat at the seam with the hero.
+  // Fading them in from the top (and out at the bottom) lets them emerge
+  // from the dark instead, so the two sections read as one surface.
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 m.dp(240),
+    #000 calc(100% - #{m.dp(180)}),
+    transparent 100%
+  );
+}
+
+.rose {
+  position: absolute;
+  top: m.dp(76);
+  left: 50%;
+  width: m.dp(1100);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+
+  @media #{t.$query-desktop} {
+    top: m.dp(103);
+    width: m.dp(1800);
+  }
+}
+
+.rings,
+.spokes {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke: var(--color-gold);
+  stroke-width: 1;
+
+  * {
+    vector-effect: non-scaling-stroke;
+  }
+}
+
+.spokes {
+  stroke-opacity: 0.035;
+}
+
+.dust {
+  position: absolute;
+  inset: 0 0 -30%;
+}
+
+.mote {
+  position: absolute;
+  border-radius: 50%;
+  background-color: var(--color-alabaster-light);
+}
+
+// ---- Layout shell
+
+.inner {
+  @include design-scale;
+
+  position: relative;
+  z-index: 1;
+
+  // flow-root stops the stage's top margin collapsing through, which would
+  // drag the absolutely-placed label, hairline and orb down with it.
+  display: flow-root;
+  width: 100%;
+  max-width: m.dp(390);
+  margin-inline: auto;
+  padding: 0 m.dp(24) m.dp(72);
+
+  @media #{t.$query-desktop} {
+    max-width: m.dp(1440);
+    padding: 0 m.dp(96) m.dp(120);
+  }
+}
+
+// ---- Invocation: label, hairline, orb
+
+.label {
+  position: absolute;
+  top: m.dp(28);
+  left: m.dp(24);
+  display: flex;
+  align-items: center;
+  gap: m.dp(10);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp(10)}, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.44em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    top: m.dp(96);
+    left: m.dp(96);
+    gap: m.dp(12);
+    font-size: max(#{m.dp(12)}, 1rem);
+  }
+}
+
+.labelSigil {
+  display: block;
+  width: m.dp(10);
+  height: m.dp(10);
+  color: var(--color-gilt);
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  @media #{t.$query-desktop} {
+    width: m.dp(12);
+    height: m.dp(12);
+  }
+}
+
+.hairline {
+  position: absolute;
+  top: 0;
+  left: calc(50% - 0.5px);
+  width: 1px;
+  height: m.dp(70);
+  background-color: rgb(210 169 97 / 50%);
+  transform-origin: top center;
+
+  @media #{t.$query-desktop} {
+    height: m.dp(96);
+  }
+}
+
+.orb {
+  position: absolute;
+  top: m.dp(76);
+  left: 50%;
+
+  @media #{t.$query-desktop} {
+    top: m.dp(103);
+  }
+}
+
+.orbHalo,
+.orbCore {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.orbHalo {
+  width: m.dp(26);
+  height: m.dp(26);
+  margin: m.dp(-13) 0 0 m.dp(-13);
+  border: 1px solid rgb(196 69 58 / 35%);
+
+  @media #{t.$query-desktop} {
+    width: m.dp(32);
+    height: m.dp(32);
+    margin: m.dp(-16) 0 0 m.dp(-16);
+  }
+}
+
+.orbCore {
+  width: m.dp(12);
+  height: m.dp(12);
+  margin: m.dp(-6) 0 0 m.dp(-6);
+  background-color: var(--color-crimson);
+  box-shadow: 0 0 m.dp(20) 0 rgb(163 43 35 / 85%);
+
+  @media #{t.$query-desktop} {
+    width: m.dp(14);
+    height: m.dp(14);
+    margin: m.dp(-7) 0 0 m.dp(-7);
+    box-shadow: 0 0 m.dp(26) 0 rgb(163 43 35 / 85%);
+  }
+}
+
+// ---- Stage: the arch with the headline and facts either side.
+// Mobile stacks everything under the arch; the side columns dissolve
+// (display: contents) so their headline and facts join the stage grid.
+
+.stage {
+  display: grid;
+  grid-template-areas:
+    'arch arch'
+    'head-left head-left'
+    'head-right head-right'
+    'facts-left facts-right';
+  grid-template-columns: 1fr 1fr;
+  column-gap: m.dp(22);
+  margin-top: m.dp(130);
+
+  @media #{t.$query-desktop} {
+    grid-template-areas: 'side-left arch side-right';
+    grid-template-columns: 1fr m.dp(460) 1fr;
+    column-gap: m.dp(70);
+    margin-top: m.dp(172);
+  }
+}
+
+.side {
+  display: contents;
+
+  @media #{t.$query-desktop} {
+    position: relative;
+    display: block;
+  }
+}
+
+.sideLeft {
+  grid-area: side-left;
+}
+
+.sideRight {
+  grid-area: side-right;
+}
+
+.headline {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  color: var(--color-cream);
+
+  &[data-side='left'] {
+    grid-area: head-left;
+    margin-top: m.dp(44);
+  }
+
+  &[data-side='right'] {
+    grid-area: head-right;
+    margin-top: m.dp(14);
+  }
+
+  @media #{t.$query-desktop} {
+    &[data-side='left'],
+    &[data-side='right'] {
+      margin-top: m.dp(73);
+    }
+
+    &[data-side='left'] {
+      text-align: right;
+    }
+
+    &[data-side='right'] {
+      text-align: left;
+    }
+  }
+}
+
+.headlineLead {
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(26);
+  font-style: italic;
+  font-weight: 400;
+  line-height: m.dp(30);
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(36);
+    line-height: m.dp(46);
+  }
+}
+
+.headlineStatement {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(22);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: m.dp(30);
+  text-transform: uppercase;
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(30);
+    line-height: m.dp(46);
+  }
+}
+
+.factsWrap {
+  margin-top: m.dp(52);
+
+  &[data-side='left'] {
+    grid-area: facts-left;
+  }
+
+  &[data-side='right'] {
+    grid-area: facts-right;
+  }
+
+  // Desktop: centred on the lower half of the arch, 12 dp further out than
+  // the headline. `translate` (not `transform`) leaves the children's
+  // transforms free for the motion timeline.
+  @media #{t.$query-desktop} {
+    position: absolute;
+    top: m.dp(371);
+    margin-top: 0;
+    translate: 0 -50%;
+
+    &[data-side='left'] {
+      right: m.dp(12);
+    }
+
+    &[data-side='right'] {
+      left: m.dp(12);
+    }
+  }
+}
+
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(28);
+
+  @media #{t.$query-desktop} {
+    gap: m.dp(56);
+  }
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: m.dp(8);
+
+  @media #{t.$query-desktop} {
+    gap: m.dp(10);
+
+    [data-side='left'] & {
+      align-items: flex-end;
+      text-align: right;
+    }
+  }
+}
+
+.factTick {
+  display: block;
+  width: m.dp(20);
+  height: 1px;
+  background-color: rgb(210 169 97 / 70%);
+
+  @media #{t.$query-desktop} {
+    width: m.dp(24);
+  }
+}
+
+.factLabel {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp(9)}, 0.9rem);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-concrete-light);
+
+  @media #{t.$query-desktop} {
+    font-size: max(#{m.dp(10)}, 0.9rem);
+  }
+}
+
+.factValue {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(15);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.35;
+  text-transform: uppercase;
+  color: var(--color-cream);
+
+  // On the mobile 2 × 2 grid the first row reserves two lines so the second
+  // row lines up across both columns.
+  .fact:first-child & {
+    min-height: calc(2em * 1.35);
+  }
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(18);
+    letter-spacing: 0.08em;
+
+    .fact:first-child & {
+      min-height: 0;
+    }
+  }
+}
+
+// ---- The arch
+
+.archColumn {
+  position: relative;
+  grid-area: arch;
+  justify-self: center;
+  width: m.dp(280);
+
+  @media #{t.$query-desktop} {
+    width: 100%;
+  }
+}
+
+.ribs {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+
+  path {
+    fill: none;
+    stroke: var(--color-gilt);
+    stroke-width: 1;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    vector-effect: non-scaling-stroke;
+  }
+}
+
+.pilaster {
+  position: absolute;
+  top: 35.9375%; // the arch's springing line (230 / 640)
+  bottom: 0;
+  width: 1px;
+  background-color: rgb(182 158 124 / 12%);
+}
+
+.pilasterLeft {
+  left: m.dp(-31);
+
+  @media #{t.$query-desktop} {
+    left: m.dp(-54);
+  }
+}
+
+.pilasterRight {
+  right: m.dp(-31);
+
+  @media #{t.$query-desktop} {
+    right: m.dp(-54);
+  }
+}
+
+.arch {
+  position: relative;
+  aspect-ratio: 460 / 640;
+  overflow: hidden;
+  border: 1px solid rgb(210 169 97 / 55%);
+
+  // A semicircular top on a 460 × 640 box, in percentages so it scales.
+  border-radius: 50% 50% 0 0 / 35.9375% 35.9375% 0 0;
+  background-color: var(--color-obsidian);
+}
+
+.photo {
+  position: relative;
+  transform-origin: 50% 45%;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgb(0 0 0 / 12%);
+  }
+}
+
+.photoImage {
+  object-fit: cover;
+  object-position: 48% 50%;
+}
+
+// Rests fully below the arch (revealed); the timelines drop it from the top.
+.veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: var(--color-obsidian);
+  transform: translateY(100%);
+}
+
+.floor {
+  position: absolute;
+  right: m.dp(-31);
+  bottom: 0;
+  left: m.dp(-31);
+  height: 1px;
+  background-color: rgb(182 158 124 / 26%);
+
+  @media #{t.$query-desktop} {
+    right: m.dp(-394);
+    left: m.dp(-394);
+  }
+}
+
+// ---- Interpretation: copy below the floor line
+
+.divider {
+  display: block;
+  height: 1px;
+  margin-top: m.dp(40);
+  background-color: rgb(182 158 124 / 12%);
+
+  @media #{t.$query-desktop} {
+    display: none;
+  }
+}
+
+.copy {
+  display: grid;
+  gap: m.dp(20);
+  margin-top: m.dp(36);
+
+  @media #{t.$query-desktop} {
+    grid-template-columns: m.dp(640) m.dp(440);
+    justify-content: space-between;
+    gap: 0;
+    margin-top: m.dp(72);
+  }
+}
+
+.body {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(20);
+  font-weight: 400;
+  line-height: m.dp(32);
+  color: var(--color-cream);
+  text-wrap: pretty;
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(26);
+    line-height: m.dp(42);
+  }
+}
+
+.emphasis {
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(24);
+  font-style: italic;
+  color: var(--color-gilt);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(32);
+  }
+}
+
+.asideColumn {
+  display: grid;
+  gap: m.dp(28);
+
+  @media #{t.$query-desktop} {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: m.dp(24);
+    padding-top: m.dp(8);
+  }
+}
+
+.aside {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(14)}, 1.3rem);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--color-concrete-light);
+
+  @media #{t.$query-desktop} {
+    font-size: max(#{m.dp(15)}, 1.3rem);
+  }
+}
+
+.ctaWrap {
+  display: inline-flex;
+  justify-self: end;
+
+  @media #{t.$query-desktop} {
+    align-self: flex-end;
+  }
+}
