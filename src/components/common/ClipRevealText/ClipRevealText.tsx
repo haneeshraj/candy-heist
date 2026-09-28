@@ -65,32 +65,18 @@ const ClipRevealText = forwardRef<ClipRevealTextHandle, ClipRevealTextProps>(
       [letters.length, staggerDelay, letterDuration]
     );
 
-    const play = useCallback(() => {
-      return new Promise<void>((resolve) => {
-        timelineRef.current?.kill();
+    const skipMotion = reducedMotion && respectReducedMotion;
 
-        if (reducedMotion && respectReducedMotion) {
-          nodesRef.current.forEach(
-            (node) => node && gsap.set(node, { yPercent: 0 })
-          );
-          if (wipeRef.current)
-            gsap.set(wipeRef.current, { clipPath: CLIP_END });
-          onStart?.();
-          onComplete?.();
-          resolve();
-          return;
-        }
+    const showFinal = useCallback(() => {
+      nodesRef.current.forEach(
+        (node) => node && gsap.set(node, { yPercent: 0 })
+      );
+      if (wipeRef.current) gsap.set(wipeRef.current, { clipPath: CLIP_END });
+    }, []);
 
-        onStart?.();
-
-        const tl = gsap.timeline({
-          delay: startDelay,
-          onComplete: () => {
-            onComplete?.();
-            resolve();
-          }
-        });
-
+    // Adds the whole reveal to `tl`, starting at its 0.
+    const build = useCallback(
+      (tl: gsap.core.Timeline) => {
         // The wipe-in (CLIP_START -> CLIP_FULL) reuses letterDuration as a
         // single "beat" so it stays proportional to the rest of the reveal
         // without a dedicated prop. Everything else — the wipe-out and the
@@ -122,20 +108,44 @@ const ClipRevealText = forwardRef<ClipRevealTextHandle, ClipRevealTextProps>(
             );
         });
 
-        timelineRef.current = tl;
+        return tl;
+      },
+      [letters, staggerDelay, letterDuration, ease, totalDuration]
+    );
+
+    const play = useCallback(() => {
+      return new Promise<void>((resolve) => {
+        timelineRef.current?.kill();
+
+        if (skipMotion) {
+          showFinal();
+          onStart?.();
+          onComplete?.();
+          resolve();
+          return;
+        }
+
+        onStart?.();
+
+        timelineRef.current = build(
+          gsap.timeline({
+            delay: startDelay,
+            onComplete: () => {
+              onComplete?.();
+              resolve();
+            }
+          })
+        );
       });
-    }, [
-      letters,
-      reducedMotion,
-      respectReducedMotion,
-      startDelay,
-      staggerDelay,
-      letterDuration,
-      ease,
-      totalDuration,
-      onStart,
-      onComplete
-    ]);
+    }, [skipMotion, showFinal, build, startDelay, onStart, onComplete]);
+
+    const timeline = useCallback(() => {
+      if (skipMotion) {
+        showFinal();
+        return gsap.timeline();
+      }
+      return build(gsap.timeline());
+    }, [skipMotion, showFinal, build]);
 
     const reset = useCallback(() => {
       timelineRef.current?.kill();
@@ -145,7 +155,11 @@ const ClipRevealText = forwardRef<ClipRevealTextHandle, ClipRevealTextProps>(
       if (wipeRef.current) gsap.set(wipeRef.current, { clipPath: CLIP_START });
     }, []);
 
-    useImperativeHandle(forwardedRef, () => ({ play, reset }), [play, reset]);
+    useImperativeHandle(forwardedRef, () => ({ play, reset, timeline }), [
+      play,
+      reset,
+      timeline
+    ]);
 
     useEffect(() => {
       if (hasPlayedRef.current) return;

@@ -59,6 +59,13 @@ export interface ScrambleTextHandle {
   play: () => Promise<void>;
   /** Snaps every letter back to its hidden, pre-reveal state. */
   reset: () => void;
+  /**
+   * Builds the reveal as a fresh timeline and hands it over, so a parent can
+   * nest it (e.g. in a scroll-scrubbed timeline). The caller owns it: it
+   * ignores startDelay, onStart and onComplete, and play() won't stop it.
+   * With reduced motion it shows the final text and returns an empty timeline.
+   */
+  timeline: () => gsap.core.Timeline;
 }
 
 export interface ScrambleLetterProps {

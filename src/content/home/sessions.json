@@ -1,0 +1,37 @@
+{
+  "label": "Sessions",
+  "status": "Now booking",
+  "headline": { "lead": "One on one,", "statement": "In the studio." },
+  "intro": "Lessons, production sessions and feedback, straight from the booth.",
+  "cta": { "label": "Book a session", "href": "/sessions" },
+  "photo": {
+    "src": "/img/home/sessions-photo.jpeg",
+    "alt": "Candy Heist at the decks on a stage washed in crimson and gold light"
+  },
+  "services": [
+    {
+      "id": "production-session",
+      "name": "Production Session",
+      "summary": "Bring the track you’re stuck on and fix it together.",
+      "icon": "production"
+    },
+    {
+      "id": "dj-lessons",
+      "name": "DJ Lessons",
+      "summary": "From your first blend to reading a room.",
+      "icon": "dj"
+    },
+    {
+      "id": "project-feedback",
+      "name": "Project Feedback",
+      "summary": "Honest notes on your track, with a video walkthrough.",
+      "icon": "feedback"
+    },
+    {
+      "id": "mix-and-master",
+      "name": "Mix & Master",
+      "summary": "Your finished track, mixed and mastered for release.",
+      "icon": "mix"
+    }
+  ]
+}

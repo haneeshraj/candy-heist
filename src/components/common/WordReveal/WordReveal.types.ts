@@ -1,32 +1,30 @@
 import type { ElementType } from 'react';
 
-export type ClipRevealTextTrigger = 'mount' | 'inView' | 'manual';
+export type WordRevealTrigger = 'mount' | 'inView' | 'manual';
 
-export interface ClipRevealTextProps {
-  /** The real text. Rendered letter-by-letter, one animated span each. */
+export interface WordRevealProps {
+  /** The real text. Rendered word by word, one animated span each. */
   text: string;
-  /** Wrapping element/tag rendered around the letters. @default 'span' */
+  /** Wrapping element/tag rendered around the words. @default 'span' */
   as?: ElementType;
   className?: string;
-  /** Applied to every per-letter inner span, in addition to the wrapper's inherited styles. */
-  letterClassName?: string;
+  /** Applied to every per-word inner span. */
+  wordClassName?: string;
   /**
    * 'mount' plays as soon as the component mounts, 'inView' waits for the
    * wrapper to scroll into view, 'manual' waits for the imperative `play()`
-   * handle so a parent can orchestrate multiple components in sequence.
+   * (or `timeline()`) handle so a parent can orchestrate it.
    * @default 'mount'
    */
-  trigger?: ClipRevealTextTrigger;
-  /** Seconds to wait before the sweep starts (only applies to 'mount' / 'inView'). */
+  trigger?: WordRevealTrigger;
+  /** Seconds to wait before the first word starts (only applies to 'mount' / 'inView'). */
   startDelay?: number;
-  /** Seconds between each letter's start. @default 0.05 */
+  /** Seconds between each word's start. @default 0.04 */
   staggerDelay?: number;
-  /** Seconds each letter's slide-up takes; also the duration of the wipe's initial grow-in from the left edge. @default 0.6 */
-  letterDuration?: number;
-  /** GSAP ease for both the letter slide-up and the wipe sweep. @default the shared signature cubic-bezier */
+  /** Seconds each word's rise takes. @default 0.9 */
+  wordDuration?: number;
+  /** GSAP ease for the rise. @default the shared signature cubic-bezier */
   ease?: string;
-  /** Solid color the wipe block sweeps in. @default 'var(--color-cream)' */
-  wipeColor?: string;
   /** Skip the animation and render the final text immediately for prefers-reduced-motion. @default true */
   respectReducedMotion?: boolean;
   /** rootMargin/threshold for the 'inView' trigger. */
@@ -35,10 +33,10 @@ export interface ClipRevealTextProps {
   onComplete?: () => void;
 }
 
-export interface ClipRevealTextHandle {
+export interface WordRevealHandle {
   /** (re)plays the reveal from its hidden state and resolves when it finishes. */
   play: () => Promise<void>;
-  /** Snaps the wipe back to fully-covered and letters back to hidden. */
+  /** Snaps every word back to its hidden, pre-reveal state. */
   reset: () => void;
   /**
    * Builds the reveal as a fresh timeline and hands it over, so a parent can

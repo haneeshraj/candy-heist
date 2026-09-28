@@ -4,6 +4,10 @@ export {
   PlayIcon,
   PauseIcon,
   ArrowIcon,
-  ExternalIcon
+  ExternalIcon,
+  ProductionIcon,
+  DjIcon,
+  FeedbackIcon,
+  MixIcon
 } from './glyphs';
 export type { IconProps, BaseIconProps } from './Icon.types';

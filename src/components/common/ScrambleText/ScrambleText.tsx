@@ -79,14 +79,39 @@ const ScrambleText = forwardRef<ScrambleTextHandle, ScrambleTextProps>(
       []
     );
 
+    const skipMotion = reducedMotion && respectReducedMotion;
+
+    const showFinal = useCallback(() => {
+      nodesRef.current.forEach(
+        (node) => node && gsap.set(node, { yPercent: 0 })
+      );
+    }, []);
+
+    // Adds the whole reveal to `tl`, starting at its 0. Each scramble reads
+    // the letter's replay when it fires, not when the timeline is built: the
+    // letters re-register a fresh replay on most renders.
+    const build = useCallback(
+      (tl: gsap.core.Timeline) => {
+        letters.forEach((char, i) => {
+          if (char === ' ') return;
+          const at = i * staggerDelay;
+          const node = nodesRef.current[i];
+          if (scrambleEnabled)
+            tl.call(() => replaysRef.current[i]?.(), undefined, at);
+          if (node)
+            tl.to(node, { yPercent: 0, duration: letterDuration, ease }, at);
+        });
+        return tl;
+      },
+      [letters, staggerDelay, letterDuration, ease, scrambleEnabled]
+    );
+
     const play = useCallback(() => {
       return new Promise<void>((resolve) => {
         timelineRef.current?.kill();
 
-        if (reducedMotion && respectReducedMotion) {
-          nodesRef.current.forEach(
-            (node) => node && gsap.set(node, { yPercent: 0 })
-          );
+        if (skipMotion) {
+          showFinal();
           onStart?.();
           onComplete?.();
           resolve();
@@ -95,38 +120,25 @@ const ScrambleText = forwardRef<ScrambleTextHandle, ScrambleTextProps>(
 
         onStart?.();
 
-        const tl = gsap.timeline({
-          delay: startDelay,
-          onComplete: () => {
-            onComplete?.();
-            resolve();
-          }
-        });
-
-        letters.forEach((char, i) => {
-          if (char === ' ') return;
-          const at = i * staggerDelay;
-          const node = nodesRef.current[i];
-          const replay = replaysRef.current[i];
-          if (scrambleEnabled) tl.call(() => replay?.(), undefined, at);
-          if (node)
-            tl.to(node, { yPercent: 0, duration: letterDuration, ease }, at);
-        });
-
-        timelineRef.current = tl;
+        timelineRef.current = build(
+          gsap.timeline({
+            delay: startDelay,
+            onComplete: () => {
+              onComplete?.();
+              resolve();
+            }
+          })
+        );
       });
-    }, [
-      letters,
-      reducedMotion,
-      respectReducedMotion,
-      startDelay,
-      staggerDelay,
-      letterDuration,
-      ease,
-      scrambleEnabled,
-      onStart,
-      onComplete
-    ]);
+    }, [skipMotion, showFinal, build, startDelay, onStart, onComplete]);
+
+    const timeline = useCallback(() => {
+      if (skipMotion) {
+        showFinal();
+        return gsap.timeline();
+      }
+      return build(gsap.timeline());
+    }, [skipMotion, showFinal, build]);
 
     const reset = useCallback(() => {
       timelineRef.current?.kill();
@@ -135,7 +147,11 @@ const ScrambleText = forwardRef<ScrambleTextHandle, ScrambleTextProps>(
       );
     }, []);
 
-    useImperativeHandle(forwardedRef, () => ({ play, reset }), [play, reset]);
+    useImperativeHandle(forwardedRef, () => ({ play, reset, timeline }), [
+      play,
+      reset,
+      timeline
+    ]);
 
     useEffect(() => {
       if (hasPlayedRef.current) return;

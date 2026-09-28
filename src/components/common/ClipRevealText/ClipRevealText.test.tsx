@@ -61,4 +61,19 @@ describe('ClipRevealText', () => {
     await expect(ref.current?.play()).resolves.toBeUndefined();
     expect(() => ref.current?.reset()).not.toThrow();
   });
+
+  it('hands a parent the reveal as a timeline: the wipe in and out, then each letter', () => {
+    const ref = createRef<ClipRevealTextHandle>();
+    render(<ClipRevealText ref={ref} text="HI" trigger="manual" />);
+
+    expect(ref.current?.timeline().getChildren()).toHaveLength(4);
+  });
+
+  it('returns an empty timeline when reduced motion is preferred', () => {
+    mockMatchMedia(true);
+    const ref = createRef<ClipRevealTextHandle>();
+    render(<ClipRevealText ref={ref} text="HI" trigger="manual" />);
+
+    expect(ref.current?.timeline().getChildren()).toHaveLength(0);
+  });
 });

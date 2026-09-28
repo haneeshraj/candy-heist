@@ -1,6 +1,8 @@
 import { AboutSection } from '@/components/landing/AboutSection';
 import { LandingHero } from '@/components/landing/LandingHero';
+import { SessionsSection } from '@/components/landing/SessionsSection';
 import { aboutContent } from '@/content/home/about';
+import { sessionsContent } from '@/content/home/sessions';
 import styles from './page.module.scss';
 
 export default function Home() {
@@ -9,6 +11,7 @@ export default function Home() {
       <main className={styles.main}>
         <LandingHero />
         <AboutSection content={aboutContent} />
+        <SessionsSection content={sessionsContent} />
       </main>
     </div>
   );

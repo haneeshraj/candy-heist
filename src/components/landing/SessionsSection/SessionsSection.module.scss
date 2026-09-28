@@ -1,0 +1,408 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Measured in design pixels (m.dp) against the Figma "5E · Left column"
+// frame (1440 × 1040). Mobile, on the 390 grid, keeps the same column but
+// puts the photo in a band across the top that fades into the list.
+
+.sessions {
+  position: relative;
+  overflow: hidden;
+  container-type: inline-size;
+  background-color: var(--color-obsidian);
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+// ---- Backdrop: the photo and its three fades
+
+.backdrop {
+  @include m.design-scale;
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 0;
+  height: m.dp(500);
+
+  @media #{t.$query-desktop} {
+    bottom: 0;
+    height: auto;
+  }
+}
+
+.photo {
+  position: relative;
+  transform-origin: 64% 40%;
+}
+
+// Mobile centres the DJ in the band; desktop shows the Figma crop as is.
+.photoImage {
+  object-fit: cover;
+  object-position: 78% 40%;
+
+  @media #{t.$query-desktop} {
+    object-position: 50% 50%;
+  }
+}
+
+.fadeTop,
+.fadeLeft,
+.fadeBottom {
+  position: absolute;
+  pointer-events: none;
+}
+
+.fadeTop {
+  top: 0;
+  right: 0;
+  left: 0;
+  height: m.dp(140);
+  background: linear-gradient(to bottom, var(--color-obsidian), transparent);
+
+  @media #{t.$query-desktop} {
+    height: m.dp(160);
+  }
+}
+
+.fadeLeft {
+  display: none;
+
+  @media #{t.$query-desktop} {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    width: m.dp(980);
+    background: linear-gradient(
+      to right,
+      rgb(12 12 12 / 94%) 0,
+      rgb(12 12 12 / 80%) 55%,
+      transparent 100%
+    );
+  }
+}
+
+.fadeBottom {
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: m.dp(300);
+  background: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgb(12 12 12 / 85%) 60%,
+    var(--color-obsidian) 100%
+  );
+
+  @media #{t.$query-desktop} {
+    top: m.dp(620);
+    height: auto;
+  }
+}
+
+// ---- The column
+
+.inner {
+  @include m.design-scale;
+
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  max-width: m.dp(390);
+  margin-inline: auto;
+  padding: m.dp(28) m.dp(24) m.dp(72);
+
+  @media #{t.$query-desktop} {
+    max-width: m.dp(1440);
+    min-height: m.dp(1040);
+    padding: m.dp(96) m.dp(96) m.dp(139);
+  }
+}
+
+.topline {
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.label,
+.status {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-weight: 500;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.label {
+  gap: m.dp(10);
+  font-size: max(#{m.dp(10)}, 1rem);
+  letter-spacing: 0.44em;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    gap: m.dp(12);
+    font-size: max(#{m.dp(12)}, 1rem);
+  }
+}
+
+.labelSigil {
+  display: block;
+  width: m.dp(10);
+  height: m.dp(10);
+  color: var(--color-gilt);
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  @media #{t.$query-desktop} {
+    width: m.dp(12);
+    height: m.dp(12);
+  }
+}
+
+// The section's one crimson focal point: a live dot beside NOW BOOKING.
+.status {
+  gap: m.dp(10);
+  font-size: max(#{m.dp(9)}, 0.9rem);
+  letter-spacing: 0.4em;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    font-size: max(#{m.dp(10)}, 0.9rem);
+  }
+}
+
+.statusDot {
+  position: relative;
+  flex: none;
+  width: m.dp(8);
+  height: m.dp(8);
+  border-radius: 50%;
+  background-color: var(--color-crimson);
+  box-shadow: 0 0 m.dp(10) 0 rgb(163 43 35 / 70%);
+
+  // A halo that keeps breathing out from the dot.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: m.dp(-4);
+    border: 1px solid rgb(196 69 58 / 55%);
+    border-radius: 50%;
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    &::after {
+      animation: status-halo 2.4s t.$ease-signature infinite;
+    }
+  }
+}
+
+@keyframes status-halo {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.5);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+
+// ---- Headline, intro and the one action
+
+.headline {
+  margin-top: m.dp(300);
+  font-weight: 400;
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(24);
+  }
+}
+
+.headlineVisual {
+  display: flex;
+  flex-direction: column;
+}
+
+.lead {
+  display: block;
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(32);
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(48);
+  }
+}
+
+.statement {
+  display: block;
+  margin-top: m.dp(4);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(36);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(1);
+    font-size: m.dp(64);
+    letter-spacing: 0.12em;
+  }
+}
+
+.introWrap {
+  max-width: m.dp(342);
+  margin-top: m.dp(18);
+
+  @media #{t.$query-desktop} {
+    max-width: m.dp(460);
+    margin-top: m.dp(22);
+  }
+}
+
+.intro {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(16)}, 1.4rem);
+  font-weight: 400;
+  line-height: 1.5;
+  color: rgb(221 207 178 / 85%);
+  text-wrap: pretty;
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(17);
+  }
+}
+
+.ctaWrap {
+  display: inline-flex;
+  margin-top: m.dp(28);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(37);
+  }
+}
+
+// ---- Services
+
+.list,
+.listEnd {
+  align-self: stretch;
+
+  @media #{t.$query-desktop} {
+    align-self: flex-start;
+    width: m.dp(480);
+  }
+}
+
+.list {
+  margin-top: m.dp(48);
+  list-style: none;
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(76);
+  }
+}
+
+.service {
+  position: relative;
+  display: grid;
+
+  // Rows hug their text; the desktop row's fixed height mustn't stretch them.
+  align-content: start;
+  grid-template-columns: m.dp(20) 1fr;
+  column-gap: m.dp(16);
+  padding: m.dp(22) 0;
+
+  @media #{t.$query-desktop} {
+    grid-template-columns: m.dp(22) 1fr;
+    column-gap: m.dp(18);
+    height: m.dp(104);
+    padding: m.dp(28) 0 0;
+  }
+}
+
+.rule,
+.listEnd {
+  display: block;
+  height: 1px;
+  background-color: rgb(182 158 124 / 22%);
+  transform-origin: left center;
+}
+
+.rule {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+.serviceIcon {
+  grid-row: 1 / span 2;
+  width: m.dp(20);
+  aspect-ratio: 1;
+  margin-top: m.dp(1);
+  color: var(--color-gilt);
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  @media #{t.$query-desktop} {
+    width: m.dp(22);
+    margin-top: m.dp(2);
+  }
+}
+
+.serviceName {
+  grid-column: 2;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(16);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(18);
+  }
+}
+
+.serviceSummary {
+  grid-column: 2;
+  margin-top: m.dp(8);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(15)}, 1.4rem);
+  font-weight: 400;
+  line-height: 1.5;
+  color: rgb(221 207 178 / 82%);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(8.4);
+    font-size: m.dp(15);
+  }
+}

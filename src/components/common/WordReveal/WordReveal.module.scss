@@ -1,0 +1,28 @@
+@use '../../../styles/mixins' as m;
+
+// No display override: the words flow inside whatever tag the consumer
+// passed via `as`, inheriting its font, line-height and wrapping.
+.wrapper {
+  position: relative;
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+// Clips vertically only. The negative inline insets leave room for italic
+// overhangs, which overflow: hidden would shave off; the bottom padding keeps
+// descenders inside the clip, and the matching negative margin cancels it
+// so the line spacing is unchanged.
+.mask {
+  display: inline-block;
+  padding-bottom: 0.15em;
+  margin-bottom: -0.15em;
+  clip-path: inset(-0.1em -0.5em 0);
+}
+
+.word {
+  display: inline-block;
+  transform: translateY(120%);
+  will-change: transform;
+}
