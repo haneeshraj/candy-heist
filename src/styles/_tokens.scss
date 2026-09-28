@@ -10,4 +10,5 @@ $breakpoint-tablet: 768px;
 $breakpoint-desktop: 1024px;
 $query-tablet: '(min-width: #{$breakpoint-tablet})';
 $query-desktop: '(min-width: #{$breakpoint-desktop})';
+$query-hover: '(hover: hover) and (pointer: fine)';
 $ease-signature: cubic-bezier(0.64, 0, 0, 0.97);

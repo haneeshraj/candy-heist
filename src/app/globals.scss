@@ -4,6 +4,23 @@
   --color-gold: #b69e7c;
   --color-gold-dim: #8f7d63;
   --color-gold-hairline: rgb(210 169 97 / 40%);
+
+  // The rest of the five-material palette (obsidian, concrete, brushed
+  // gold / aged brass, crimson glass, alabaster). Crimson is reserved for a
+  // section's single focal object and never used on controls.
+  --color-obsidian-raised: #111011;
+  --color-concrete-deep: #3b372f;
+  --color-concrete-dark: #554e42;
+  --color-concrete: #6f6656;
+  --color-concrete-light: #8a8071;
+  --color-concrete-muted: #5a544a;
+  --color-alabaster-light: #cdb994;
+  --color-brass: #45351f;
+  --color-gilt: #d2a961;
+  --color-gilt-bright: #e3c286;
+  --color-gilt-deep: #b98b47;
+  --color-crimson: #a32b23;
+  --color-crimson-glow: #c4453a;
 }
 
 *,

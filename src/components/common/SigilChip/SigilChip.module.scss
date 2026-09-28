@@ -1,0 +1,228 @@
+@use '../../../styles/tokens' as t;
+
+// Sizes and colours are all custom properties so each variant/state below
+// only swaps values; the structure is written once. Values mirror the
+// "Sigil Chip" component set in Figma.
+
+@mixin size-md {
+  --chip-pad: 0.8rem;
+  --chip-ring: 3rem;
+  --chip-glyph: 1.2rem;
+  --chip-gap: 1.2rem;
+  --chip-font: 1.1rem;
+  --chip-tracking: 0.36em;
+}
+
+@mixin size-sm {
+  --chip-pad: 0.6rem;
+  --chip-ring: 2.2rem;
+  --chip-glyph: 0.9rem;
+  --chip-gap: 1rem;
+  --chip-font: 1rem;
+  --chip-tracking: 0.32em;
+}
+
+.chip {
+  @include size-md;
+
+  // Outline at rest.
+  --chip-bg: var(--color-obsidian-raised);
+  --chip-border: rgb(210 169 97 / 35%);
+  --chip-ring-bg: transparent;
+  --chip-ring-border: rgb(210 169 97 / 60%);
+  --chip-glyph-color: var(--color-gilt);
+  --chip-label-color: var(--color-cream);
+  --chip-glow: 0 0 0 0 transparent;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: var(--chip-pad);
+  border: 1px solid var(--chip-border);
+  background-color: var(--chip-bg);
+  box-shadow: var(--chip-glow);
+  color: var(--chip-label-color);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.35s t.$ease-signature,
+    border-color 0.35s t.$ease-signature,
+    box-shadow 0.35s t.$ease-signature,
+    color 0.35s t.$ease-signature;
+
+  // The magnetic catch zone: the pull starts a little before the pointer
+  // reaches the visible edge.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1rem;
+  }
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 4px;
+  }
+}
+
+.chip[data-size='sm'] {
+  @include size-sm;
+}
+
+@media #{t.$query-desktop} {
+  .chip[data-size-desktop='sm'] {
+    @include size-sm;
+  }
+
+  .chip[data-size-desktop='md'] {
+    @include size-md;
+  }
+}
+
+.chip[data-variant='solid'] {
+  --chip-bg: var(--color-gilt);
+  --chip-border: var(--color-gilt);
+  --chip-ring-bg: var(--color-obsidian);
+  --chip-ring-border: var(--color-obsidian);
+  --chip-glyph-color: var(--color-gilt);
+  --chip-label-color: var(--color-obsidian);
+}
+
+.chip[data-variant='ghost'] {
+  --chip-bg: transparent;
+  --chip-border: transparent;
+}
+
+.content {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ring {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--chip-ring);
+  height: var(--chip-ring);
+  border: 1px solid var(--chip-ring-border);
+  border-radius: 50%;
+  background-color: var(--chip-ring-bg);
+  color: var(--chip-glyph-color);
+  transition:
+    background-color 0.35s t.$ease-signature,
+    border-color 0.35s t.$ease-signature,
+    color 0.35s t.$ease-signature;
+}
+
+.glyph {
+  display: block;
+  width: var(--chip-glyph);
+  height: var(--chip-glyph);
+  transition: transform 0.6s t.$ease-signature;
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--chip-ring);
+  padding-inline: var(--chip-gap);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: var(--chip-font);
+  font-weight: 500;
+  letter-spacing: var(--chip-tracking);
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+// ---- Hover (fine pointers only, so touch never sticks in a hover state)
+
+@media #{t.$query-hover} {
+  .chip[data-variant='outline']:not(:disabled, [aria-disabled='true']):hover {
+    --chip-border: rgb(210 169 97 / 90%);
+    --chip-glow: 0 0 1.8rem 0 rgb(210 169 97 / 14%);
+  }
+
+  .chip[data-variant='outline']:not(:disabled, [aria-disabled='true']):hover,
+  .chip[data-variant='ghost']:not(:disabled, [aria-disabled='true']):hover {
+    --chip-ring-bg: var(--color-gilt);
+    --chip-ring-border: var(--color-gilt);
+    --chip-glyph-color: var(--color-obsidian);
+    --chip-label-color: var(--color-gilt-bright);
+  }
+
+  .chip[data-variant='solid']:not(:disabled, [aria-disabled='true']):hover {
+    --chip-bg: var(--color-gilt-bright);
+    --chip-border: var(--color-gilt-bright);
+    --chip-glyph-color: var(--color-gilt-bright);
+    --chip-glow: 0 0 2.2rem 0 rgb(210 169 97 / 28%);
+  }
+
+  .chip:not(:disabled, [aria-disabled='true']):hover
+    .ring[data-spin='true']
+    .glyph {
+    transform: rotate(45deg);
+  }
+}
+
+// ---- Pressed
+
+.chip[data-variant='outline']:not(:disabled, [aria-disabled='true']):active {
+  --chip-bg: rgb(69 53 31 / 85%);
+  --chip-border: var(--color-gilt);
+}
+
+.chip[data-variant='outline']:not(:disabled, [aria-disabled='true']):active,
+.chip[data-variant='ghost']:not(:disabled, [aria-disabled='true']):active {
+  --chip-ring-bg: var(--color-gilt-deep);
+  --chip-ring-border: var(--color-gilt-deep);
+  --chip-glyph-color: var(--color-obsidian);
+  --chip-label-color: var(--color-gilt-bright);
+}
+
+.chip[data-variant='solid']:not(:disabled, [aria-disabled='true']):active {
+  --chip-bg: var(--color-gilt-deep);
+  --chip-border: var(--color-gilt-deep);
+  --chip-glyph-color: var(--color-gilt-deep);
+}
+
+// ---- Disabled
+
+.chip:disabled,
+.chip[aria-disabled='true'] {
+  --chip-border: var(--color-concrete-deep);
+  --chip-ring-border: var(--color-concrete-dark);
+  --chip-glyph-color: var(--color-concrete-dark);
+  --chip-label-color: var(--color-concrete-muted);
+
+  cursor: not-allowed;
+}
+
+.chip[data-variant='solid']:disabled,
+.chip[data-variant='solid'][aria-disabled='true'] {
+  --chip-bg: var(--color-concrete-deep);
+  --chip-ring-bg: var(--color-obsidian-raised);
+  --chip-ring-border: var(--color-obsidian-raised);
+  --chip-glyph-color: var(--color-concrete);
+  --chip-label-color: var(--color-concrete-light);
+}
+
+.chip[data-variant='ghost']:disabled,
+.chip[data-variant='ghost'][aria-disabled='true'] {
+  --chip-border: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip,
+  .ring,
+  .glyph {
+    transition: none;
+  }
+}
