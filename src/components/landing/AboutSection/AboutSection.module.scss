@@ -1,17 +1,8 @@
 @use '../../../styles/tokens' as t;
 @use '../../../styles/mixins' as m;
 
-// Everything is measured in design pixels (m.dp) against the Figma frames:
-// the 390 mobile frame below the desktop breakpoint (capped so tablets don't
-// balloon), the 1440 "Nave v3" frame from the desktop breakpoint up (capped
-// at 1:1 on wider screens). cqw keeps the scrollbar out of the maths.
-@mixin design-scale {
-  --dp: min(100cqw / 390, 1.2px);
-
-  @media #{t.$query-desktop} {
-    --dp: min(100cqw / 1440, 1px);
-  }
-}
+// Everything is measured in design pixels (m.dp) against the "Nave v3"
+// Figma frames; see m.design-scale.
 
 .about {
   position: relative;
@@ -27,7 +18,7 @@
 // ---- Backdrop: rose field + dust
 
 .backdrop {
-  @include design-scale;
+  @include m.design-scale;
 
   position: absolute;
   inset: 0;
@@ -95,7 +86,7 @@
 // ---- Layout shell
 
 .inner {
-  @include design-scale;
+  @include m.design-scale;
 
   position: relative;
   z-index: 1;

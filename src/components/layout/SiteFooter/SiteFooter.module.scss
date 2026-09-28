@@ -1,0 +1,286 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Measured in design pixels (m.dp) against the Figma "Footer R — Vortex
+// Mask" frames: 390 mobile, 1440 desktop.
+
+.footer {
+  position: relative;
+  overflow: hidden;
+  container-type: inline-size;
+  background-color: var(--color-obsidian);
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+.inner {
+  @include m.design-scale;
+
+  position: relative;
+
+  // Its own stacking context, so the desktop vortex can sit at z-index -1:
+  // behind the copy, but still above the footer's background.
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  max-width: m.dp(390);
+  margin-inline: auto;
+  padding: m.dp(56) m.dp(24) m.dp(48);
+
+  @media #{t.$query-desktop} {
+    max-width: m.dp(1440);
+    min-height: m.dp(800);
+    padding: m.dp(120) m.dp(96) m.dp(48);
+  }
+}
+
+// ---- Sign-off
+
+.headline {
+  display: flex;
+  flex-direction: column;
+  font-weight: 400;
+}
+
+.lead {
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(36);
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(48);
+  }
+}
+
+.statement {
+  margin: m.dp(4) 0 0 m.dp(-3);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(96);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    margin: m.dp(-1) 0 0 m.dp(-4);
+    font-size: m.dp(120);
+  }
+}
+
+// ---- The vortex: a band between the sign-off and the address on mobile,
+// cropped by the screen's sides; on desktop it fills the right of the frame
+// behind the copy, cropped by the footer's edges.
+
+.vortex {
+  position: relative;
+  flex: none;
+  width: m.dp(600);
+  aspect-ratio: 414.64 / 298.37;
+  margin: m.dp(33) 0 0 m.dp(-121);
+
+  // Motion turns and scales it around the eye.
+  transform-origin: 49.5% 49.7%;
+
+  @media #{t.$query-desktop} {
+    position: absolute;
+    top: m.dp(-55);
+    left: m.dp(426.5);
+    z-index: -1;
+    width: m.dp(1300);
+    margin: 0;
+
+    // The mark runs off the footer's top edge, which on the page is the seam
+    // with the section above. Fading it in over the first 200 dp (it starts
+    // 55 dp above the edge) keeps that crop from reading as a line.
+    mask-image: linear-gradient(
+      to bottom,
+      transparent m.dp(55),
+      #000 m.dp(255)
+    );
+  }
+}
+
+.vortexFill {
+  position: absolute;
+  inset: 0;
+
+  // Same file as FooterVortex's edge <use>.
+  mask: url('/img/brand/vortex.svg') center / 100% 100% no-repeat;
+
+  // Gilt duotone: the photo goes greyscale below, gilt multiplies over it.
+  // The mask isolates the blend, so only the photo sits beneath it.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-gilt);
+    mix-blend-mode: multiply;
+  }
+}
+
+.vortexPhoto {
+  position: absolute;
+  inset: 0;
+  transform-origin: 49.5% 49.7%;
+}
+
+// Tuned against the Figma render: its "highlights −35%" has no CSS
+// equivalent, and a touch under 1 on contrast is the nearest match.
+.vortexImage {
+  object-fit: cover;
+  filter: grayscale(1) contrast(0.95);
+}
+
+// The stroke width is in the mark's own units (it scales with the box), so
+// each size gets the value that lands near 1px: 600 / 414.64 and
+// 1300 / 414.64 are the two scale factors.
+.vortexEdge {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--color-gilt);
+  stroke-opacity: 0.35;
+  stroke-width: 0.7;
+
+  @media #{t.$query-desktop} {
+    stroke-width: 0.32;
+  }
+}
+
+.eye {
+  position: absolute;
+  top: 49.7%;
+  left: 49.5%;
+  width: m.dp(12);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-color: var(--color-crimson);
+
+  // `translate`, not `transform`, so motion's scale doesn't fight it.
+  translate: -50% -50%;
+
+  @media #{t.$query-desktop} {
+    width: m.dp(16);
+  }
+}
+
+// ---- Address and links
+
+.email {
+  margin-top: m.dp(39);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(18);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  color: var(--color-cream);
+  text-decoration: none;
+  transition: color 0.35s t.$ease-signature;
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(38);
+    font-size: m.dp(20);
+  }
+}
+
+.email,
+.link {
+  &:focus-visible {
+    outline: 1px solid var(--color-gilt);
+    outline-offset: m.dp(4);
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      color: var(--color-gilt);
+    }
+  }
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: m.dp(171) auto;
+  margin-top: m.dp(40);
+
+  @media #{t.$query-desktop} {
+    grid-template-columns: m.dp(220) auto;
+    margin-top: m.dp(64);
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(16);
+
+  @media #{t.$query-desktop} {
+    gap: m.dp(18);
+  }
+}
+
+.columnLabel,
+.copyright {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp(9)}, 0.9rem);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-concrete-light);
+
+  @media #{t.$query-desktop} {
+    font-size: max(#{m.dp(10)}, 0.9rem);
+  }
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(10);
+  list-style: none;
+}
+
+.link {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(15)}, 1.3rem);
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--color-gold);
+  text-decoration: none;
+  transition: color 0.35s t.$ease-signature;
+}
+
+// ---- Legal row: pinned to the bottom of the desktop frame.
+
+.legal {
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(29);
+  width: 100%;
+  margin-top: m.dp(44);
+
+  @media #{t.$query-desktop} {
+    gap: m.dp(37);
+    width: m.dp(560);
+    margin-top: auto;
+    padding-top: m.dp(44);
+  }
+}
+
+.rule {
+  display: block;
+  height: 1px;
+  background-color: rgb(182 158 124 / 14%);
+  transform-origin: left center;
+}

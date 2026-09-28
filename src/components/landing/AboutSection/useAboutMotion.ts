@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, type RefObject } from 'react';
-import { EASE_SIGNATURE, gsap, ScrollTrigger } from '@/lib/animation/gsap';
+import { EASE_SIGNATURE, gsap } from '@/lib/animation/gsap';
+import { revealOnce } from '@/lib/animation/reveal';
 import {
   BELOW_DESKTOP_QUERY,
   DESKTOP_QUERY,
@@ -166,35 +167,9 @@ function scrollScrubbed(root: HTMLElement, q: Select) {
     .from(q(hook('cta')), { autoAlpha: 0, y: 16, duration: 0.8 }, 1.2);
 }
 
-// A play-once reveal starts when its top passes 85% of the viewport, but
-// never later than 1px before the end of the page. clamp() alone isn't
-// enough here: it pins the start to exactly max scroll, where progress is 0
-// and a once-trigger never fires, so the last element on the page stayed
-// hidden. Recomputed on every ScrollTrigger refresh.
-const revealStart = (trigger: Element) => () =>
-  Math.min(
-    trigger.getBoundingClientRect().top +
-      window.scrollY -
-      window.innerHeight * 0.85,
-    ScrollTrigger.maxScroll(window) - 1
-  );
-
+// Each group plays once, the first time it scrolls into view.
 function onView(root: HTMLElement, q: Select) {
-  // Each group plays once, the first time it scrolls into view.
-  const reveal = (
-    trigger: Element | undefined,
-    build: (timeline: gsap.core.Timeline) => void
-  ) => {
-    if (!trigger) return;
-    build(
-      gsap.timeline({
-        defaults: { ease: EASE_SIGNATURE },
-        scrollTrigger: { trigger, start: revealStart(trigger), once: true }
-      })
-    );
-  };
-
-  reveal(root, (tl) =>
+  revealOnce(root, (tl) =>
     tl
       .fromTo(
         q(hook('line')),
@@ -213,7 +188,7 @@ function onView(root: HTMLElement, q: Select) {
       .from(q(hook('orb')), { boxShadow: GLOW_OFF, duration: 0.8 }, 0.4)
   );
 
-  reveal(q(hook('arch'))[0], (tl) =>
+  revealOnce(q(hook('arch'))[0], (tl) =>
     tl
       .fromTo(
         q(hook('rib-outer')),
@@ -249,7 +224,7 @@ function onView(root: HTMLElement, q: Select) {
       )
   );
 
-  reveal(q(hook('head-left'))[0], (tl) =>
+  revealOnce(q(hook('head-left'))[0], (tl) =>
     tl.from([...q(hook('head-left')), ...q(hook('head-right'))], {
       autoAlpha: 0,
       y: 16,
@@ -264,20 +239,20 @@ function onView(root: HTMLElement, q: Select) {
   const facts = left.flatMap((fact, i) =>
     right[i] ? [fact, right[i]] : [fact]
   );
-  reveal(facts[0], (tl) =>
+  revealOnce(facts[0], (tl) =>
     tl.from(facts, { autoAlpha: 0, y: 12, duration: 0.6, stagger: 0.08 })
   );
 
-  reveal(q(hook('divider'))[0], (tl) =>
+  revealOnce(q(hook('divider'))[0], (tl) =>
     tl.fromTo(q(hook('divider')), { scaleX: 0 }, { scaleX: 1, duration: 0.6 })
   );
-  reveal(q(hook('body'))[0], (tl) =>
+  revealOnce(q(hook('body'))[0], (tl) =>
     tl.from(q(hook('body')), { autoAlpha: 0, y: 16, duration: 0.7 })
   );
-  reveal(q(hook('aside'))[0], (tl) =>
+  revealOnce(q(hook('aside'))[0], (tl) =>
     tl.from(q(hook('aside')), { autoAlpha: 0, y: 12, duration: 0.6 }, 0.1)
   );
-  reveal(q(hook('cta'))[0], (tl) =>
+  revealOnce(q(hook('cta'))[0], (tl) =>
     tl.from(q(hook('cta')), { autoAlpha: 0, y: 8, duration: 0.5 }, 0.2)
   );
 }

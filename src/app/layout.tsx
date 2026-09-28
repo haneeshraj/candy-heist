@@ -8,6 +8,8 @@ import {
 } from 'next/font/google';
 import './globals.scss';
 import SmoothScroll from '@/components/common/SmoothScroll';
+import { SiteFooter } from '@/components/layout/SiteFooter';
+import { footerContent } from '@/content/site/footer';
 
 const archivo = Archivo({
   subsets: ['latin'],
@@ -56,7 +58,10 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       className={`${archivo.variable} ${archivoBlack.variable} ${archivoNarrow.variable} ${ibmPlexMono.variable} ${cormorantGaramond.variable}`}
     >
       <body>
-        <SmoothScroll>{children}</SmoothScroll>
+        <SmoothScroll>
+          {children}
+          <SiteFooter content={footerContent} />
+        </SmoothScroll>
       </body>
     </html>
   );
