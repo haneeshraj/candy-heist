@@ -7,7 +7,8 @@
 
   // The rest of the five-material palette (obsidian, concrete, brushed
   // gold / aged brass, crimson glass, alabaster). Crimson is reserved for a
-  // section's single focal object and never used on controls.
+  // section's single focal object and never used on controls, except to
+  // mark a field's error.
   --color-obsidian-raised: #111011;
   --color-concrete-deep: #3b372f;
   --color-concrete-dark: #554e42;
@@ -21,6 +22,10 @@
   --color-gilt-deep: #b98b47;
   --color-crimson: #a32b23;
   --color-crimson-glow: #c4453a;
+
+  // Crimson for words: the glow is only 4:1 on obsidian, this is 6.5:1, so
+  // error messages stay readable at small sizes.
+  --color-crimson-light: #db7a6f;
 
   // What the fixed navbar covers at the bottom of the screen: the full-width
   // bar on phones, the floating pill and its gap from the tablet breakpoint

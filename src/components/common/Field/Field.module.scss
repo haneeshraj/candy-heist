@@ -64,7 +64,7 @@
   }
 
   .field[data-invalid='true'] & {
-    border-color: rgb(227 194 134 / 70%);
+    border-color: rgb(196 69 58 / 90%);
   }
 }
 
@@ -73,10 +73,27 @@
   resize: vertical;
 }
 
-// Gilt-bright, not crimson: crimson is kept for the one focal point.
+// Errors are the one place crimson marks a control: the border above, and a
+// glowing dot before the line, in a lighter crimson that stays readable.
 .error {
+  display: flex;
+  gap: 0.8rem;
+  align-items: baseline;
   font-family: var(--font-archivo), sans-serif;
   font-size: 1.3rem;
   line-height: 1.4;
-  color: var(--color-gilt-bright);
+  color: var(--color-crimson-light);
+
+  &::before {
+    content: '';
+    flex: none;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background-color: var(--color-crimson-glow);
+    box-shadow: 0 0 0.6rem 0 rgb(196 69 58 / 90%);
+
+    // Sits on the text's middle, not its baseline.
+    translate: 0 -0.1rem;
+  }
 }
