@@ -1,0 +1,197 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Measured in the parent's design pixels against Figma "Banner (sticky,
+// 360)" in frame 5.1: full width, 360 tall, the name and vortex on a 1440
+// column. Phones get a shorter one. The parent sets --dp.
+
+.banner {
+  position: relative;
+  height: m.dp(200);
+
+  @media #{t.$query-desktop} {
+    height: m.dp(360);
+  }
+}
+
+.photoClip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-color: var(--color-obsidian);
+}
+
+// The photo is taller than the banner (560 of it, 100 above the top), so
+// the banner can slide it as it settles.
+.photo {
+  position: absolute;
+  top: m.dp(-60);
+  right: 0;
+  left: 0;
+  height: m.dp(320);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgb(12 12 12 / 35%);
+  }
+
+  @media #{t.$query-desktop} {
+    top: m.dp(-100);
+    height: m.dp(560);
+  }
+}
+
+.photoImage {
+  object-fit: cover;
+}
+
+// Darkens the lower 70% into the ruler.
+.fade {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 70%;
+  background: linear-gradient(
+    to bottom,
+    rgb(12 12 12 / 0%),
+    rgb(12 12 12 / 90%)
+  );
+  transform-origin: bottom;
+}
+
+// Below the edge: whatever passes under dissolves on its way.
+.underFade {
+  position: absolute;
+  top: calc(100% + 1px);
+  right: 0;
+  left: 0;
+  height: m.dp(55);
+  background: linear-gradient(
+    to bottom,
+    var(--color-obsidian),
+    rgb(12 12 12 / 0%)
+  );
+  pointer-events: none;
+}
+
+.inner {
+  position: absolute;
+  inset: 0;
+
+  @media #{t.$query-desktop} {
+    right: auto;
+    left: 50%;
+    width: m.dp(1440);
+    translate: -50% 0;
+  }
+}
+
+.logo {
+  position: absolute;
+  top: m.dp(141);
+  left: m.dp(24);
+  width: m.dp(40);
+  color: var(--color-gilt);
+  transform-origin: left top;
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  @media #{t.$query-desktop} {
+    top: m.dp(259);
+    left: m.dp(96);
+    width: m.dp(68);
+  }
+}
+
+.name {
+  position: absolute;
+  top: m.dp(140);
+  left: m.dp(76);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(30);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-cream);
+  transform-origin: left top;
+
+  @media #{t.$query-desktop} {
+    top: m.dp(256);
+    left: m.dp(186);
+    font-size: m.dp(56);
+  }
+}
+
+// A tick every 16, a long one every 64, standing on the bottom edge.
+.ruler {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: m.dp(10);
+  background:
+    linear-gradient(to right, rgb(210 169 97 / 45%) 1px, transparent 1px) 0
+      100% / m.dp(64) 100% repeat-x,
+    linear-gradient(to right, rgb(210 169 97 / 45%) 1px, transparent 1px) 0
+      100% / m.dp(16) 50% repeat-x;
+}
+
+.edge {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background-color: rgb(210 169 97 / 50%);
+}
+
+// The reading progress: the gilt run and the lock point at its head.
+// Motion moves both; at rest they sit where frame 5.1 has them.
+.travelled {
+  position: absolute;
+  top: calc(100% - 1px);
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: rgb(210 169 97 / 90%);
+  transform: scaleX(0.104);
+  transform-origin: left;
+}
+
+.lock {
+  position: absolute;
+  top: calc(100% + 0.5px);
+  left: 10.4%;
+  width: 0;
+  height: 0;
+}
+
+.lockRing,
+.lockPoint {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  translate: -50% -50%;
+}
+
+.lockRing {
+  width: m.dp(30);
+  height: m.dp(30);
+  border: 1px solid rgb(196 69 58 / 45%);
+}
+
+.lockPoint {
+  width: m.dp(10);
+  height: m.dp(10);
+  background-color: var(--color-crimson-glow);
+}

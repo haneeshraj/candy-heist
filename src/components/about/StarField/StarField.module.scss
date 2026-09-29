@@ -1,0 +1,12 @@
+.stars {
+  display: block;
+  fill: var(--color-gold);
+  pointer-events: none;
+}
+
+.links {
+  fill: none;
+  stroke: var(--color-gold);
+  stroke-opacity: 0.08;
+  stroke-width: 0.6;
+}

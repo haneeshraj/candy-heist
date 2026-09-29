@@ -1,0 +1,46 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Figma "Label": the 12 px sigil, a 12 px gap, the name in IBM Plex Mono
+// 12, spaced 0.44 em (10 on phones). Sized in the parent's design pixels.
+
+.label {
+  display: flex;
+  gap: m.dp(10);
+  align-items: center;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp(10)}, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.44em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    gap: m.dp(12);
+    font-size: max(#{m.dp(12)}, 1rem);
+  }
+}
+
+.sigil {
+  display: block;
+  flex: none;
+  width: m.dp(10);
+  height: m.dp(10);
+  color: var(--color-gilt);
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  @media #{t.$query-desktop} {
+    width: m.dp(12);
+    height: m.dp(12);
+  }
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}

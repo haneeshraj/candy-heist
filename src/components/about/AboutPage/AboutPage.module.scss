@@ -1,0 +1,28 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+.about {
+  position: relative;
+  container-type: inline-size;
+  background-color: var(--color-obsidian);
+}
+
+// The sticky banner, desktop journey only. It takes no room (it overlaps
+// the journey's top) and stays hidden until the journey widens into it.
+.bannerSlot {
+  display: none;
+
+  @media #{t.$query-desktop} and (prefers-reduced-motion: no-preference) {
+    @include m.screen-scale(900);
+
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    display: block;
+    height: m.dp(360);
+    margin-bottom: calc(-1 * #{m.dp(360)});
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+}

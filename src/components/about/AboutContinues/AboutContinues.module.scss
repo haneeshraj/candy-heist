@@ -1,0 +1,218 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Figma frames 5.1 to 5.3, measured in design pixels (m.dp). On desktop
+// this section starts overlapping the journey's last screen: when the
+// journey lets go, its top is just under the 360 banner, so the label sits
+// at 420 as in 5.1, and it settles to 300 under the 240 banner (5.2).
+
+@mixin journey {
+  @media #{t.$query-desktop} and (prefers-reduced-motion: no-preference) {
+    @content;
+  }
+}
+
+.continues {
+  @include m.design-scale;
+
+  position: relative;
+  z-index: 2;
+
+  // The star field turns as it scrolls, and its corners would widen the
+  // page. clip, not hidden: hidden would stop the sticky parts sticking.
+  overflow-x: clip;
+  background-color: var(--color-obsidian);
+}
+
+// The page's banner does this job in the journey; this one is for phones
+// and reduced motion.
+.banner {
+  display: block;
+}
+
+.stars {
+  display: none;
+}
+
+.inner {
+  max-width: m.dp(390);
+  margin-inline: auto;
+  padding: m.dp(56) m.dp(24) m.dp(96);
+
+  @media #{t.$query-desktop} {
+    max-width: m.dp(1440);
+    padding: m.dp(80) m.dp(96) m.dp(140);
+  }
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(28);
+}
+
+.headline {
+  margin-top: m.dp(16);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(32);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    max-width: m.dp(560);
+    font-size: m.dp(44);
+  }
+}
+
+.flow {
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(22);
+
+  @media #{t.$query-desktop} {
+    gap: m.dp(28);
+  }
+}
+
+.lede {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(19);
+  line-height: 1.55;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(22);
+  }
+}
+
+.paragraph {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(16)}, 1.4rem);
+  line-height: 1.65;
+  color: rgb(221 207 178 / 85%);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(19);
+  }
+}
+
+.emphasis {
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: 1.16em;
+  font-style: italic;
+  color: var(--color-gilt);
+}
+
+.placeholder {
+  color: var(--color-concrete-light);
+}
+
+.coda {
+  margin-top: m.dp(72);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(118);
+  }
+}
+
+.closing {
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(40);
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(64);
+  }
+}
+
+.codaRow {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: m.dp(32);
+  margin-top: m.dp(40);
+
+  @media #{t.$query-desktop} {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: m.dp(150);
+  }
+}
+
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.6rem;
+}
+
+// Motion wraps each chip so it never fights the magnetic pull.
+.ctaWrap {
+  display: block;
+}
+
+@include journey {
+  .continues {
+    @include m.screen-scale(900);
+
+    margin-top: calc(-100svh + #{m.dp(360)});
+
+    // Softens the edge as it rises over the journey's last screen.
+    &::before {
+      content: '';
+      position: absolute;
+      top: m.dp(-80);
+      right: 0;
+      left: 0;
+      height: m.dp(80);
+      background: linear-gradient(
+        to bottom,
+        rgb(12 12 12 / 0%),
+        var(--color-obsidian)
+      );
+      pointer-events: none;
+    }
+  }
+
+  .banner {
+    display: none;
+  }
+
+  // A screen of stars that stays put while the text scrolls over it.
+  .stars {
+    position: sticky;
+    top: 0;
+    display: block;
+    width: 100%;
+    height: 100svh;
+    margin-bottom: -100svh;
+  }
+
+  .inner {
+    position: relative;
+    width: m.dp(1440);
+    max-width: none;
+    padding: m.dp(60) m.dp(96) m.dp(100);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: m.dp(624) m.dp(624);
+    gap: 0;
+    align-items: start;
+  }
+
+  // Pinned under the settled banner while the paragraphs go by.
+  .aside {
+    position: sticky;
+    top: m.dp(300);
+  }
+
+  .flow {
+    padding-top: m.dp(32);
+  }
+}

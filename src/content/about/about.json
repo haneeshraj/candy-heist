@@ -1,0 +1,169 @@
+{
+  "intro": {
+    "lead": "What the room forgot,",
+    "statement": "He takes back.",
+    "sub": "Candy Heist: DJ, producer and sound engineer. Kerala-born, Halifax-based, tuned in since 2018.",
+    "cue": "Scroll to tune in"
+  },
+  "who": {
+    "label": "Who is Candy Heist",
+    "body": [
+      {
+        "text": "Somewhere between tech house bounce and dubstep intensity, Candy Heist "
+      },
+      { "text": "builds rooms that remember", "emphasis": true },
+      {
+        "text": ". Every set is part ritual, part signal, tuned to give back something the crowd didn’t know it had lost."
+      }
+    ],
+    "secondary": "Off the decks he is a producer and sound engineer, which is why every Candy Heist set is built from the ground up.",
+    "photo": {
+      "src": "/img/home/about-photo.jpeg",
+      "alt": "Candy Heist at the decks beneath the vaulted, crimson-lit ceiling of a gothic hall"
+    },
+    "lock": "Resonance lock",
+    "readouts": [
+      {
+        "label": "Origin",
+        "value": "Kerala, India",
+        "detail": "10.85°N  76.27°E"
+      },
+      {
+        "label": "Current station",
+        "value": "Halifax, NS",
+        "detail": "44.65°N  63.58°W"
+      }
+    ],
+    "since": "Active since 2018",
+    "streamingLabel": "Listen to Candy Heist",
+    "streaming": ["soundcloud", "spotify", "youtube"]
+  },
+  "nayara": {
+    "label": "The world of Nayara",
+    "lead": "The world is fiction.",
+    "statement": "The story\nis not.",
+    "body": "Nayara is the world Candy Heist built: a living planet that has forgotten what it once was, and a rogue sonoalchemist who uses sound to make it remember. It is the story his music tells. Every part of it stands in for something real, moments from his own life told in symbols.",
+    "readouts": [
+      { "label": "World", "value": "Nayara", "detail": "A living planet" },
+      { "label": "Signal", "value": "Omun", "detail": "The planet’s resonance" }
+    ],
+    "cta": { "label": "Read the lore", "href": "/lore" }
+  },
+  "behind": {
+    "label": "Behind the signal",
+    "headline": "The music is built, not just played.",
+    "paragraphs": [
+      [
+        {
+          "text": "Every Candy Heist track is taken apart before it ever reaches a room. As DJ, producer and sound engineer, he carries it from the first idea to the final master, then plays it out himself. The ears that read the crowd are the same ones that shaped the sound."
+        }
+      ],
+      [
+        {
+          "text": "Between tech house bounce and dubstep intensity, each track is "
+        },
+        { "text": "an act of remembrance", "emphasis": true },
+        {
+          "text": ": something the room forgot, rebuilt until it hits again. The groove is designed before it is played. The weight is engineered before it is felt."
+        }
+      ]
+    ],
+    "roles": [
+      {
+        "title": "DJ",
+        "body": "Reading a room in real time: when to hold the groove, when to break it, and how long to make a crowd wait for the drop.",
+        "note": [
+          {
+            "text": "[From Candy: how he builds a set, and a night that shows it.]",
+            "placeholder": true
+          }
+        ],
+        "photo": {
+          "src": "/img/site/footer-photo.jpeg",
+          "alt": "Candy Heist at a draped DJ table on a stage between pale columns, under red light"
+        }
+      },
+      {
+        "title": "Producer",
+        "body": "Building a track from nothing: the idea, the sound design and the arrangement, until the record carries the feeling it started with.",
+        "note": [
+          {
+            "text": "On record: 4x4, a four-track EP that includes Menace; Over The Moon, a SoundCloud exclusive; and the title track of G.Roy’s Truths Collide."
+          }
+        ],
+        "photo": {
+          "src": "/img/home/landing-photo.jpeg",
+          "alt": "Candy Heist at the decks in front of a glowing spiral backdrop"
+        }
+      },
+      {
+        "title": "Sound engineer",
+        "body": "Making it land the way it was heard: the mix, the master, and a low end that holds its weight on any system.",
+        "note": [
+          {
+            "text": "[From Candy: his tools, and how he approaches a mix.]",
+            "placeholder": true
+          }
+        ],
+        "photo": {
+          "src": "/img/site/footer-photo.jpeg",
+          "alt": "Candy Heist at the mixer, his laptop open beside him",
+          "focus": { "x": 55, "y": 62, "zoom": 1.9 }
+        }
+      }
+    ]
+  },
+  "continues": {
+    "label": "The signal continues",
+    "headline": "The frequency is still changing.",
+    "lede": "The sets, the records and the sessions are all still moving. Here is where the signal stands now.",
+    "paragraphs": [
+      [
+        {
+          "text": "[From Candy: what he is working on right now, the sets, the tracks in progress and the collaborations on the desk. Two or three lines.]",
+          "placeholder": true
+        }
+      ],
+      [
+        {
+          "text": "Every release so far, from 4x4 to Truths Collide, sits on the discography shelf. "
+        },
+        {
+          "text": "[From Candy: the latest one, and what it is about.]",
+          "placeholder": true
+        }
+      ],
+      [
+        {
+          "text": "The studio is open too. Sessions are booking now: one-on-one lessons, production sessions and feedback on your own tracks, straight from the booth."
+        }
+      ],
+      [
+        {
+          "text": "[From Candy: the next sets and where to catch them, with dates and cities.]",
+          "placeholder": true
+        }
+      ],
+      [
+        {
+          "text": "[From Candy: what is coming next, the next release, the next collaboration, the next room.]",
+          "placeholder": true
+        }
+      ],
+      [
+        {
+          "text": "It all still runs out of Halifax, Nova Scotia, his station since 2023. Born in Kerala, on the air since 2018, and "
+        },
+        { "text": "still tuning", "emphasis": true },
+        { "text": "." }
+      ]
+    ],
+    "closing": "Every set ends. The signal doesn’t.",
+    "banner": {
+      "name": "Candy Heist",
+      "photo": { "src": "/img/home/landing-photo.jpeg", "alt": "" }
+    },
+    "listen": { "label": "Listen", "href": "/discography" },
+    "contact": { "label": "Contact", "href": "/contact" }
+  }
+}

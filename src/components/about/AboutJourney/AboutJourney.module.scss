@@ -1,0 +1,1041 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Figma "ABOUT PAGE — storyboard", frames 1 to 4 (1440 × 900 each),
+// measured in design pixels (m.dp). One set of markup, two layouts:
+// - the journey (desktop, motion allowed): a pinned stage, every element
+//   placed on a 1440 × 900 canvas that scales to fit the screen, where the
+//   scroll plays the frames (useJourneyMotion);
+// - stacked (phones, and reduced motion anywhere): the screens one under
+//   another, each with a still of the orb, its text revealed on view.
+// Everything the journey hides until its moment is hidden here too, so
+// the first paint already matches the timeline's start.
+
+@mixin journey {
+  @media #{t.$query-desktop} and (prefers-reduced-motion: no-preference) {
+    @content;
+  }
+}
+
+@mixin mono($size, $spacing: 0.4em) {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp($size)}, 0.8rem);
+  font-weight: 500;
+  letter-spacing: $spacing;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+// ---- Shell
+
+.journey {
+  position: relative;
+}
+
+.stage {
+  @include m.design-scale;
+
+  position: relative;
+}
+
+.stars,
+.instrument,
+.chrome {
+  display: none;
+}
+
+.canvas {
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(104);
+  max-width: m.dp(390);
+  margin-inline: auto;
+  padding: m.dp(56) m.dp(24) m.dp(96);
+
+  @media #{t.$query-desktop} {
+    gap: m.dp(160);
+    max-width: m.dp(800);
+    padding: m.dp(120) m.dp(80) m.dp(160);
+  }
+}
+
+.panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.emphasis {
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: 1.125em;
+  font-style: italic;
+  color: var(--color-gilt);
+}
+
+.placeholder {
+  color: var(--color-concrete-light);
+}
+
+@include journey {
+  // JOURNEY_SCREENS (9.5) of scroll, plus the screen the stage fills.
+  .journey {
+    height: 1050svh;
+  }
+
+  .stage {
+    @include m.screen-scale(900);
+
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  // Oversized, so its drift and turn never bare an edge.
+  .stars {
+    position: absolute;
+    inset: -8%;
+    display: block;
+    width: 116%;
+    height: 116%;
+  }
+
+  .canvas {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    width: m.dp(1440);
+    max-width: none;
+    height: m.dp(900);
+    padding: 0;
+    translate: -50% -50%;
+  }
+
+  .panel {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+
+  // Only the intro is up when the page opens.
+  .who,
+  .nayara,
+  .behind {
+    visibility: hidden;
+    opacity: 0;
+  }
+}
+
+// ---- The instrument (journey only)
+
+// Laid out where frames 2 and 3 have it; frame 1's pose (moved to the
+// centre, 260 across instead of 290) is the transform, about the orb's
+// centre, that the timeline undoes.
+.instrument {
+  @include journey {
+    position: absolute;
+    inset: 0;
+    display: block;
+    transform: translate(17.3611%, -12.2222%) scale(0.8966);
+    transform-origin: 32.6389% 51.1111%;
+  }
+}
+
+.rings {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke-width: 1;
+}
+
+.ticks {
+  fill: none;
+  stroke: var(--color-gilt);
+  stroke-opacity: 0.45;
+  stroke-width: 1;
+}
+
+.omun {
+  fill: none;
+  stroke: var(--color-gold);
+  stroke-dasharray: 2 6;
+  stroke-width: 1;
+}
+
+.instrument .omun {
+  visibility: hidden;
+  opacity: 0;
+}
+
+// The disc: the logo, then the photos. It becomes the 3:4 frame and then
+// the banner, so it's positioned in % of the canvas, as the timeline is.
+.window {
+  position: absolute;
+  top: 31.375%;
+  left: 20.3038%;
+  width: 24.6701%;
+  height: 39.4722%;
+  overflow: hidden;
+  border-radius: 50%;
+  background-color: var(--color-obsidian-raised);
+}
+
+.windowPhoto,
+.windowBanner {
+  position: absolute;
+  visibility: hidden;
+  overflow: hidden;
+  opacity: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgb(12 12 12 / 10%);
+  }
+}
+
+.windowPhoto {
+  inset: 0;
+}
+
+// Cropped exactly as the banner's own photo, so the handover is seamless.
+.windowBanner {
+  top: m.dp(-100);
+  left: 0;
+  width: 100%;
+  height: m.dp(560);
+
+  &::after {
+    background-color: rgb(12 12 12 / 35%);
+  }
+}
+
+.windowImage {
+  object-fit: cover;
+}
+
+.windowEdge {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgb(210 169 97 / 50%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  color: var(--color-crimson-glow);
+  translate: -50% -50%;
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
+
+// ---- Nayara
+
+.planet {
+  display: block;
+  overflow: visible;
+}
+
+.instrument .planet {
+  position: absolute;
+  top: 31.3889%;
+  left: 20.3125%;
+  width: 24.6528%;
+  height: 39.4444%;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.planetSurface {
+  fill: var(--color-obsidian-raised);
+}
+
+.planetGraticule {
+  fill: none;
+  stroke: var(--color-gold);
+  stroke-opacity: 0.16;
+  stroke-width: 0.8;
+}
+
+.planetVein {
+  fill: none;
+  stroke: var(--color-gilt);
+  stroke-opacity: 0.42;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 0.9;
+}
+
+// Drawn out by the timeline.
+.instrument .planetVein {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.planetCore {
+  fill: var(--color-crimson-glow);
+}
+
+.planetEdge {
+  fill: none;
+  stroke: var(--color-gilt);
+  stroke-opacity: 0.5;
+}
+
+// ---- The resonance lock
+
+.lock {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.lockArc {
+  fill: none;
+  stroke: var(--color-crimson-glow);
+}
+
+.lockNeedle {
+  stroke: rgb(196 69 58 / 55%);
+  stroke-width: 1;
+}
+
+.lockPoint {
+  fill: var(--color-crimson-glow);
+}
+
+.instrument .lockArc {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.instrument .lockNeedle,
+.instrument .lockPoint {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.lockLabel {
+  @include mono(9);
+
+  position: absolute;
+  top: m.dp(120);
+  left: 32.6389%;
+  visibility: hidden;
+  white-space: nowrap;
+  color: var(--color-crimson-glow);
+  opacity: 0;
+  translate: -50% 0;
+}
+
+// ---- Readouts
+
+.readouts {
+  position: absolute;
+  inset: 0;
+}
+
+.readout {
+  position: absolute;
+  top: m.dp(286);
+  left: m.dp(96);
+  width: m.dp(220);
+  height: m.dp(52);
+
+  & + & {
+    top: m.dp(586);
+  }
+}
+
+.readoutFace {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.readoutKey {
+  @include mono(9);
+
+  display: block;
+  color: var(--color-concrete-light);
+}
+
+.readoutValue {
+  display: block;
+  margin-top: m.dp(2);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(14);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-cream);
+}
+
+.readoutDetail {
+  @include mono(9);
+
+  display: block;
+  margin-top: m.dp(7);
+  white-space: nowrap;
+  color: var(--color-gilt);
+}
+
+.leader {
+  position: absolute;
+  top: m.dp(24);
+  left: m.dp(154);
+  width: m.dp(10);
+  height: 1px;
+  background-color: rgb(210 169 97 / 40%);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.node {
+  position: absolute;
+  top: m.dp(22);
+  left: m.dp(149.5);
+  width: m.dp(5);
+  height: m.dp(5);
+  border-radius: 50%;
+  background-color: var(--color-gilt);
+  transform: scale(0);
+}
+
+.since {
+  @include mono(10);
+
+  position: absolute;
+  top: m.dp(751);
+  left: 32.6389%;
+  visibility: hidden;
+  white-space: nowrap;
+  color: var(--color-gold);
+  opacity: 0;
+  translate: -50% 0;
+}
+
+// ---- The frame's chrome (journey only)
+
+.chrome {
+  @include journey {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+}
+
+.frameTicks,
+.frameBrackets,
+.frameNeedle,
+.framePoint {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.frameTicks {
+  fill: none;
+  stroke: var(--color-gilt);
+  stroke-opacity: 0.35;
+  stroke-width: 1;
+}
+
+.frameBrackets {
+  fill: none;
+  stroke: var(--color-gilt);
+  stroke-width: 1.5;
+}
+
+.frameNeedle {
+  stroke: rgb(196 69 58 / 55%);
+  stroke-width: 1;
+}
+
+.framePoint {
+  fill: var(--color-crimson-glow);
+}
+
+// ---- The still orb (stacked only)
+
+.figure {
+  position: relative;
+  width: 100%;
+  max-width: m.dp(300);
+  aspect-ratio: 1;
+  margin-inline: auto;
+
+  @media #{t.$query-desktop} {
+    max-width: m.dp(440);
+  }
+}
+
+.figureDrawing {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+  stroke-width: 1;
+}
+
+.figureDisc {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 58.238%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid rgb(210 169 97 / 50%);
+  border-radius: 50%;
+  background-color: var(--color-obsidian-raised);
+  translate: -50% -50%;
+}
+
+.figureLogo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  color: var(--color-crimson-glow);
+  translate: -50% -50%;
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
+
+.figurePlanet {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 58.197%;
+  translate: -50% -50%;
+}
+
+.flowReadouts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: m.dp(20);
+  margin-top: m.dp(28);
+  list-style: none;
+}
+
+.flowReadout {
+  display: flex;
+  flex-direction: column;
+}
+
+.flowReadouts + .column {
+  margin-top: m.dp(40);
+}
+
+// ---- 1 · Intro
+
+.intro {
+  align-items: center;
+  text-align: center;
+}
+
+.introHeading {
+  margin-top: m.dp(28);
+  font-weight: 400;
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(40);
+  }
+}
+
+.introVisual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.introLead {
+  display: block;
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(34);
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(48);
+  }
+}
+
+.introStatement {
+  display: block;
+  margin-top: m.dp(4);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(30);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(1);
+    font-size: m.dp(64);
+    letter-spacing: 0.12em;
+  }
+}
+
+.introSub {
+  max-width: m.dp(320);
+  margin-top: m.dp(16);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(16)}, 1.4rem);
+  line-height: 1.5;
+  color: rgb(221 207 178 / 85%);
+  text-wrap: balance;
+
+  @media #{t.$query-desktop} {
+    max-width: m.dp(720);
+    margin-top: m.dp(26);
+    font-size: m.dp(17);
+  }
+}
+
+.cue {
+  @include mono(10);
+
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(8);
+  align-items: center;
+  margin-top: m.dp(36);
+  color: var(--color-gold);
+}
+
+.cueLine {
+  display: block;
+  width: 1px;
+  height: m.dp(26);
+  background-color: rgb(210 169 97 / 50%);
+}
+
+@include journey {
+  .introHeading {
+    position: absolute;
+    top: m.dp(668);
+    right: 0;
+    left: 0;
+    margin: 0;
+  }
+
+  .introSub {
+    position: absolute;
+    top: m.dp(806);
+    right: 0;
+    left: 0;
+    max-width: none;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .cue {
+    position: absolute;
+    top: m.dp(854);
+    right: 0;
+    left: 0;
+    gap: m.dp(7);
+    margin: 0;
+  }
+}
+
+// ---- 2 · Who is
+
+.whoBody {
+  margin-top: m.dp(16);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(20);
+  line-height: 1.5;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(18);
+    font-size: m.dp(24);
+  }
+}
+
+.whoSecondary {
+  margin-top: m.dp(16);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(15)}, 1.3rem);
+  line-height: 1.6;
+  color: var(--color-concrete-light);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(22);
+  }
+}
+
+.socials {
+  margin-top: m.dp(24);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(36);
+  }
+}
+
+// ---- 3 · Nayara
+
+.nayaraHeading {
+  margin-top: m.dp(20);
+  font-weight: 400;
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(24);
+  }
+}
+
+.nayaraVisual {
+  display: flex;
+  flex-direction: column;
+}
+
+.nayaraLead {
+  display: block;
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(30);
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(40);
+  }
+}
+
+// One block per line of the statement.
+.nayaraStatement {
+  display: block;
+  margin: m.dp(4) 0 0 -0.05em;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(40);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+
+  & + & {
+    margin-top: 0;
+  }
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(6);
+    font-size: m.dp(56);
+  }
+}
+
+.nayaraBody {
+  margin-top: m.dp(20);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(16)}, 1.4rem);
+  line-height: 1.6;
+  color: rgb(221 207 178 / 85%);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(28);
+    font-size: m.dp(18);
+  }
+}
+
+.nayaraCta {
+  display: block;
+  margin-top: m.dp(32);
+}
+
+@include journey {
+  // Frames 2 and 3: the copy centred on the orb's height, right of it.
+  .who .column,
+  .nayara .column {
+    position: absolute;
+    top: m.dp(460);
+    left: m.dp(860);
+    width: m.dp(484);
+    translate: 0 -50%;
+  }
+
+  .nayaraCta {
+    position: absolute;
+    top: m.dp(800);
+    right: m.dp(96);
+    margin: 0;
+  }
+}
+
+// ---- 4 · Behind the signal
+
+.behindHeadline {
+  margin-top: m.dp(16);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(32);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(44);
+  }
+}
+
+.behindStack {
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(36);
+  width: 100%;
+  margin-top: m.dp(28);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(36);
+  }
+}
+
+.behindParagraphs {
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(18);
+
+  @media #{t.$query-desktop} {
+    gap: m.dp(22);
+  }
+}
+
+.behindParagraph {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(16)}, 1.4rem);
+  line-height: 1.6;
+  color: rgb(221 207 178 / 88%);
+
+  & + & {
+    color: rgb(221 207 178 / 72%);
+  }
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(18);
+  }
+}
+
+.flowFrame {
+  position: relative;
+  width: 100%;
+  max-width: m.dp(342);
+  aspect-ratio: 3 / 4;
+  border: 1px solid rgb(210 169 97 / 50%);
+  background-color: var(--color-obsidian-raised);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgb(12 12 12 / 10%);
+  }
+
+  @media #{t.$query-desktop} {
+    max-width: m.dp(420);
+  }
+}
+
+.roles {
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(28);
+  list-style: none;
+}
+
+.role {
+  position: relative;
+  padding-top: m.dp(20);
+
+  @media #{t.$query-desktop} {
+    padding: m.dp(22) 0 m.dp(22) m.dp(20);
+  }
+}
+
+.roleRule {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background-color: rgb(182 158 124 / 20%);
+}
+
+.roleBar {
+  display: none;
+}
+
+.roleTitle {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(20);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(24);
+  }
+}
+
+.roleCounter {
+  @include mono(9);
+
+  position: absolute;
+  top: m.dp(24);
+  right: 0;
+  color: var(--color-gilt);
+
+  @media #{t.$query-desktop} {
+    top: m.dp(30);
+  }
+}
+
+.roleBody {
+  margin-top: m.dp(12);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(16)}, 1.4rem);
+  line-height: 1.6;
+  color: rgb(221 207 178 / 85%);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(15);
+    font-size: m.dp(17);
+  }
+}
+
+.roleNote {
+  margin-top: m.dp(10);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(14)}, 1.3rem);
+  line-height: 1.6;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(14);
+    font-size: m.dp(15);
+  }
+}
+
+@include journey {
+  .behind .column {
+    position: absolute;
+    top: m.dp(150);
+    left: m.dp(96);
+    width: m.dp(640);
+  }
+
+  // The paragraphs and each role take turns in the same place.
+  .behindStack {
+    display: grid;
+
+    > * {
+      grid-area: 1 / 1;
+      align-self: start;
+    }
+  }
+
+  .behindParagraph {
+    width: m.dp(600);
+  }
+
+  .roles {
+    display: grid;
+  }
+
+  // Each as tall as its own copy, so its bar ends with it.
+  .role {
+    grid-area: 1 / 1;
+    align-self: start;
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  .roleBar {
+    position: absolute;
+    top: 1px;
+    bottom: 0;
+    left: 0;
+    display: block;
+    width: 2px;
+    background-color: var(--color-gilt);
+  }
+
+  .roleBody,
+  .roleNote {
+    width: m.dp(600);
+  }
+}
+
+// The stacked layout's own pieces, last so they win over their base rules.
+@include journey {
+  .figure,
+  .flowReadouts,
+  .flowFrame {
+    display: none;
+  }
+}
+
+// What the timeline brings in after its screen has appeared starts out of
+// sight too, or it would show until its own tween begins.
+@include journey {
+  .socials > li,
+  .nayaraCta,
+  .roleCounter {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  .roleRule {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .roleBar {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+}
