@@ -2,7 +2,10 @@
 @use '../../../styles/mixins' as m;
 
 // Measured in design pixels (m.dp) against the Figma "Footer R — Vortex
-// Mask" frames: 390 mobile, 1440 desktop.
+// Mask" frames: 390 mobile, 1440 × 800 desktop. On desktop it scales to the
+// screen's height too (m.screen-scale), so the whole footer fits on screen
+// and the curtain can pin it: a footer taller than the screen can't be
+// pinned without hiding its top, so it would scroll in plainly instead.
 
 .footer {
   position: relative;
@@ -23,7 +26,7 @@
 }
 
 .inner {
-  @include m.design-scale;
+  @include m.screen-scale(800);
 
   position: relative;
 
@@ -39,9 +42,9 @@
   padding: m.dp(56) m.dp(24) m.dp(48);
 
   @media #{t.$query-desktop} {
-    max-width: m.dp(1440);
+    max-width: calc(1440 * var(--dpx));
     min-height: m.dp(800);
-    padding: m.dp(120) m.dp(96) m.dp(48);
+    padding: m.dp(120) calc(96 * var(--dpx)) m.dp(48);
   }
 }
 
