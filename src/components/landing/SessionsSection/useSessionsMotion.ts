@@ -16,7 +16,9 @@ import type { SessionsReveals, TextReveal } from './SessionsSection.types';
 // turns its glyph in, decodes its name and lifts its line. The text
 // components hand over their reveals as timelines, so the letters and words
 // scrub with the scroll too. Mobile plays each group once as it enters view.
-// The scrubbed ranges are clamp()ed so they stay inside the scrollable range.
+// The scrubbed ranges are clamp()ed so they stay inside the scrollable range,
+// and both finish by the time the (one-screen) section has settled into
+// view, rather than while it's already leaving.
 
 type Select = (selector: string) => Element[];
 
@@ -62,7 +64,7 @@ function scrollScrubbed(root: HTMLElement, q: Select, text: SessionsReveals) {
     scrollTrigger: {
       trigger: root,
       start: 'clamp(top 80%)',
-      end: 'clamp(top 5%)',
+      end: 'clamp(top 20%)',
       scrub: SCRUB
     }
   });
@@ -89,8 +91,8 @@ function scrollScrubbed(root: HTMLElement, q: Select, text: SessionsReveals) {
     defaults: { ease: EASE_SIGNATURE },
     scrollTrigger: {
       trigger: q(hook('list'))[0],
-      start: 'clamp(top 88%)',
-      end: 'clamp(bottom 62%)',
+      start: 'clamp(top 95%)',
+      end: 'clamp(bottom 85%)',
       scrub: SCRUB
     }
   });
