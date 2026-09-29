@@ -39,6 +39,12 @@ export interface SigilChipOwnProps {
   spinIcon?: boolean;
   /** Pulls toward the pointer on fine-pointer devices. @default true */
   magnetic?: boolean;
+  /**
+   * Sets the label in capitals. Turn it off for text whose case matters to
+   * the reader, like an email address.
+   * @default true
+   */
+  uppercase?: boolean;
   /** The label. Leave it out for an icon-only chip, which then needs an `aria-label`. */
   children?: ReactNode;
   className?: string;

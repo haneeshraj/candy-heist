@@ -140,6 +140,10 @@
   line-height: 1;
   text-transform: uppercase;
   white-space: nowrap;
+
+  .chip[data-case='as-typed'] & {
+    text-transform: none;
+  }
 }
 
 // ---- Hover (fine pointers only, so touch never sticks in a hover state)

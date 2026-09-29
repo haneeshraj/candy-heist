@@ -19,6 +19,7 @@ export default function SigilChip(props: SigilChipProps) {
     icon,
     spinIcon,
     magnetic = true,
+    uppercase = true,
     children,
     className,
     disabled = false,
@@ -39,7 +40,8 @@ export default function SigilChip(props: SigilChipProps) {
     'data-size': sizes.base,
     'data-size-desktop': sizes.desktop,
     'data-icon-only': hasLabel ? undefined : 'true',
-    'data-label-only': glyph ? undefined : 'true'
+    'data-label-only': glyph ? undefined : 'true',
+    'data-case': uppercase ? undefined : 'as-typed'
   };
 
   const content = (

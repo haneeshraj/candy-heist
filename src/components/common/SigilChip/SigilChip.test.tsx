@@ -67,6 +67,13 @@ describe('SigilChip', () => {
     expect(link).not.toHaveAttribute('data-next-link');
   });
 
+  it('can keep the label as typed instead of in capitals', () => {
+    const { rerender } = render(<SigilChip>Bookings</SigilChip>);
+    expect(screen.getByRole('button')).not.toHaveAttribute('data-case');
+    rerender(<SigilChip uppercase={false}>booking@example.com</SigilChip>);
+    expect(screen.getByRole('button')).toHaveAttribute('data-case', 'as-typed');
+  });
+
   it('supports label-only chips and custom, non-spinning icons', () => {
     const { rerender } = render(<SigilChip icon={null}>Bookings</SigilChip>);
     let chip = screen.getByRole('button', { name: 'Bookings' });
