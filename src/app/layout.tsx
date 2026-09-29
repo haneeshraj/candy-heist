@@ -7,6 +7,7 @@ import {
   IBM_Plex_Mono
 } from 'next/font/google';
 import './globals.scss';
+import styles from './layout.module.scss';
 import SmoothScroll from '@/components/common/SmoothScroll';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteNavbar } from '@/components/layout/SiteNavbar';
@@ -62,7 +63,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       <body>
         <SmoothScroll>
           <SiteNavbar content={navbarContent} />
-          {children}
+          <div className={styles.content}>{children}</div>
           <SiteFooter content={footerContent} />
         </SmoothScroll>
       </body>

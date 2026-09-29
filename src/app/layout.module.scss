@@ -1,0 +1,12 @@
+// The page's content, drawn over the footer. When the footer is pinned
+// behind it (SiteFooter's curtain), the content's bottom edge lifts away to
+// uncover the footer, casting a soft shadow onto it as it goes.
+.content {
+  position: relative;
+  z-index: 1;
+  background-color: var(--color-obsidian);
+
+  &:has(+ [data-curtain='true']) {
+    box-shadow: 0 0.8rem 3.2rem 0 rgb(0 0 0 / 22%);
+  }
+}

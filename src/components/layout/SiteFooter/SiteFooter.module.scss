@@ -9,6 +9,13 @@
   overflow: hidden;
   container-type: inline-size;
   background-color: var(--color-obsidian);
+
+  // The curtain (useFooterCurtain): pinned to the bottom of the screen,
+  // under the page, which lifts away at its end to uncover it.
+  &[data-curtain='true'] {
+    position: sticky;
+    bottom: 0;
+  }
 }
 
 .srOnly {

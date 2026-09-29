@@ -14,16 +14,19 @@ export const revealStart = (trigger: Element) => () =>
   );
 
 // Builds a timeline that plays once, the first time `trigger` scrolls into
-// view. A missing trigger (an optional element that didn't render) is a no-op.
+// view (or at `start`, a scroll position recomputed on every refresh, for
+// elements that don't simply scroll in). A missing trigger (an optional
+// element that didn't render) is a no-op.
 export function revealOnce(
   trigger: Element | undefined,
-  build: (timeline: gsap.core.Timeline) => void
+  build: (timeline: gsap.core.Timeline) => void,
+  start: (trigger: Element) => () => number = revealStart
 ) {
   if (!trigger) return;
   build(
     gsap.timeline({
       defaults: { ease: EASE_SIGNATURE },
-      scrollTrigger: { trigger, start: revealStart(trigger), once: true }
+      scrollTrigger: { trigger, start: start(trigger), once: true }
     })
   );
 }

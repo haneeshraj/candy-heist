@@ -5,15 +5,19 @@ import { useId, useRef } from 'react';
 import FooterVortex from './FooterVortex';
 import styles from './SiteFooter.module.scss';
 import type { SiteFooterProps } from './SiteFooter.types';
+import { useFooterCurtain } from './useFooterCurtain';
 import { useFooterMotion } from './useFooterMotion';
 
 // "Footer R — Vortex Mask" from the Figma file: the sign-off, the photo
 // poured into the vortex mark, the bookings address and two link columns.
-// Every group reveals once as it scrolls into view (useFooterMotion).
+// When it fits on screen it waits pinned under the page, which lifts away
+// to uncover it (useFooterCurtain). Every group reveals once as it comes
+// into view (useFooterMotion).
 export default function SiteFooter({ content }: SiteFooterProps) {
   const rootRef = useRef<HTMLElement | null>(null);
   const followId = useId();
   const navigateId = useId();
+  useFooterCurtain(rootRef);
   useFooterMotion(rootRef);
 
   const { headline, follow, navigate } = content;

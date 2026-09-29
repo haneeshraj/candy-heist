@@ -2,13 +2,16 @@
 
 import { useEffect, type RefObject } from 'react';
 import { gsap } from '@/lib/animation/gsap';
-import { revealOnce } from '@/lib/animation/reveal';
+import { revealOnce, revealStart } from '@/lib/animation/reveal';
 import { MOTION_OK_QUERY } from '@/lib/constants/breakpoints';
+import { curtainStart } from './useFooterCurtain';
 
 // Choreography from the Figma "On-view Spec — Footer R · Mobile", used on
-// every breakpoint: each group plays once as it scrolls into view, never
+// every breakpoint: each group plays once as it comes into view, never
 // scrubbed. The footer ends the page, so revealOnce fires the lower groups
 // at the last scrollable pixel when they can't reach the usual 85% mark.
+// Under the curtain the footer doesn't scroll in, it's uncovered from the
+// bottom up, so each group plays once the curtain has cleared half of it.
 // Reduced motion doesn't match, so the settled layout just shows.
 
 const BACK = 'back.out(1.7)';
@@ -26,8 +29,17 @@ export function useFooterMotion(rootRef: RefObject<HTMLElement | null>) {
       () => {
         const q = gsap.utils.selector(root);
         const first = (name: string) => q(hook(name))[0];
+        // Read on every refresh: the curtain comes and goes with the screen.
+        const start = (trigger: Element) => () =>
+          root.dataset.curtain === 'true'
+            ? curtainStart(root, trigger)
+            : revealStart(trigger)();
+        const reveal = (
+          trigger: Element | undefined,
+          build: (tl: gsap.core.Timeline) => void
+        ) => revealOnce(trigger, build, start);
 
-        revealOnce(first('lead'), (tl) =>
+        reveal(first('lead'), (tl) =>
           tl
             .from(q(hook('lead')), { autoAlpha: 0, y: 16, duration: 0.7 }, 0)
             .from(
@@ -39,7 +51,7 @@ export function useFooterMotion(rootRef: RefObject<HTMLElement | null>) {
 
         // The mark turns into place around its own eye while the photo
         // inside settles; the crimson eye lands last.
-        revealOnce(first('vortex'), (tl) =>
+        reveal(first('vortex'), (tl) =>
           tl
             .from(
               q(hook('vortex')),
@@ -55,11 +67,11 @@ export function useFooterMotion(rootRef: RefObject<HTMLElement | null>) {
             .from(q(hook('eye')), { scale: 0, duration: 0.5, ease: BACK }, 0.7)
         );
 
-        revealOnce(first('email'), (tl) =>
+        reveal(first('email'), (tl) =>
           tl.from(q(hook('email')), { autoAlpha: 0, y: 12, duration: 0.6 })
         );
 
-        revealOnce(first('column'), (tl) =>
+        reveal(first('column'), (tl) =>
           tl.from(q(hook('column')), {
             autoAlpha: 0,
             y: 12,
@@ -68,7 +80,7 @@ export function useFooterMotion(rootRef: RefObject<HTMLElement | null>) {
           })
         );
 
-        revealOnce(first('rule'), (tl) =>
+        reveal(first('rule'), (tl) =>
           tl
             .fromTo(
               q(hook('rule')),
