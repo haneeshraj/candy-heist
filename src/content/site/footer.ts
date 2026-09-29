@@ -40,12 +40,12 @@ export const footerContent: FooterContent = {
   },
   navigate: {
     label: 'Navigate',
-    // Only Home exists so far; the rest are the planned routes.
+    // About and Lore are planned routes; the rest exist.
     links: [
       { label: 'Home', href: '/' },
       { label: 'About', href: '/about' },
       { label: 'Discography', href: '/discography' },
-      { label: 'Sets', href: '/sets' },
+      { label: 'Lore', href: '/lore' },
       { label: 'Contact', href: '/contact' }
     ]
   },

@@ -25,13 +25,13 @@ export interface NavbarContent {
 export const navbarContent: NavbarContent = {
   menuLabel: 'Menu',
   toggle: { open: 'Open menu', close: 'Close menu' },
-  // Home and Sessions exist so far; the rest are the planned routes.
+  // About and Lore are planned routes; the rest exist.
   links: [
     { label: 'Home', href: '/' },
     { label: 'About', href: '/about' },
     { label: 'Sessions', href: '/sessions' },
     { label: 'Discography', href: '/discography' },
-    { label: 'Sets', href: '/sets' },
+    { label: 'Lore', href: '/lore' },
     { label: 'Contact', href: '/contact' }
   ],
   socialsLabel: 'Follow',
