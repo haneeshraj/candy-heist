@@ -5,6 +5,19 @@
 // frame (1440 × 1040). Mobile, on the 390 grid, keeps the same column but
 // puts the photo in a band across the top that fades into the list.
 
+// Desktop fills exactly one screen: the design scales to whichever runs out
+// first, the width or the height, so all 1040 of it fits in 100svh. The
+// floor keeps text readable on very short screens, where the section grows
+// instead of clipping. `--dpx` is the width-only scale, for the gutters.
+@mixin screen-scale {
+  @include m.design-scale;
+
+  @media #{t.$query-desktop} {
+    --dpx: min(100cqw / 1440, 1px);
+    --dp: max(0.62px, min(100cqw / 1440, 100svh / 1040, 1px));
+  }
+}
+
 .sessions {
   position: relative;
   overflow: hidden;
@@ -19,7 +32,7 @@
 // ---- Backdrop: the photo and its three fades
 
 .backdrop {
-  @include m.design-scale;
+  @include screen-scale;
 
   position: absolute;
   top: 0;
@@ -107,7 +120,7 @@
 // ---- The column
 
 .inner {
-  @include m.design-scale;
+  @include screen-scale;
 
   position: relative;
   z-index: 1;
@@ -120,9 +133,12 @@
   padding: m.dp(28) m.dp(24) m.dp(72);
 
   @media #{t.$query-desktop} {
-    max-width: m.dp(1440);
-    min-height: m.dp(1040);
-    padding: m.dp(96) m.dp(96) m.dp(139);
+    max-width: calc(1440 * var(--dpx));
+    min-height: 100svh;
+
+    // 4 px short of the design's 139 at the bottom: room for the small-text
+    // floors on short screens. Any of it left over goes above the list.
+    padding: m.dp(96) calc(96 * var(--dpx)) calc(#{m.dp(139)} - 4px);
   }
 }
 
@@ -294,12 +310,17 @@
   }
 }
 
+// On desktop the 76 below the button is the least the list sits from it;
+// any spare height (a screen taller than the design) opens up here. The
+// chip keeps its 48 px touch height at every scale, so the gap gives back
+// what it doesn't shrink by: 76 + 48 design px, less the real 48.
 .ctaWrap {
   display: inline-flex;
   margin-top: m.dp(28);
 
   @media #{t.$query-desktop} {
     margin-top: m.dp(37);
+    margin-bottom: max(0px, calc(#{m.dp(124)} - 48px));
   }
 }
 
@@ -320,7 +341,7 @@
   list-style: none;
 
   @media #{t.$query-desktop} {
-    margin-top: m.dp(76);
+    margin-top: auto;
   }
 }
 
