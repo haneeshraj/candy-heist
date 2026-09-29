@@ -36,14 +36,16 @@ const ARRIVE_STAGGER = 0.045;
 export const INTRO_SECONDS =
   ARRIVE_DURATION + ARRIVE_STAGGER * (SHELF_FRONT + SHELF_BEHIND + 2);
 
-// Tuned against the Figma v3 frames: 1440 × 640 desktop band, 390 × 460 phone.
+// Tuned against the Figma v3 frames: 1440 × 640 desktop band, 390 × 460
+// phone. The desktop band has since grown to 760 below the tapes: the same
+// tapes, at the same place, with more of the row running down past them.
 export const DESKTOP_SHELF: ShelfLayout = {
   width: 0.44,
-  height: 0.62,
+  height: 0.522,
   step: 0.29,
   lift: 0.23,
   falloff: 0.075,
-  focus: { x: 0.52, y: 0.56 }
+  focus: { x: 0.52, y: 0.4716 }
 };
 
 export const MOBILE_SHELF: ShelfLayout = {

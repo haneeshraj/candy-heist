@@ -2,9 +2,11 @@
 @use '../../../styles/mixins' as m;
 
 // Measured in design pixels (m.dp) against the Figma "Discography v3 —
-// Tape v2" frames: 1440 × 1040 desktop, where it fills one screen
-// (m.screen-scale), and the 390 phone, where everything stacks: headline,
-// the lifted release, the shelf, then the way to the discography.
+// Tape v2" frames: 1440 wide on desktop, scaled like the one-screen
+// sections (m.screen-scale) but 1200 tall rather than 1040, so the shelf
+// runs a little past the screen; and the 390 phone, where everything
+// stacks: headline, the lifted release, the shelf, then the way to the
+// discography.
 
 .discography {
   position: relative;
@@ -32,7 +34,7 @@
   @media #{t.$query-desktop} {
     display: block;
     max-width: calc(1440 * var(--dpx));
-    min-height: max(100svh, #{m.dp(1040)});
+    min-height: max(100svh, #{m.dp(1200)});
     padding: m.dp(96) calc(96 * var(--dpx));
   }
 }
@@ -250,7 +252,7 @@
     top: m.dp(330);
     right: 0;
     left: 0;
-    height: m.dp(640);
+    height: m.dp(760);
     margin: 0;
   }
 
@@ -285,8 +287,9 @@
 
   --monument-max: #{m.dp(240)};
 
+  // Centred on the tapes, 310 below the band's top rather than its middle.
   @media #{t.$query-desktop} {
-    bottom: 3.2%;
+    bottom: 18.4%;
 
     --monument-max: #{m.dp(560)};
   }

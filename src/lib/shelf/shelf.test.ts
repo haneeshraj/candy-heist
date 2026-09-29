@@ -9,15 +9,17 @@ import {
   SHELF_FRONT
 } from './shelf';
 
-const m = measureShelf(1440, 640, DESKTOP_SHELF);
+const m = measureShelf(1440, 760, DESKTOP_SHELF);
 
 describe('measureShelf', () => {
   it('sizes the focused tape by width, capped by height', () => {
-    const tall = measureShelf(1440, 1400, DESKTOP_SHELF);
+    const tall = measureShelf(1440, 1600, DESKTOP_SHELF);
     expect(tall.tapeWidth).toBeCloseTo(1440 * 0.44);
-    // The desktop band (1440 × 640) is height-limited, as in the Figma frame.
+    // The desktop band (1440 × 760) is height-limited: the same 444 px tape
+    // as the Figma frame's 640 band.
     const aspect = TAPE_SPRITE.width / TAPE_SPRITE.height;
-    expect(m.tapeWidth).toBeCloseTo(640 * 0.62 * aspect);
+    expect(m.tapeWidth).toBeCloseTo(760 * 0.522 * aspect);
+    expect(m.tapeWidth).toBeCloseTo(444, 0);
   });
 
   it('puts the vanishing point up and to the right of the focus', () => {
