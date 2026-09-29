@@ -11,6 +11,7 @@ import {
 import { gsap, EASE_SIGNATURE } from '@/lib/animation/gsap';
 import { useInView } from '@/hooks/useInView';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { groupWords } from '@/lib/text/groupWords';
 import styles from './ClipRevealText.module.scss';
 import type {
   ClipRevealTextHandle,
@@ -47,6 +48,7 @@ const ClipRevealText = forwardRef<ClipRevealTextHandle, ClipRevealTextProps>(
     forwardedRef
   ) {
     const letters = useMemo(() => Array.from(text), [text]);
+    const groups = useMemo(() => groupWords(letters), [letters]);
     const nodesRef = useRef<Array<HTMLSpanElement | null>>([]);
     // Tracks which node each index was last *primed* for — see the identical
     // ref in ScrambleText for why this can't just compare against the
@@ -181,28 +183,36 @@ const ClipRevealText = forwardRef<ClipRevealTextHandle, ClipRevealTextProps>(
         }
         aria-label={text}
       >
-        {letters.map((char, i) =>
-          char === ' ' ? (
-            <span key={i} aria-hidden="true" className={styles.space}>
-              {' '}
+        {groups.map((group) =>
+          group.kind === 'space' ? (
+            <span key={group.index} aria-hidden="true" className={styles.space}>
+              {' '}
             </span>
           ) : (
-            <span key={i} aria-hidden="true" className={styles.mask}>
-              <span
-                ref={(node) => {
-                  nodesRef.current[i] = node;
-                  // Only prime a genuinely new DOM node — see primedNodesRef
-                  // above for why. See the identical comment in ScrambleText's
-                  // registerLetter for why priming is needed at all.
-                  if (node && primedNodesRef.current[i] !== node) {
-                    gsap.set(node, { y: 0, yPercent: -100 });
-                    primedNodesRef.current[i] = node;
-                  }
-                }}
-                className={`${styles.letter}${letterClassName ? ` ${letterClassName}` : ''}`}
-              >
-                {char}
-              </span>
+            // One unbreakable span per word, so lines only break at spaces.
+            <span key={group.start} aria-hidden="true" className={styles.word}>
+              {group.chars.map((char, offset) => {
+                const i = group.start + offset;
+                return (
+                  <span key={i} className={styles.mask}>
+                    <span
+                      ref={(node) => {
+                        nodesRef.current[i] = node;
+                        // Only prime a genuinely new DOM node: see
+                        // primedNodesRef above for why, and ScrambleText's
+                        // registerLetter for why priming is needed at all.
+                        if (node && primedNodesRef.current[i] !== node) {
+                          gsap.set(node, { y: 0, yPercent: -100 });
+                          primedNodesRef.current[i] = node;
+                        }
+                      }}
+                      className={`${styles.letter}${letterClassName ? ` ${letterClassName}` : ''}`}
+                    >
+                      {char}
+                    </span>
+                  </span>
+                );
+              })}
             </span>
           )
         )}

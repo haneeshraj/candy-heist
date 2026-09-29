@@ -3,6 +3,14 @@
 // rather than flex layout, which ignores letter-spacing between items
 // entirely, and rather than a forced display that would fight whatever tag
 // (h1, p, span, ...) the consumer passed via `as`.
+// A word's letters travel together: a line can break at a space, never
+// inside a word.
+.word {
+  display: inline-block;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
 .mask {
   display: inline-block;
   overflow: hidden;
@@ -16,7 +24,9 @@
   will-change: transform;
 }
 
+// `pre`, or the lone space collapses to nothing between two word boxes.
 .space {
   display: inline-block;
   line-height: 1;
+  white-space: pre;
 }

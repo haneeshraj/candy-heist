@@ -11,7 +11,9 @@ import {
 import { gsap, EASE_SIGNATURE } from '@/lib/animation/gsap';
 import { useInView } from '@/hooks/useInView';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { groupWords } from '@/lib/text/groupWords';
 import ScrambleLetter from './ScrambleLetter';
+import styles from './ScrambleText.module.scss';
 import type {
   ScrambleTextHandle,
   ScrambleTextProps
@@ -39,6 +41,7 @@ const ScrambleText = forwardRef<ScrambleTextHandle, ScrambleTextProps>(
     forwardedRef
   ) {
     const letters = useMemo(() => Array.from(text), [text]);
+    const groups = useMemo(() => groupWords(letters), [letters]);
     const nodesRef = useRef<Array<HTMLSpanElement | null>>([]);
     const replaysRef = useRef<Array<(() => void) | null>>([]);
     // Tracks which node each index was last *primed* for. React calls a
@@ -167,16 +170,27 @@ const ScrambleText = forwardRef<ScrambleTextHandle, ScrambleTextProps>(
 
     return (
       <Tag ref={inViewRef} className={className} aria-label={text}>
-        {letters.map((char, i) => (
-          <ScrambleLetter
-            key={i}
-            char={char}
-            index={i}
-            className={letterClassName}
-            scrambleOptions={scramble}
-            registerLetter={registerLetter}
-          />
-        ))}
+        {groups.map((group) => {
+          const letter = (char: string, index: number) => (
+            <ScrambleLetter
+              key={index}
+              char={char}
+              index={index}
+              className={letterClassName}
+              scrambleOptions={scramble}
+              registerLetter={registerLetter}
+            />
+          );
+          if (group.kind === 'space') return letter(' ', group.index);
+          // One unbreakable span per word, so lines only break at spaces.
+          return (
+            <span key={group.start} aria-hidden="true" className={styles.word}>
+              {group.chars.map((char, offset) =>
+                letter(char, group.start + offset)
+              )}
+            </span>
+          );
+        })}
       </Tag>
     );
   }
