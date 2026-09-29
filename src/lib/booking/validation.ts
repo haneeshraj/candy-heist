@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { PHONE_PATTERN } from '@/lib/forms/patterns';
 import type { BookingDetails } from './bookingState';
 
 export interface DetailsMessages {
@@ -13,9 +14,6 @@ export type DetailsErrors = Partial<Record<keyof BookingDetails, string>>;
 
 export const NOTE_MAX_LENGTH = 1000;
 
-// Digits with the usual separators and an optional leading +.
-const PHONE = /^\+?[\d\s().-]{7,20}$/;
-
 export function detailsSchema(messages: DetailsMessages) {
   return z.object({
     name: z.string().trim().min(1, messages.name).max(120, messages.name),
@@ -27,7 +25,10 @@ export function detailsSchema(messages: DetailsMessages) {
     phone: z
       .string()
       .trim()
-      .refine((value) => value === '' || PHONE.test(value), messages.phone),
+      .refine(
+        (value) => value === '' || PHONE_PATTERN.test(value),
+        messages.phone
+      ),
     note: z.string().max(NOTE_MAX_LENGTH, messages.note)
   });
 }
