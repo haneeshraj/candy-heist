@@ -61,7 +61,10 @@ export default function IntroStep({
           duration={intro.video.duration}
           chapters={intro.video.chapters}
           unavailableLabel={intro.video.unavailable}
+          // Covers the screen: as wide as the viewport, or 16:9 of its height.
+          sizes="(min-aspect-ratio: 16/9) 100vw, 178vh"
           priority
+          fill
         />
       </div>
 

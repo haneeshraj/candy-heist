@@ -57,6 +57,7 @@ export default function VideoPlayer({
   playLabel,
   sizes = '100vw',
   priority = false,
+  fill = false,
   className
 }: VideoPlayerProps) {
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -218,6 +219,7 @@ export default function VideoPlayer({
       ref={rootRef}
       className={className ? `${styles.player} ${className}` : styles.player}
       data-phase={phase}
+      data-fill={fill ? 'true' : undefined}
       data-idle={idle && phase === 'playing' ? 'true' : undefined}
       role="region"
       aria-label={title}

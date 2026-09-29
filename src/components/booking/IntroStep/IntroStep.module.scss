@@ -10,8 +10,11 @@
   @include m.visually-hidden;
 }
 
+// The intro video fills the first screen.
 .player {
   width: 100%;
+  height: 100svh;
+  min-height: 36rem;
 }
 
 .column {

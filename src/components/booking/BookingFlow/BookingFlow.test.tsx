@@ -28,6 +28,13 @@ vi.mock('next/link', () => ({
   )
 }));
 
+// The whole flow renders hundreds of animated letter spans, and role
+// queries check every ancestor's styles to rule out hidden elements, which
+// is slow in jsdom. Nothing here is hidden (reduced motion is on), so the
+// queries skip that check, and the file gets a longer timeout.
+vi.setConfig({ testTimeout: 20000 });
+const SKIP_HIDDEN_CHECK = { hidden: true } as const;
+
 // Reduced motion, so step changes swap at once.
 function mockMatchMedia() {
   window.matchMedia = vi.fn().mockImplementation((query: string) => ({
@@ -48,14 +55,24 @@ describe('BookingFlow', () => {
   it('opens on the intro with every session to pick from, and no way on yet', () => {
     render(<BookingFlow content={bookingContent} services={services} />);
     expect(
-      screen.getByRole('heading', { level: 1, name: bookingContent.title })
+      screen.getByRole('heading', {
+        ...SKIP_HIDDEN_CHECK,
+        level: 1,
+        name: bookingContent.title
+      })
     ).toBeInTheDocument();
     const group = screen.getByRole('radiogroup', {
+      ...SKIP_HIDDEN_CHECK,
       name: bookingContent.choose.heading
     });
-    expect(within(group).getAllByRole('radio')).toHaveLength(services.length);
+    expect(within(group).getAllByRole('radio', SKIP_HIDDEN_CHECK)).toHaveLength(
+      services.length
+    );
     expect(
-      screen.queryByRole('button', { name: bookingContent.choose.next })
+      screen.queryByRole('button', {
+        ...SKIP_HIDDEN_CHECK,
+        name: bookingContent.choose.next
+      })
     ).not.toBeInTheDocument();
   });
 
@@ -63,17 +80,29 @@ describe('BookingFlow', () => {
     const user = userEvent.setup();
     render(<BookingFlow content={bookingContent} services={services} />);
 
-    await user.click(screen.getByRole('radio', { name: /^DJ Lessons/ }));
     await user.click(
-      await screen.findByRole('button', { name: bookingContent.choose.next })
+      screen.getByRole('radio', { ...SKIP_HIDDEN_CHECK, name: /^DJ Lessons/ })
+    );
+    await user.click(
+      await screen.findByRole('button', {
+        ...SKIP_HIDDEN_CHECK,
+        name: bookingContent.choose.next
+      })
     );
 
     expect(
-      await screen.findByRole('heading', { level: 2, name: 'DJ Lessons' })
+      await screen.findByRole('heading', {
+        ...SKIP_HIDDEN_CHECK,
+        level: 2,
+        name: 'DJ Lessons'
+      })
     ).toBeInTheDocument();
     expect(window.location.search).toBe('?step=session&session=dj-lessons');
     expect(
-      screen.getByRole('navigation', { name: bookingContent.stepsLabel })
+      screen.getByRole('navigation', {
+        ...SKIP_HIDDEN_CHECK,
+        name: bookingContent.stepsLabel
+      })
     ).toBeInTheDocument();
   });
 
@@ -81,7 +110,11 @@ describe('BookingFlow', () => {
     window.history.replaceState(null, '', '/sessions?session=mix-and-master');
     render(<BookingFlow content={bookingContent} services={services} />);
     expect(
-      await screen.findByRole('heading', { level: 2, name: 'Mix & Master' })
+      await screen.findByRole('heading', {
+        ...SKIP_HIDDEN_CHECK,
+        level: 2,
+        name: 'Mix & Master'
+      })
     ).toBeInTheDocument();
   });
 });

@@ -31,5 +31,11 @@ export interface VideoPlayerProps {
   sizes?: string;
   /** Loads the poster eagerly, for a player above the fold. */
   priority?: boolean;
+  /**
+   * Fills the parent's height instead of keeping 16:9: the poster covers
+   * it, and the video crops to it (or letterboxes on a portrait screen).
+   * @default false
+   */
+  fill?: boolean;
   className?: string;
 }

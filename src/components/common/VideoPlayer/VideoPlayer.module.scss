@@ -16,6 +16,12 @@
     cursor: none;
   }
 
+  // Takes its parent's height (e.g. a full-screen hero) instead of 16:9.
+  &[data-fill='true'] {
+    aspect-ratio: auto;
+    height: 100%;
+  }
+
   &:fullscreen {
     aspect-ratio: auto;
     width: 100%;
@@ -54,6 +60,14 @@
   .player[data-phase='poster'] &,
   .player[data-phase='ended'] & {
     visibility: hidden;
+  }
+
+  // Filling a portrait screen would crop a landscape video to a sliver:
+  // letterbox it there instead. The poster still covers.
+  @media (orientation: portrait) {
+    .player[data-fill='true'] & {
+      object-fit: contain;
+    }
   }
 
   &::cue {
