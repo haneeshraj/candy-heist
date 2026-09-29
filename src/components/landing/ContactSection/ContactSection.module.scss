@@ -1,0 +1,340 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Measured in design pixels (m.dp) against the Figma "Contact V —
+// Broadcast" frames: 1440 × 960 on desktop, scaled like the other
+// one-screen sections (m.screen-scale), and the 390 × 800 phone. The
+// horizon sits a fixed distance above the bottom edge, and everything that
+// radiates is drawn around the source on it.
+
+.contact {
+  position: relative;
+  overflow: hidden;
+  container-type: inline-size;
+  background-color: var(--color-obsidian);
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+// ---- Backdrop: the rings, the scrim over them, the horizon and its source
+
+.backdrop {
+  @include m.screen-scale;
+
+  // The horizon's height above the bottom edge, and the gap it leaves
+  // either side of the source.
+  --horizon: #{m.dp(72)};
+  --gap: #{m.dp(20)};
+
+  // SVG units per CSS pixel of stroke. The phone draws the desktop rings at
+  // about half size (974 / 2000), so its strokes are doubled to stay
+  // hairlines.
+  --u: 2;
+
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  @media #{t.$query-desktop} {
+    --horizon: #{m.dp(100)};
+    --gap: #{m.dp(34)};
+    --u: 1;
+  }
+}
+
+// The upper half of a 2000-unit square around the source; below the
+// horizon is clipped away.
+.sky {
+  position: absolute;
+  bottom: var(--horizon);
+  left: 50%;
+  width: m.dp(974);
+  height: m.dp(487);
+  overflow: hidden;
+  translate: -50% 0;
+
+  @media #{t.$query-desktop} {
+    width: m.dp(2000);
+    height: m.dp(1000);
+  }
+}
+
+.ring,
+.ringDotted,
+.pulse {
+  fill: none;
+}
+
+.ring {
+  stroke: var(--color-gilt);
+  stroke-width: calc(0.75 * var(--u));
+}
+
+.ringDotted {
+  stroke: var(--color-gold);
+  stroke-dasharray: calc(1.5 * var(--u)) calc(7 * var(--u));
+  stroke-linecap: round;
+  stroke-width: calc(1.4 * var(--u));
+}
+
+// Hidden at rest: the motion sends them out.
+.pulse {
+  opacity: 0;
+  stroke: var(--color-gilt-bright);
+  stroke-opacity: 0.75;
+  stroke-width: calc(1.2 * var(--u));
+}
+
+.bearings {
+  stroke: var(--color-gold);
+  stroke-opacity: 0.06;
+  stroke-width: calc(0.5 * var(--u));
+}
+
+// Keeps the copy clear of the outer rings.
+.scrim {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: m.dp(540);
+  background: linear-gradient(
+    to bottom,
+    rgb(12 12 12 / 95%) 0,
+    rgb(12 12 12 / 82%) 60%,
+    transparent 100%
+  );
+
+  @media #{t.$query-desktop} {
+    background: linear-gradient(
+      to bottom,
+      rgb(12 12 12 / 95%) 0,
+      rgb(12 12 12 / 80%) 55%,
+      transparent 100%
+    );
+  }
+}
+
+// Two halves, so each can draw outward from the source.
+.horizon {
+  position: absolute;
+  bottom: var(--horizon);
+  height: 1px;
+  background-color: rgb(182 158 124 / 25%);
+}
+
+.horizonLeft {
+  right: calc(50% + var(--gap));
+  left: 0;
+  transform-origin: right center;
+}
+
+.horizonRight {
+  right: 0;
+  left: calc(50% + var(--gap));
+  transform-origin: left center;
+}
+
+// The section's one crimson focal point. `translate`, not `transform`, so
+// motion's scale doesn't fight the centring.
+.source,
+.sourceHalo {
+  position: absolute;
+  bottom: var(--horizon);
+  left: 50%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  translate: -50% 50%;
+}
+
+.source {
+  width: m.dp(14);
+  background-color: var(--color-crimson);
+  box-shadow: 0 0 m.dp(16) 0 rgb(196 69 58 / 85%);
+
+  @media #{t.$query-desktop} {
+    width: m.dp(22);
+    box-shadow: 0 0 m.dp(24) 0 rgb(196 69 58 / 85%);
+  }
+}
+
+.sourceHalo {
+  width: m.dp(36);
+  border: 1px solid rgb(196 69 58 / 40%);
+
+  @media #{t.$query-desktop} {
+    width: m.dp(56);
+  }
+}
+
+// ---- The copy, centred above the rings
+
+.inner {
+  @include m.screen-scale;
+
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: m.dp(390);
+  min-height: m.dp(800);
+  margin-inline: auto;
+
+  // The bottom keeps the rings and the button clear if the copy grows.
+  padding: m.dp(56) m.dp(24) m.dp(220);
+  text-align: center;
+
+  @media #{t.$query-desktop} {
+    max-width: calc(1440 * var(--dpx));
+    min-height: m.dp(960);
+    padding: m.dp(104) calc(96 * var(--dpx)) m.dp(260);
+  }
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.label {
+  display: flex;
+  gap: m.dp(10);
+  align-items: center;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp(10)}, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.44em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    gap: m.dp(12);
+    font-size: max(#{m.dp(12)}, 1rem);
+  }
+}
+
+.labelSigil {
+  display: block;
+  width: m.dp(10);
+  height: m.dp(10);
+  color: var(--color-gilt);
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  @media #{t.$query-desktop} {
+    width: m.dp(12);
+    height: m.dp(12);
+  }
+}
+
+.headline {
+  margin-top: m.dp(18);
+  font-weight: 400;
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(20);
+  }
+}
+
+.headlineVisual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lead {
+  display: block;
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(36);
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(48);
+  }
+}
+
+// Two lines on the phone (SEND A / SIGNAL.), one on desktop.
+.statement {
+  display: block;
+  max-width: m.dp(300);
+  margin-top: m.dp(4);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(44);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    max-width: none;
+    margin-top: m.dp(1);
+    font-size: m.dp(64);
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+  }
+}
+
+.intro {
+  max-width: m.dp(342);
+  margin-top: m.dp(20);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(16)}, 1.4rem);
+  font-weight: 400;
+  line-height: 1.5;
+  color: rgb(221 207 178 / 85%);
+  text-wrap: balance;
+
+  @media #{t.$query-desktop} {
+    max-width: m.dp(600);
+    margin-top: m.dp(26);
+    font-size: m.dp(17);
+  }
+}
+
+// ---- The two ways to reach out, and the one main action
+
+.channels {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  align-items: center;
+  margin-top: m.dp(32);
+  list-style: none;
+
+  @media #{t.$query-desktop} {
+    flex-direction: row;
+    gap: m.dp(16);
+    margin-top: m.dp(40);
+  }
+}
+
+.channel {
+  display: inline-flex;
+}
+
+// Bottom right, just above the horizon.
+.cta {
+  position: absolute;
+  right: m.dp(24);
+  bottom: m.dp(104);
+  display: inline-flex;
+
+  @media #{t.$query-desktop} {
+    right: calc(96 * var(--dpx));
+    bottom: m.dp(132);
+  }
+}
