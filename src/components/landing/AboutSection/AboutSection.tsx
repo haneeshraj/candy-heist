@@ -92,11 +92,7 @@ export default function AboutSection({ content }: AboutSectionProps) {
             </p>
             {/* Motion wraps the chip so it never fights the magnetic pull. */}
             <span className={styles.ctaWrap} data-motion="cta">
-              <SigilChip
-                variant="ghost"
-                size={{ base: 'md', desktop: 'sm' }}
-                href={content.cta.href}
-              >
+              <SigilChip variant="outline" size="sm" href={content.cta.href}>
                 {content.cta.label}
               </SigilChip>
             </span>
