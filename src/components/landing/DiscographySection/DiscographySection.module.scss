@@ -1,0 +1,390 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Measured in design pixels (m.dp) against the Figma "Discography v3 —
+// Tape v2" frames: 1440 × 1040 desktop, where it fills one screen
+// (m.screen-scale), and the 390 phone, where everything stacks: headline,
+// the lifted release, the shelf, then the way to the discography.
+
+.discography {
+  position: relative;
+  overflow: hidden;
+  container-type: inline-size;
+  background-color: var(--color-obsidian);
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+.inner {
+  @include m.screen-scale;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  max-width: m.dp(390);
+  margin-inline: auto;
+  padding: m.dp(56) m.dp(24) m.dp(56);
+
+  @media #{t.$query-desktop} {
+    display: block;
+    max-width: calc(1440 * var(--dpx));
+    min-height: max(100svh, #{m.dp(1040)});
+    padding: m.dp(96) calc(96 * var(--dpx));
+  }
+}
+
+// ---- Headline, top left
+
+.head {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  @media #{t.$query-desktop} {
+    width: m.dp(600);
+  }
+}
+
+.label {
+  display: flex;
+  gap: m.dp(10);
+  align-items: center;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp(10)}, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.44em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    gap: m.dp(12);
+    font-size: max(#{m.dp(12)}, 1rem);
+  }
+}
+
+.labelSigil {
+  display: block;
+  width: m.dp(10);
+  height: m.dp(10);
+  color: var(--color-gilt);
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  @media #{t.$query-desktop} {
+    width: m.dp(12);
+    height: m.dp(12);
+  }
+}
+
+.headline {
+  margin-top: m.dp(18);
+  font-weight: 400;
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(24);
+  }
+}
+
+.headlineVisual {
+  display: flex;
+  flex-direction: column;
+}
+
+.lead {
+  display: block;
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(36);
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(48);
+  }
+}
+
+.statement {
+  display: block;
+  margin-top: m.dp(2);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(38);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(1);
+    font-size: m.dp(64);
+    letter-spacing: 0.12em;
+  }
+}
+
+.intro {
+  max-width: m.dp(320);
+  margin-top: m.dp(16);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(16)}, 1.4rem);
+  font-weight: 400;
+  line-height: 1.5;
+  color: rgb(221 207 178 / 85%);
+  text-wrap: pretty;
+
+  @media #{t.$query-desktop} {
+    max-width: none;
+    margin-top: m.dp(22);
+    font-size: m.dp(17);
+  }
+}
+
+// ---- The lifted release: under the intro on phones, top right on desktop
+
+.release {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: m.dp(18);
+  align-items: center;
+  margin-top: m.dp(28);
+
+  @media #{t.$query-desktop} {
+    position: absolute;
+    top: m.dp(96);
+    right: calc(96 * var(--dpx));
+    flex-direction: row-reverse;
+    gap: m.dp(28);
+    margin-top: 0;
+  }
+}
+
+.releaseCover {
+  position: relative;
+  flex: none;
+  overflow: hidden;
+  width: m.dp(72);
+  aspect-ratio: 1;
+  border: 1px solid rgb(210 169 97 / 20%);
+  background-color: var(--color-obsidian-raised);
+
+  @media #{t.$query-desktop} {
+    width: m.dp(124);
+  }
+}
+
+.releaseCoverImage {
+  position: absolute;
+  inset: 0;
+
+  img {
+    object-fit: cover;
+  }
+}
+
+// Old and new lines overlap in one cell while they swap.
+.releaseText {
+  display: grid;
+  justify-items: start;
+
+  @media #{t.$query-desktop} {
+    justify-items: end;
+    text-align: right;
+  }
+}
+
+.releaseLines {
+  grid-area: 1 / 1;
+}
+
+.releaseTitle {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(26);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(40);
+  }
+}
+
+.releaseArtist {
+  margin-top: m.dp(8);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp(10)}, 0.9rem);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-gilt);
+}
+
+// ---- The shelf: a full-bleed band, the title monumental behind the tapes
+
+.shelf {
+  position: relative;
+  z-index: 1;
+  align-self: stretch;
+  overflow: hidden;
+  height: m.dp(460);
+  margin: m.dp(8) m.dp(-24) 0;
+
+  @media #{t.$query-desktop} {
+    position: absolute;
+    top: m.dp(330);
+    right: 0;
+    left: 0;
+    height: m.dp(640);
+    margin: 0;
+  }
+
+  &[data-interactive='true'] {
+    touch-action: pan-y;
+    cursor: grab;
+    user-select: none;
+  }
+
+  &[data-dragging='true'] {
+    cursor: grabbing;
+  }
+
+  // Keyboard focus rides on the lifted tape; ring the shelf while it's there.
+  &:has(.tape:focus-visible)::after {
+    content: '';
+    position: absolute;
+    inset: m.dp(6);
+    z-index: 3;
+    border: 1px dashed rgb(221 207 178 / 45%);
+    pointer-events: none;
+  }
+}
+
+.monument {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+
+  --monument-max: #{m.dp(240)};
+
+  @media #{t.$query-desktop} {
+    bottom: 3.2%;
+
+    --monument-max: #{m.dp(560)};
+  }
+}
+
+.monumentWord {
+  grid-area: 1 / 1;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: calc(var(--monument-max) * var(--fit, 1));
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: max(1px, #{m.dp(1.5)}) rgb(210 169 97 / 30%);
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.tape {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  outline: none;
+  transform-origin: 0 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.tapeImage {
+  display: block;
+  width: var(--tape-w, 400px);
+  height: auto;
+  user-select: none;
+}
+
+// Only the tape's own shape takes clicks, not its transparent margin.
+.tapeHit {
+  position: absolute;
+  inset: 0;
+
+  .shelf[data-interactive='true'] & {
+    pointer-events: auto;
+  }
+
+  .shelf[data-interactive='true'] .tape[data-focused='true'] & {
+    cursor: pointer;
+  }
+}
+
+.shelfFadeTop,
+.shelfFadeBottom {
+  position: absolute;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.shelfFadeTop {
+  top: 0;
+  height: m.dp(70);
+  background: linear-gradient(to bottom, var(--color-obsidian), transparent);
+
+  @media #{t.$query-desktop} {
+    height: m.dp(90);
+  }
+}
+
+.shelfFadeBottom {
+  bottom: 0;
+  height: m.dp(60);
+  background: linear-gradient(to top, var(--color-obsidian), transparent);
+
+  @media #{t.$query-desktop} {
+    height: m.dp(80);
+  }
+}
+
+// ---- The way to the full discography: bottom right
+
+.cta {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-self: flex-end;
+  margin-top: m.dp(12);
+
+  @media #{t.$query-desktop} {
+    position: absolute;
+    right: calc(96 * var(--dpx));
+    bottom: m.dp(96);
+    margin-top: 0;
+  }
+}

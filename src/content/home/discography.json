@@ -1,0 +1,7 @@
+{
+  "label": "Discography",
+  "headline": { "lead": "The archive,", "statement": "Remembered." },
+  "intro": "Every release in the archive, kept on tape. Take one down to listen.",
+  "shelfLabel": "Releases on the shelf. Use the arrow keys to move along it.",
+  "cta": { "label": "Discography", "href": "/discography" }
+}

@@ -22,6 +22,20 @@
   }
 }
 
+// For one-screen sections (Sessions, Discography): like design-scale, but on
+// desktop the 1440 × 1040 frame scales to whichever runs out first, the
+// width or the height, so all of it fits in 100svh. The floor keeps text
+// readable on very short screens, where the section grows instead of
+// clipping. `--dpx` is the width-only scale, for the gutters.
+@mixin screen-scale {
+  @include design-scale;
+
+  @media #{t.$query-desktop} {
+    --dpx: min(100cqw / 1440, 1px);
+    --dp: max(0.62px, min(100cqw / 1440, 100svh / 1040, 1px));
+  }
+}
+
 // Hidden visually, still read by assistive tech.
 @mixin visually-hidden {
   position: absolute;

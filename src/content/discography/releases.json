@@ -1,0 +1,142 @@
+[
+  {
+    "slug": "4x4",
+    "title": "4x4",
+    "artist": "Candy Heist",
+    "cover": {
+      "src": "/img/discography/covers/4x4.webp",
+      "alt": "4x4 cover: a grid of gold sigils on black"
+    },
+    "tape": "/img/discography/tapes/4x4.webp"
+  },
+  {
+    "slug": "portal",
+    "title": "Portal",
+    "artist": "Candy Heist",
+    "cover": {
+      "src": "/img/discography/covers/portal.webp",
+      "alt": "Brass rings around a sigil on alabaster stone"
+    },
+    "tape": "/img/discography/tapes/portal.webp"
+  },
+  {
+    "slug": "the-halls",
+    "title": "The Halls",
+    "artist": "Candy Heist",
+    "cover": {
+      "src": "/img/discography/covers/halls.webp",
+      "alt": "Endless halls converging on a light"
+    },
+    "tape": "/img/discography/tapes/halls.webp"
+  },
+  {
+    "slug": "vortex",
+    "title": "Vortex",
+    "artist": "Candy Heist",
+    "cover": {
+      "src": "/img/discography/covers/vortex.webp",
+      "alt": "A stage photo poured into the vortex mark"
+    },
+    "tape": "/img/discography/tapes/vortex.webp"
+  },
+  {
+    "slug": "monolith",
+    "title": "Monolith",
+    "artist": "Candy Heist",
+    "cover": {
+      "src": "/img/discography/covers/monolith.webp",
+      "alt": "A ribbed gold arch in a concrete wall"
+    },
+    "tape": "/img/discography/tapes/monolith.webp"
+  },
+  {
+    "slug": "truths-collide",
+    "title": "Truths Collide",
+    "artist": "G.Roy, Candy Heist",
+    "cover": {
+      "src": "/img/discography/covers/truths-collide.webp",
+      "alt": "Truths Collide cover: twin stone monoliths with a beam of light between them"
+    },
+    "tape": "/img/discography/tapes/truths-collide.webp"
+  },
+  {
+    "slug": "resonance",
+    "title": "Resonance",
+    "artist": "Candy Heist",
+    "cover": {
+      "src": "/img/discography/covers/resonance.webp",
+      "alt": "Gold ripples crossed by one frequency line"
+    },
+    "tape": "/img/discography/tapes/resonance.webp"
+  },
+  {
+    "slug": "alabaster",
+    "title": "Alabaster",
+    "artist": "Candy Heist",
+    "cover": {
+      "src": "/img/discography/covers/alabaster.webp",
+      "alt": "The black vortex mark on veined alabaster"
+    },
+    "tape": "/img/discography/tapes/alabaster.webp"
+  },
+  {
+    "slug": "self-portrait",
+    "title": "Self Portrait",
+    "artist": "Candy Heist",
+    "cover": {
+      "src": "/img/discography/covers/portrait.webp",
+      "alt": "A portrait of Candy Heist in cream and concrete"
+    },
+    "tape": "/img/discography/tapes/portrait.webp"
+  },
+  {
+    "slug": "over-the-moon",
+    "title": "Over The Moon",
+    "artist": "Candy Heist",
+    "cover": {
+      "src": "/img/discography/covers/over-the-moon.webp",
+      "alt": "Over The Moon cover: a brass moon over a concrete horizon"
+    },
+    "tape": "/img/discography/tapes/over-the-moon.webp"
+  },
+  {
+    "slug": "ledger",
+    "title": "Ledger",
+    "artist": "Candy Heist",
+    "cover": {
+      "src": "/img/discography/covers/ledger.webp",
+      "alt": "An archive record card, most of it redacted"
+    },
+    "tape": "/img/discography/tapes/ledger.webp"
+  },
+  {
+    "slug": "orbits",
+    "title": "Orbits",
+    "artist": "Candy Heist",
+    "cover": {
+      "src": "/img/discography/covers/orbits.webp",
+      "alt": "Tilted gold orbits around a brass core"
+    },
+    "tape": "/img/discography/tapes/orbits.webp"
+  },
+  {
+    "slug": "oculus",
+    "title": "Oculus",
+    "artist": "Candy Heist",
+    "cover": {
+      "src": "/img/discography/covers/oculus.webp",
+      "alt": "A studio photo seen through a round opening in concrete"
+    },
+    "tape": "/img/discography/tapes/oculus.webp"
+  },
+  {
+    "slug": "gold-seam",
+    "title": "Gold Seam",
+    "artist": "Candy Heist",
+    "cover": {
+      "src": "/img/discography/covers/seam.webp",
+      "alt": "Raw concrete split by one gold seam"
+    },
+    "tape": "/img/discography/tapes/seam.webp"
+  }
+]

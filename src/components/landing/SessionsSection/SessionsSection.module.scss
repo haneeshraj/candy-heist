@@ -5,18 +5,7 @@
 // frame (1440 × 1040). Mobile, on the 390 grid, keeps the same column but
 // puts the photo in a band across the top that fades into the list.
 
-// Desktop fills exactly one screen: the design scales to whichever runs out
-// first, the width or the height, so all 1040 of it fits in 100svh. The
-// floor keeps text readable on very short screens, where the section grows
-// instead of clipping. `--dpx` is the width-only scale, for the gutters.
-@mixin screen-scale {
-  @include m.design-scale;
-
-  @media #{t.$query-desktop} {
-    --dpx: min(100cqw / 1440, 1px);
-    --dp: max(0.62px, min(100cqw / 1440, 100svh / 1040, 1px));
-  }
-}
+// Desktop fills exactly one screen (m.screen-scale).
 
 .sessions {
   position: relative;
@@ -32,7 +21,7 @@
 // ---- Backdrop: the photo and its three fades
 
 .backdrop {
-  @include screen-scale;
+  @include m.screen-scale;
 
   position: absolute;
   top: 0;
@@ -120,7 +109,7 @@
 // ---- The column
 
 .inner {
-  @include screen-scale;
+  @include m.screen-scale;
 
   position: relative;
   z-index: 1;
