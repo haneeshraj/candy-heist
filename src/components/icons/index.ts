@@ -13,6 +13,10 @@ export {
   ProductionIcon,
   DjIcon,
   FeedbackIcon,
-  MixIcon
+  MixIcon,
+  InstagramIcon,
+  SoundCloudIcon,
+  SpotifyIcon,
+  YouTubeIcon
 } from './glyphs';
 export type { IconProps, BaseIconProps } from './Icon.types';

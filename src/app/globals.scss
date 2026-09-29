@@ -21,6 +21,15 @@
   --color-gilt-deep: #b98b47;
   --color-crimson: #a32b23;
   --color-crimson-glow: #c4453a;
+
+  // What the fixed navbar covers at the bottom of the screen: the full-width
+  // bar on phones, the floating pill and its gap from the tablet breakpoint
+  // (768px) up. Sticky bottom bars and full-screen controls sit above it.
+  --navbar-clearance: 7.5rem;
+
+  @media (width >= 768px) {
+    --navbar-clearance: 6.4rem;
+  }
 }
 
 *,
@@ -39,4 +48,9 @@ body {
   font-family: var(--font-archivo), sans-serif;
   background-color: var(--color-obsidian);
   color: var(--color-cream);
+
+  // On phones the bar spans the screen, so the page ends above it.
+  @media (width < 768px) {
+    padding-bottom: var(--navbar-clearance);
+  }
 }

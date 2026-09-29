@@ -9,7 +9,9 @@ import {
 import './globals.scss';
 import SmoothScroll from '@/components/common/SmoothScroll';
 import { SiteFooter } from '@/components/layout/SiteFooter';
+import { SiteNavbar } from '@/components/layout/SiteNavbar';
 import { footerContent } from '@/content/site/footer';
+import { navbarContent } from '@/content/site/navbar';
 
 const archivo = Archivo({
   subsets: ['latin'],
@@ -59,6 +61,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
     >
       <body>
         <SmoothScroll>
+          <SiteNavbar content={navbarContent} />
           {children}
           <SiteFooter content={footerContent} />
         </SmoothScroll>

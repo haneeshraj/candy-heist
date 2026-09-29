@@ -144,3 +144,43 @@ export function FeedbackIcon(props: IconProps) {
 export function MixIcon(props: IconProps) {
   return <Icon path={MIX_PATHS} {...props} />;
 }
+
+// ---- Social glyphs (Figma "Glyph / Instagram", "SoundCloud", "Spotify"
+// and "YouTube"). Spotify's arcs and YouTube's play mark are cut out of a
+// single shape, so those two fill even-odd.
+
+const INSTAGRAM_PATHS = [
+  'M9.4 3.25C9.4 3.61 9.11 3.9 8.75 3.9C8.39 3.9 8.1 3.61 8.1 3.25C8.1 2.89 8.39 2.6 8.75 2.6C9.11 2.6 9.4 2.89 9.4 3.25Z',
+  'M10.3 4.1C10.3 2.77 9.23 1.7 7.9 1.7H4.1C2.77 1.7 1.7 2.77 1.7 4.1V7.9C1.7 9.23 2.77 10.3 4.1 10.3H7.9C9.23 10.3 10.3 9.23 10.3 7.9V4.1ZM11.3 7.9C11.3 9.78 9.78 11.3 7.9 11.3H4.1C2.22 11.3 0.7 9.78 0.7 7.9V4.1C0.7 2.22 2.22 0.7 4.1 0.7H7.9C9.78 0.7 11.3 2.22 11.3 4.1V7.9Z',
+  'M7.8 6C7.8 5.01 6.99 4.2 6 4.2C5.01 4.2 4.2 5.01 4.2 6C4.2 6.99 5.01 7.8 6 7.8C6.99 7.8 7.8 6.99 7.8 6ZM8.8 6C8.8 7.55 7.55 8.8 6 8.8C4.45 8.8 3.2 7.55 3.2 6C3.2 4.45 4.45 3.2 6 3.2C7.55 3.2 8.8 4.45 8.8 6Z'
+] as const;
+
+// The cloud and its three bars.
+const SOUNDCLOUD_PATHS = [
+  'M4.5 9.2V4.5C5.2 3.8 6.1 3.4 7.1 3.4C8.9 3.4 10.4 4.7 10.7 6.4C11.4 6.4 12 7 12 7.8C12 8.6 11.4 9.2 10.6 9.2H4.5Z',
+  'M0.4 7.3C0.4 7.13 0.53 7 0.7 7H0.85C1.02 7 1.15 7.13 1.15 7.3V8.9C1.15 9.07 1.02 9.2 0.85 9.2H0.7C0.53 9.2 0.4 9.07 0.4 8.9V7.3Z',
+  'M1.7 6.1C1.7 5.93 1.83 5.8 2 5.8H2.15C2.32 5.8 2.45 5.93 2.45 6.1V8.9C2.45 9.07 2.32 9.2 2.15 9.2H2C1.83 9.2 1.7 9.07 1.7 8.9V6.1Z',
+  'M3 5.1C3 4.93 3.13 4.8 3.3 4.8H3.45C3.62 4.8 3.75 4.93 3.75 5.1V8.9C3.75 9.07 3.62 9.2 3.45 9.2H3.3C3.13 9.2 3 9.07 3 8.9V5.1Z'
+] as const;
+
+const SPOTIFY_PATH =
+  'M6 0.4C9.09 0.4 11.6 2.91 11.6 6C11.6 9.09 9.09 11.6 6 11.6C2.91 11.6 0.4 9.09 0.4 6C0.4 2.91 2.91 0.4 6 0.4ZM8.14 7.68C6.67 7.12 5.18 7.05 3.69 7.47C3.48 7.53 3.35 7.76 3.42 7.97C3.48 8.18 3.7 8.3 3.91 8.24C5.22 7.87 6.54 7.93 7.86 8.43C8.06 8.51 8.3 8.41 8.37 8.2C8.45 7.99 8.35 7.76 8.14 7.68ZM8.89 5.85C6.92 5.01 5 4.89 3.15 5.54C2.9 5.62 2.77 5.89 2.85 6.14C2.94 6.39 3.21 6.52 3.46 6.44C5.06 5.88 6.74 5.96 8.51 6.72C8.75 6.83 9.03 6.71 9.14 6.47C9.24 6.23 9.13 5.95 8.89 5.85ZM9.53 3.92C7.15 2.79 4.79 2.64 2.51 3.5C2.22 3.61 2.08 3.92 2.19 4.21C2.29 4.49 2.61 4.64 2.89 4.53C4.87 3.79 6.92 3.9 9.07 4.91C9.34 5.04 9.67 4.92 9.8 4.65C9.93 4.37 9.81 4.05 9.53 3.92Z';
+
+const YOUTUBE_PATH =
+  'M9.3 2.2C10.57 2.2 11.6 3.23 11.6 4.5V7.5C11.6 8.77 10.57 9.8 9.3 9.8H2.7C1.43 9.8 0.4 8.77 0.4 7.5V4.5C0.4 3.23 1.43 2.2 2.7 2.2H9.3ZM4.9 7.8L8.1 6L4.9 4.2V7.8Z';
+
+export function InstagramIcon(props: IconProps) {
+  return <Icon path={INSTAGRAM_PATHS} {...props} />;
+}
+
+export function SoundCloudIcon(props: IconProps) {
+  return <Icon path={SOUNDCLOUD_PATHS} {...props} />;
+}
+
+export function SpotifyIcon(props: IconProps) {
+  return <Icon path={SPOTIFY_PATH} fillRule="evenodd" {...props} />;
+}
+
+export function YouTubeIcon(props: IconProps) {
+  return <Icon path={YOUTUBE_PATH} fillRule="evenodd" {...props} />;
+}

@@ -1,11 +1,10 @@
 import Image from 'next/image';
+import { VortexMark } from '@/components/common/VortexMark';
 import styles from './SiteFooter.module.scss';
 import type { FooterVortexProps } from './SiteFooter.types';
 
 // One file draws both the fill's mask (in the stylesheet) and the hairline
-// edge (the <use> below), so the two can never drift apart.
-const MARK = '/img/brand/vortex.svg';
-const MARK_VIEWBOX = '0 0 414.64 298.37';
+// edge (VortexMark below), so the two can never drift apart.
 
 // The vortex mark with the photo poured into it: a gilt duotone clipped to
 // the logo, a hairline tracing its edge, and the crimson eye at its centre.
@@ -25,14 +24,7 @@ export default function FooterVortex({ photo }: FooterVortexProps) {
           />
         </div>
       </div>
-      <svg
-        className={styles.vortexEdge}
-        viewBox={MARK_VIEWBOX}
-        aria-hidden="true"
-        focusable="false"
-      >
-        <use href={`${MARK}#mark`} />
-      </svg>
+      <VortexMark className={styles.vortexEdge} />
       <span className={styles.eye} data-motion="eye" aria-hidden="true" />
     </div>
   );

@@ -166,7 +166,7 @@
 
 .action {
   position: sticky;
-  bottom: 0;
+  bottom: var(--navbar-clearance, 0);
   z-index: 2;
   display: flex;
   flex-wrap: wrap;

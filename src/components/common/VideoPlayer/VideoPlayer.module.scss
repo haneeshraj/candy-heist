@@ -272,6 +272,11 @@
     opacity 0.45s t.$ease-signature,
     translate 0.45s t.$ease-signature;
 
+  // A full-screen player has the fixed navbar over its bottom edge.
+  .player[data-fill='true'] & {
+    bottom: calc(clamp(10px, 3cqw, 38px) + var(--navbar-clearance, 0px));
+  }
+
   .player[data-idle='true'] & {
     pointer-events: none;
     opacity: 0;

@@ -3,6 +3,8 @@
 // Action / database) can replace this module later without touching the
 // component. Draft content until the client's intake answers arrive.
 
+import { socialLinks } from './socials';
+
 export interface FooterLink {
   label: string;
   href: string;
@@ -34,13 +36,7 @@ export const footerContent: FooterContent = {
   },
   follow: {
     label: 'Follow',
-    // Placeholders: platform home pages until the client sends profile URLs.
-    links: [
-      { label: 'Instagram', href: 'https://www.instagram.com/' },
-      { label: 'SoundCloud', href: 'https://soundcloud.com/' },
-      { label: 'Spotify', href: 'https://open.spotify.com/' },
-      { label: 'YouTube', href: 'https://www.youtube.com/' }
-    ]
+    links: socialLinks
   },
   navigate: {
     label: 'Navigate',
