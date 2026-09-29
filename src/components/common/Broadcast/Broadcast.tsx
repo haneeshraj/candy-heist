@@ -1,9 +1,12 @@
-import styles from './ContactSection.module.scss';
+import styles from './Broadcast.module.scss';
+import type { BroadcastProps } from './Broadcast.types';
 
-// Nine rings rise from the crimson source on the horizon, alternating solid
-// and dotted, over faint bearing lines, with two pulses waiting to travel
-// out through them. Drawn in the desktop frame's units around the source at
-// (0, 0), so the phone just draws the whole thing smaller (see .sky).
+// Figma "Broadcast": nine rings rise from a crimson source on a horizon,
+// alternating solid and dotted, over faint bearing lines, with pulses that
+// motion can send out through them. Drawn in 2000 units around the source
+// at (0, 0), so each place just sets how big the drawing is and where its
+// horizon sits (see Broadcast.module.scss). The motion hooks find the parts
+// by their data-motion names.
 
 const RINGS = [70, 130, 200, 280, 370, 470, 580, 700, 830];
 const PULSE = 300;
@@ -21,9 +24,14 @@ function bearing(degrees: number) {
   };
 }
 
-export default function ContactBackdrop() {
+export default function Broadcast({ className, pulses = 0 }: BroadcastProps) {
   return (
-    <div className={styles.backdrop} aria-hidden="true">
+    <div
+      className={
+        className ? `${styles.broadcast} ${className}` : styles.broadcast
+      }
+      aria-hidden="true"
+    >
       <svg className={styles.sky} viewBox="-1000 -1000 2000 1000">
         <g className={styles.bearings} data-motion="bearings">
           {BEARINGS.map((degrees) => (
@@ -39,8 +47,14 @@ export default function ContactBackdrop() {
             data-motion="ring"
           />
         ))}
-        <circle r={PULSE} className={styles.pulse} data-motion="pulse" />
-        <circle r={PULSE} className={styles.pulse} data-motion="pulse" />
+        {Array.from({ length: pulses }, (_, i) => (
+          <circle
+            key={i}
+            r={PULSE}
+            className={styles.pulse}
+            data-motion="pulse"
+          />
+        ))}
       </svg>
 
       <span className={styles.scrim} />

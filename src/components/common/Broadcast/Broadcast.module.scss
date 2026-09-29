@@ -1,0 +1,120 @@
+// Fills its positioned parent. Each place sizes and positions it through
+// custom properties set on the className it passes:
+//   --broadcast-size     how wide the drawing is (its rings span 2000 units)
+//   --broadcast-horizon  the horizon's height above the bottom edge
+//   --broadcast-gap      the gap the horizon leaves either side of the source
+//   --broadcast-source   the crimson source's width, and its glow:
+//   --broadcast-glow
+//   --broadcast-halo     the halo ring's width
+//   --broadcast-scrim    how far down the scrim over the rings reaches
+//   --broadcast-u        SVG units per CSS pixel of stroke, so strokes stay
+//                        hairlines when the drawing is small (2000 / size)
+
+.broadcast {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+// The upper half of a 2000-unit square around the source; below the
+// horizon is clipped away.
+.sky {
+  position: absolute;
+  bottom: var(--broadcast-horizon, 0);
+  left: 50%;
+  width: var(--broadcast-size);
+  height: calc(var(--broadcast-size) / 2);
+  overflow: hidden;
+  translate: -50% 0;
+}
+
+.ring,
+.ringDotted,
+.pulse {
+  fill: none;
+}
+
+.ring {
+  stroke: var(--color-gilt);
+  stroke-width: calc(0.75 * var(--broadcast-u, 1));
+}
+
+.ringDotted {
+  stroke: var(--color-gold);
+  stroke-dasharray: calc(1.5 * var(--broadcast-u, 1))
+    calc(7 * var(--broadcast-u, 1));
+  stroke-linecap: round;
+  stroke-width: calc(1.4 * var(--broadcast-u, 1));
+}
+
+// Hidden at rest: the motion sends them out.
+.pulse {
+  opacity: 0;
+  stroke: var(--color-gilt-bright);
+  stroke-opacity: 0.75;
+  stroke-width: calc(1.2 * var(--broadcast-u, 1));
+}
+
+.bearings {
+  stroke: var(--color-gold);
+  stroke-opacity: 0.06;
+  stroke-width: calc(0.5 * var(--broadcast-u, 1));
+}
+
+// Keeps the copy over the rings clear of them.
+.scrim {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--broadcast-scrim, 0);
+  background: linear-gradient(
+    to bottom,
+    rgb(12 12 12 / 95%) 0,
+    rgb(12 12 12 / 81%) 58%,
+    transparent 100%
+  );
+}
+
+// Two halves, so each can draw outward from the source.
+.horizon {
+  position: absolute;
+  bottom: var(--broadcast-horizon, 0);
+  height: 1px;
+  background-color: rgb(182 158 124 / 25%);
+}
+
+.horizonLeft {
+  right: calc(50% + var(--broadcast-gap, 0px));
+  left: 0;
+  transform-origin: right center;
+}
+
+.horizonRight {
+  right: 0;
+  left: calc(50% + var(--broadcast-gap, 0px));
+  transform-origin: left center;
+}
+
+// The one crimson focal point. `translate`, not `transform`, so motion's
+// scale doesn't fight the centring.
+.source,
+.sourceHalo {
+  position: absolute;
+  bottom: var(--broadcast-horizon, 0);
+  left: 50%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  translate: -50% 50%;
+}
+
+.source {
+  width: var(--broadcast-source);
+  background-color: var(--color-crimson);
+  box-shadow: 0 0 var(--broadcast-glow) 0 rgb(196 69 58 / 85%);
+}
+
+.sourceHalo {
+  width: var(--broadcast-halo);
+  border: 1px solid rgb(196 69 58 / 40%);
+}

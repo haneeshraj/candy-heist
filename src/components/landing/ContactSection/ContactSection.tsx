@@ -3,10 +3,10 @@
 import { useId, useRef } from 'react';
 import { ClipRevealText } from '@/components/common/ClipRevealText';
 import { ScrambleText } from '@/components/common/ScrambleText';
+import { Broadcast } from '@/components/common/Broadcast';
 import { SigilChip } from '@/components/common/SigilChip';
 import { WordReveal } from '@/components/common/WordReveal';
 import { ArrowIcon, MailIcon, PhoneIcon, SigilIcon } from '@/components/icons';
-import ContactBackdrop from './ContactBackdrop';
 import styles from './ContactSection.module.scss';
 import type {
   ContactReveals,
@@ -40,7 +40,7 @@ export default function ContactSection({ content }: ContactSectionProps) {
       className={styles.contact}
       aria-labelledby={headingId}
     >
-      <ContactBackdrop />
+      <Broadcast className={styles.backdrop} pulses={2} />
 
       <div className={styles.inner}>
         <div className={styles.head} data-motion="head">

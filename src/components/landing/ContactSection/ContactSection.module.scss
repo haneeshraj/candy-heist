@@ -18,155 +18,33 @@
   @include m.visually-hidden;
 }
 
-// ---- Backdrop: the rings, the scrim over them, the horizon and its source
+// ---- Backdrop: the shared Broadcast drawing, sized to this section's
+// frames. Its horizon sits a fixed distance above the bottom edge.
 
 .backdrop {
   @include m.screen-scale;
 
-  // The horizon's height above the bottom edge, and the gap it leaves
-  // either side of the source.
-  --horizon: #{m.dp(72)};
-  --gap: #{m.dp(20)};
+  --broadcast-size: #{m.dp(974)};
+  --broadcast-horizon: #{m.dp(72)};
+  --broadcast-gap: #{m.dp(20)};
+  --broadcast-source: #{m.dp(14)};
+  --broadcast-glow: #{m.dp(16)};
+  --broadcast-halo: #{m.dp(36)};
+  --broadcast-scrim: #{m.dp(540)};
 
-  // SVG units per CSS pixel of stroke. The phone draws the desktop rings at
-  // about half size (974 / 2000), so its strokes are doubled to stay
-  // hairlines.
-  --u: 2;
+  // The phone draws the rings at about half size, so strokes double.
+  --broadcast-u: 2;
 
-  position: absolute;
-  inset: 0;
   z-index: 0;
-  pointer-events: none;
 
   @media #{t.$query-desktop} {
-    --horizon: #{m.dp(100)};
-    --gap: #{m.dp(34)};
-    --u: 1;
-  }
-}
-
-// The upper half of a 2000-unit square around the source; below the
-// horizon is clipped away.
-.sky {
-  position: absolute;
-  bottom: var(--horizon);
-  left: 50%;
-  width: m.dp(974);
-  height: m.dp(487);
-  overflow: hidden;
-  translate: -50% 0;
-
-  @media #{t.$query-desktop} {
-    width: m.dp(2000);
-    height: m.dp(1000);
-  }
-}
-
-.ring,
-.ringDotted,
-.pulse {
-  fill: none;
-}
-
-.ring {
-  stroke: var(--color-gilt);
-  stroke-width: calc(0.75 * var(--u));
-}
-
-.ringDotted {
-  stroke: var(--color-gold);
-  stroke-dasharray: calc(1.5 * var(--u)) calc(7 * var(--u));
-  stroke-linecap: round;
-  stroke-width: calc(1.4 * var(--u));
-}
-
-// Hidden at rest: the motion sends them out.
-.pulse {
-  opacity: 0;
-  stroke: var(--color-gilt-bright);
-  stroke-opacity: 0.75;
-  stroke-width: calc(1.2 * var(--u));
-}
-
-.bearings {
-  stroke: var(--color-gold);
-  stroke-opacity: 0.06;
-  stroke-width: calc(0.5 * var(--u));
-}
-
-// Keeps the copy clear of the outer rings.
-.scrim {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  height: m.dp(540);
-  background: linear-gradient(
-    to bottom,
-    rgb(12 12 12 / 95%) 0,
-    rgb(12 12 12 / 82%) 60%,
-    transparent 100%
-  );
-
-  @media #{t.$query-desktop} {
-    background: linear-gradient(
-      to bottom,
-      rgb(12 12 12 / 95%) 0,
-      rgb(12 12 12 / 80%) 55%,
-      transparent 100%
-    );
-  }
-}
-
-// Two halves, so each can draw outward from the source.
-.horizon {
-  position: absolute;
-  bottom: var(--horizon);
-  height: 1px;
-  background-color: rgb(182 158 124 / 25%);
-}
-
-.horizonLeft {
-  right: calc(50% + var(--gap));
-  left: 0;
-  transform-origin: right center;
-}
-
-.horizonRight {
-  right: 0;
-  left: calc(50% + var(--gap));
-  transform-origin: left center;
-}
-
-// The section's one crimson focal point. `translate`, not `transform`, so
-// motion's scale doesn't fight the centring.
-.source,
-.sourceHalo {
-  position: absolute;
-  bottom: var(--horizon);
-  left: 50%;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  translate: -50% 50%;
-}
-
-.source {
-  width: m.dp(14);
-  background-color: var(--color-crimson);
-  box-shadow: 0 0 m.dp(16) 0 rgb(196 69 58 / 85%);
-
-  @media #{t.$query-desktop} {
-    width: m.dp(22);
-    box-shadow: 0 0 m.dp(24) 0 rgb(196 69 58 / 85%);
-  }
-}
-
-.sourceHalo {
-  width: m.dp(36);
-  border: 1px solid rgb(196 69 58 / 40%);
-
-  @media #{t.$query-desktop} {
-    width: m.dp(56);
+    --broadcast-size: #{m.dp(2000)};
+    --broadcast-horizon: #{m.dp(100)};
+    --broadcast-gap: #{m.dp(34)};
+    --broadcast-source: #{m.dp(22)};
+    --broadcast-glow: #{m.dp(24)};
+    --broadcast-halo: #{m.dp(56)};
+    --broadcast-u: 1;
   }
 }
 
