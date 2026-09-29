@@ -1,0 +1,6 @@
+{
+  "label": "Contact",
+  "headline": { "lead": "Got a question?", "statement": "Send a signal." },
+  "intro": "Bookings, collaborations or just a hello. Reach out and let’s talk.",
+  "cta": { "label": "Contact", "href": "/contact" }
+}

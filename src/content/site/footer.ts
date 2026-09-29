@@ -3,6 +3,7 @@
 // Action / database) can replace this module later without touching the
 // component. Draft content until the client's intake answers arrive.
 
+import { siteContact } from './contact';
 import { socialLinks } from './socials';
 
 export interface FooterLink {
@@ -28,8 +29,7 @@ export interface FooterContent {
 
 export const footerContent: FooterContent = {
   headline: { lead: 'Plan the next', statement: 'Heist.' },
-  // Placeholder until the client confirms a bookings address.
-  email: 'booking@candyheist.com',
+  email: siteContact.email,
   photo: {
     src: '/img/site/footer-photo.jpeg',
     alt: 'Candy Heist at the decks, seen through the vortex mark'
