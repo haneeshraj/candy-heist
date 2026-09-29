@@ -36,6 +36,29 @@ export function ExternalIcon(props: IconProps) {
   );
 }
 
+// ---- Contact glyphs
+
+// An envelope: the flap sits inside the outline's hole, so it fills even-odd.
+export function MailIcon(props: IconProps) {
+  return (
+    <Icon
+      path="M0 2H12V10H0Z M1 3V9H11V3Z M1 3L6 6.6L11 3V4.2L6 7.8L1 4.2Z"
+      fillRule="evenodd"
+      {...props}
+    />
+  );
+}
+
+// A handset.
+export function PhoneIcon(props: IconProps) {
+  return (
+    <Icon
+      path="M2.86 5.29C3.7 6.94 5.06 8.29 6.71 9.14L7.99 7.86C8.15 7.7 8.38 7.64 8.58 7.71C9.24 7.93 9.94 8.05 10.67 8.05C10.99 8.05 11.25 8.31 11.25 8.63V10.67C11.25 10.99 10.99 11.25 10.67 11.25C5.19 11.25 0.75 6.81 0.75 1.33C0.75 1.01 1.01 0.75 1.33 0.75H3.38C3.7 0.75 3.96 1.01 3.96 1.33C3.96 2.06 4.07 2.76 4.29 3.42C4.35 3.62 4.31 3.85 4.14 4.01Z"
+      {...props}
+    />
+  );
+}
+
 // ---- Player controls
 
 export function VolumeIcon(props: IconProps) {

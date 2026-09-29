@@ -5,6 +5,8 @@ export {
   PauseIcon,
   ArrowIcon,
   ExternalIcon,
+  MailIcon,
+  PhoneIcon,
   VolumeIcon,
   MutedIcon,
   FullscreenIcon,
