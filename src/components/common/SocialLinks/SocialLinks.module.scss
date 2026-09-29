@@ -1,0 +1,67 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Figma "Navbar / Social" (square): 36 px, a gilt hairline on the raised
+// obsidian, the glyph 21 px in the middle. Fixed rem sizes, like the navbar
+// it comes from.
+
+.list {
+  display: flex;
+  gap: 1.2rem;
+  list-style: none;
+}
+
+.square {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  border: 1px solid rgb(210 169 97 / 35%);
+  background-color: var(--color-obsidian-raised);
+  color: var(--color-gilt);
+  transition:
+    background-color 0.35s t.$ease-signature,
+    border-color 0.35s t.$ease-signature,
+    color 0.35s t.$ease-signature;
+
+  // The magnetic catch zone: the pull starts just before the edge.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -0.6rem;
+  }
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 3px;
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      border-color: rgb(210 169 97 / 90%);
+      background-color: var(--color-gilt);
+      color: var(--color-obsidian);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.glyph {
+  display: block;
+  width: 2.1rem;
+  height: 2.1rem;
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
