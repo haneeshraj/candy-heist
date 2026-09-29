@@ -95,15 +95,6 @@
     z-index: -1;
     width: m.dp(1300);
     margin: 0;
-
-    // The mark runs off the footer's top edge, which on the page is the seam
-    // with the section above. Fading it in over the first 200 dp (it starts
-    // 55 dp above the edge) keeps that crop from reading as a line.
-    mask-image: linear-gradient(
-      to bottom,
-      transparent m.dp(55),
-      #000 m.dp(255)
-    );
   }
 }
 
