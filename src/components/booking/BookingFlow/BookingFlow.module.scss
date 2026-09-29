@@ -1,0 +1,15 @@
+@use '../../../styles/mixins' as m;
+
+.flow {
+  position: relative;
+  min-height: 100svh;
+  background-color: var(--color-obsidian);
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+.stage {
+  position: relative;
+}

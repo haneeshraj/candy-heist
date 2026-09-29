@@ -1,0 +1,66 @@
+// Shared pieces of the booking page UI, imported with
+// `@use '../booking' as b;` from each booking component's module.
+
+@use '../../styles/tokens' as t;
+
+// The page column: 1248 wide at 1440, with the 96 gutters of the Figma
+// frames, narrowing to 24 on a phone.
+@mixin column {
+  width: 100%;
+  max-width: 144rem;
+  margin-inline: auto;
+  padding-inline: clamp(2.4rem, 6.67vw, 9.6rem);
+}
+
+@mixin mono($size: 1rem, $tracking: 0.4em) {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: $size;
+  font-weight: 500;
+  letter-spacing: $tracking;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+@mixin display($size: 4rem) {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: $size;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  color: var(--color-cream);
+}
+
+@mixin caps($size: 2rem, $tracking: 0.06em) {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: $size;
+  font-weight: 600;
+  letter-spacing: $tracking;
+  line-height: 1.12;
+  text-transform: uppercase;
+  color: var(--color-cream);
+}
+
+@mixin body($size: 1.6rem, $color: var(--color-gold)) {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: $size;
+  font-weight: 400;
+  line-height: 1.55;
+  color: $color;
+}
+
+@mixin panel {
+  border: 1px solid rgb(182 158 124 / 14%);
+  background-color: var(--color-obsidian-raised);
+}
+
+// Main column plus a 380 aside (the summary) from the desktop breakpoint.
+@mixin with-aside {
+  display: grid;
+  gap: 4.8rem;
+
+  @media #{t.$query-desktop} {
+    grid-template-columns: minmax(0, 1fr) 38rem;
+    gap: 8.4rem;
+    align-items: start;
+  }
+}

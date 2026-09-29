@@ -1,0 +1,459 @@
+@use '../../../styles/tokens' as t;
+
+// Sized against the 1248 × 702 Figma player and scaled by the player's own
+// width (cqw), with floors so the controls stay usable on a phone.
+
+.player {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  container-type: inline-size;
+  color: var(--color-cream);
+  background-color: var(--color-obsidian);
+
+  &[data-idle='true'] {
+    cursor: none;
+  }
+
+  &:fullscreen {
+    aspect-ratio: auto;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.media,
+.poster,
+.shade {
+  position: absolute;
+  inset: 0;
+}
+
+.poster {
+  transition: opacity 0.8s t.$ease-signature;
+
+  .player[data-phase='playing'] &,
+  .player[data-phase='paused'] & {
+    opacity: 0;
+  }
+}
+
+.posterImage {
+  object-fit: cover;
+}
+
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background-color: #000;
+
+  .player[data-phase='poster'] &,
+  .player[data-phase='ended'] & {
+    visibility: hidden;
+  }
+
+  &::cue {
+    font-family: var(--font-archivo), sans-serif;
+    color: var(--color-cream);
+    background-color: rgb(12 12 12 / 62%);
+  }
+}
+
+// Top and bottom fades for the chrome, and a soft vignette.
+.shade {
+  pointer-events: none;
+  background:
+    linear-gradient(
+      to bottom,
+      rgb(12 12 12 / 75%) 0,
+      transparent 21%,
+      transparent 69%,
+      rgb(12 12 12 / 92%) 100%
+    ),
+    radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 45%) 100%);
+  transition: opacity 0.6s t.$ease-signature;
+
+  .player[data-idle='true'] & {
+    opacity: 0.4;
+  }
+}
+
+.player .ticks {
+  inset: clamp(12px, 2.25cqw, 28px);
+  opacity: 0.7;
+}
+
+// ---- Title and badges
+
+.head {
+  position: absolute;
+  top: clamp(18px, 4.3cqw, 54px);
+  right: clamp(18px, 4.5cqw, 56px);
+  left: clamp(18px, 4.5cqw, 56px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  pointer-events: none;
+  transition: opacity 0.5s t.$ease-signature;
+
+  .player[data-idle='true'] & {
+    opacity: 0;
+  }
+}
+
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 0.65cqw, 8px);
+}
+
+.eyebrow,
+.badge,
+.coverLabel,
+.chapter,
+.tooltip {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-weight: 500;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  font-size: clamp(8px, 0.8cqw, 10px);
+  letter-spacing: 0.4em;
+  color: var(--color-gilt);
+}
+
+.title {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: clamp(14px, 1.6cqw, 20px);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.badges {
+  display: flex;
+  gap: 10px;
+
+  @container (width < 480px) {
+    display: none;
+  }
+}
+
+.badge {
+  padding: 7px 7px 7px 11px;
+  border: 1px solid rgb(221 207 178 / 25%);
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  background-color: rgb(12 12 12 / 50%);
+}
+
+// ---- Poster cover: rings and the big play button
+
+.cover {
+  position: absolute;
+  inset: 0;
+}
+
+.rings {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 61cqw;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+}
+
+.bigPlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: clamp(64px, 8.65cqw, 108px);
+  aspect-ratio: 1;
+  padding: 0;
+  border: 1px solid rgb(210 169 97 / 95%);
+  border-radius: 50%;
+  color: var(--color-gilt);
+  background-color: rgb(12 12 12 / 40%);
+  translate: -50% -50%;
+  cursor: pointer;
+  transition:
+    scale 0.6s t.$ease-signature,
+    background-color 0.6s t.$ease-signature;
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--color-gilt);
+    outline-offset: 6px;
+  }
+
+  @media #{t.$query-hover} {
+    &:not(:disabled):hover {
+      scale: 1.06;
+      background-color: rgb(210 169 97 / 12%);
+    }
+  }
+}
+
+.bigPlayRing {
+  position: absolute;
+  inset: 9%;
+  border: 1px solid rgb(210 169 97 / 30%);
+  border-radius: 50%;
+
+  @media (prefers-reduced-motion: no-preference) {
+    .bigPlay:not(:disabled) & {
+      animation: play-breathe 3.2s t.$ease-signature infinite;
+    }
+  }
+}
+
+@keyframes play-breathe {
+  0% {
+    opacity: 0.9;
+    scale: 1;
+  }
+
+  70%,
+  100% {
+    opacity: 0;
+    scale: 1.45;
+  }
+}
+
+.bigPlayIcon {
+  width: 24%;
+  height: 24%;
+  translate: 6% 0;
+}
+
+.coverLabel {
+  position: absolute;
+  top: calc(50% + clamp(46px, 5.9cqw, 74px));
+  left: 50%;
+  font-size: clamp(8px, 0.8cqw, 10px);
+  letter-spacing: 0.4em;
+  white-space: nowrap;
+  translate: -50% 0;
+}
+
+// ---- Controls
+
+.controls {
+  position: absolute;
+  right: clamp(14px, 4.5cqw, 56px);
+  bottom: clamp(10px, 3cqw, 38px);
+  left: clamp(14px, 4.5cqw, 56px);
+  transition:
+    opacity 0.45s t.$ease-signature,
+    translate 0.45s t.$ease-signature;
+
+  .player[data-idle='true'] & {
+    pointer-events: none;
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+
+.track {
+  position: relative;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  height: 14px;
+  cursor: pointer;
+  outline: none;
+  touch-action: none;
+}
+
+.segment {
+  position: relative;
+  overflow: hidden;
+  flex-basis: 0;
+  height: 4px;
+  background-color: rgb(221 207 178 / 22%);
+  transition: height 0.3s t.$ease-signature;
+
+  .track:hover & {
+    height: 6px;
+  }
+}
+
+.buffered,
+.played {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+}
+
+.buffered {
+  background-color: rgb(221 207 178 / 42%);
+}
+
+.played {
+  background-color: var(--color-gilt);
+}
+
+.playhead {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border: 2px solid var(--color-obsidian);
+  border-radius: 50%;
+  background-color: var(--color-gilt);
+  translate: 0 -50%;
+  scale: 0.8;
+  transition: scale 0.3s t.$ease-signature;
+
+  .track:hover &,
+  .track:focus-visible & {
+    scale: 1;
+  }
+
+  .track:focus-visible & {
+    box-shadow: 0 0 0 3px rgb(210 169 97 / 35%);
+  }
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 22px;
+  padding: 6px 8px 6px 10px;
+  border: 1px solid rgb(210 169 97 / 30%);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+  background-color: rgb(12 12 12 / 82%);
+  translate: -50% 0;
+  pointer-events: none;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: clamp(10px, 1.8cqw, 22px);
+}
+
+.group {
+  display: flex;
+  gap: clamp(10px, 1.75cqw, 22px);
+  align-items: center;
+}
+
+.button {
+  display: inline-grid;
+  place-items: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  color: var(--color-cream);
+  background: none;
+  cursor: pointer;
+  transition: color 0.3s t.$ease-signature;
+
+  > svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--color-gilt);
+    outline-offset: 2px;
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      color: var(--color-gilt);
+    }
+  }
+}
+
+.textButton {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+
+  &[data-on='true'] {
+    color: var(--color-gilt);
+    box-shadow: inset 0 -1px 0 var(--color-gilt);
+  }
+}
+
+.volume {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.volumeRange {
+  width: 64px;
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    var(--color-cream) var(--level, 100%),
+    rgb(221 207 178 / 25%) var(--level, 100%)
+  );
+  cursor: pointer;
+  appearance: none;
+
+  &::-webkit-slider-thumb {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--color-cream);
+    appearance: none;
+  }
+
+  &::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    border: 0;
+    border-radius: 50%;
+    background-color: var(--color-cream);
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--color-gilt);
+    outline-offset: 6px;
+  }
+}
+
+.time {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.chapter {
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  white-space: nowrap;
+  color: var(--color-gold);
+}
+
+// Narrow players keep play, time, speed and fullscreen.
+@container (width < 640px) {
+  .skip,
+  .chapter,
+  .volumeRange,
+  .pip {
+    display: none;
+  }
+}

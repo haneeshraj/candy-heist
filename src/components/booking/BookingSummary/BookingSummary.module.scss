@@ -1,0 +1,86 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+@use '../booking' as b;
+
+.summary {
+  @include b.panel;
+
+  border-color: rgb(210 169 97 / 20%);
+
+  @media #{t.$query-desktop} {
+    position: sticky;
+    top: 3.2rem;
+  }
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+.photo {
+  position: relative;
+  height: 15rem;
+}
+
+.photoImage {
+  object-fit: cover;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  padding: 2.4rem 2.8rem 2.8rem;
+}
+
+.eyebrow,
+.rowLabel {
+  @include b.mono(1rem, 0.4em);
+
+  color: var(--color-concrete-light);
+}
+
+.name {
+  @include b.caps(2rem);
+
+  margin-top: 1.4rem;
+  white-space: nowrap;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  margin-top: 1.8rem;
+}
+
+.row,
+.advance {
+  display: flex;
+  gap: 1.6rem;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.rowValue {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1.3;
+  text-align: right;
+  color: var(--color-cream);
+}
+
+.rule {
+  display: block;
+  height: 1px;
+  margin: 1.6rem 0 1.4rem;
+  background-color: rgb(182 158 124 / 16%);
+}
+
+.price {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: 2.2rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--color-cream);
+}

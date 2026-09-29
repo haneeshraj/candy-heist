@@ -36,6 +36,60 @@ export function ExternalIcon(props: IconProps) {
   );
 }
 
+// ---- Player controls
+
+export function VolumeIcon(props: IconProps) {
+  return (
+    <Icon
+      path={[
+        'M1 4.2H3.4L6.6 1.6V10.4L3.4 7.8H1Z',
+        'M8 3.3L8.7 2.6C9.6 3.4 10.2 4.6 10.2 6C10.2 7.4 9.6 8.6 8.7 9.4L8 8.7C8.7 8.1 9.2 7.1 9.2 6C9.2 4.9 8.7 3.9 8 3.3Z'
+      ]}
+      {...props}
+    />
+  );
+}
+
+export function MutedIcon(props: IconProps) {
+  return (
+    <Icon
+      path={[
+        'M1 4.2H3.4L6.6 1.6V10.4L3.4 7.8H1Z',
+        'M7.9 4.6L8.6 3.9L9.8 5.1L11 3.9L11.7 4.6L10.5 5.8L11.7 7L11 7.7L9.8 6.5L8.6 7.7L7.9 7L9.1 5.8Z'
+      ]}
+      {...props}
+    />
+  );
+}
+
+export function FullscreenIcon(props: IconProps) {
+  return (
+    <Icon
+      path="M1 1H4.5V2.2H2.2V4.5H1Z M7.5 1H11V4.5H9.8V2.2H7.5Z M1 7.5H2.2V9.8H4.5V11H1Z M9.8 7.5H11V11H7.5V9.8H9.8Z"
+      {...props}
+    />
+  );
+}
+
+export function ExitFullscreenIcon(props: IconProps) {
+  return (
+    <Icon
+      path="M3.3 1H4.5V4.5H1V3.3H3.3Z M7.5 1H8.7V3.3H11V4.5H7.5Z M1 7.5H4.5V11H3.3V8.7H1Z M7.5 7.5H11V8.7H8.7V11H7.5Z"
+      {...props}
+    />
+  );
+}
+
+// The inner rectangle winds the other way, so it cuts the frame's hole.
+export function PipIcon(props: IconProps) {
+  return (
+    <Icon
+      path={['M1 2H11V10H1Z M2 3V9H10V3Z', 'M6 5.8H9.2V8.2H6Z']}
+      {...props}
+    />
+  );
+}
+
 // ---- Service glyphs, one per session type (Figma "Glyph / Production",
 // "DJ", "Feedback" and "Mix"). Each is several shapes, filled separately.
 

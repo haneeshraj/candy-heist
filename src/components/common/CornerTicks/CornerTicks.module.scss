@@ -1,0 +1,40 @@
+.ticks {
+  position: absolute;
+  inset: var(--ticks-inset, -8px);
+  pointer-events: none;
+}
+
+.tick {
+  position: absolute;
+  width: var(--ticks-size, 18px);
+  height: var(--ticks-size, 18px);
+  border: 0 solid rgb(210 169 97 / 70%);
+
+  &[data-corner='tl'] {
+    top: 0;
+    left: 0;
+    border-top-width: 1px;
+    border-left-width: 1px;
+  }
+
+  &[data-corner='tr'] {
+    top: 0;
+    right: 0;
+    border-top-width: 1px;
+    border-right-width: 1px;
+  }
+
+  &[data-corner='bl'] {
+    bottom: 0;
+    left: 0;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+  }
+
+  &[data-corner='br'] {
+    right: 0;
+    bottom: 0;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+  }
+}

@@ -1,0 +1,311 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+@use '../booking' as b;
+
+.intro {
+  padding-bottom: 12rem;
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+.player {
+  width: 100%;
+}
+
+.column {
+  @include b.column;
+}
+
+// ---- Who, under the video
+
+.hero {
+  display: grid;
+  gap: 3.2rem;
+  margin-top: 7.2rem;
+
+  @media #{t.$query-desktop} {
+    grid-template-columns: minmax(0, 1fr) 48rem;
+    gap: 6.4rem;
+    align-items: end;
+    margin-top: 8.8rem;
+  }
+}
+
+.headline {
+  font-weight: 400;
+}
+
+.headlineVisual {
+  display: flex;
+  flex-direction: column;
+}
+
+.lead {
+  display: block;
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: clamp(3.2rem, 2.2rem + 1.8vw, 4.8rem);
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--color-gold);
+}
+
+.statement {
+  display: block;
+  margin: 0.4rem 0 0 -0.4rem;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: clamp(4rem, 1.6rem + 4.4vw, 8rem);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-cream);
+}
+
+.heroAside {
+  display: flex;
+  flex-direction: column;
+  gap: 2.8rem;
+  align-items: flex-start;
+}
+
+.body {
+  @include b.body(1.8rem, rgb(221 207 178 / 85%));
+}
+
+.jump {
+  @include b.mono(1rem, 0.4em);
+
+  color: var(--color-gilt);
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: 1px solid var(--color-gilt);
+    outline-offset: 6px;
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      color: var(--color-gilt-bright);
+    }
+  }
+}
+
+.divider {
+  display: flex;
+  gap: 1.6rem;
+  align-items: center;
+  margin-top: 8rem;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background-color: rgb(182 158 124 / 14%);
+}
+
+.dividerSigil {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-gilt);
+}
+
+// ---- Choose a session
+
+.choose {
+  margin-top: 6.4rem;
+  scroll-margin-top: 4.8rem;
+}
+
+.cards {
+  display: grid;
+  gap: 1.6rem;
+  margin-top: 5.6rem;
+
+  @media #{t.$query-tablet} {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.4rem;
+  }
+
+  @media #{t.$query-desktop} {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.card {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  height: 32rem;
+  border: 1px solid transparent;
+  background-color: var(--color-obsidian-raised);
+  cursor: pointer;
+  transition: border-color 0.5s t.$ease-signature;
+
+  &:has(:focus-visible) {
+    outline: 1px solid var(--color-gilt);
+    outline-offset: 4px;
+  }
+
+  &[data-selected='true'] {
+    border-color: rgb(210 169 97 / 90%);
+  }
+
+  @media #{t.$query-desktop} {
+    height: 42rem;
+  }
+}
+
+.cardPhoto {
+  position: absolute;
+  inset: 0;
+  opacity: 0.8;
+  transition:
+    opacity 0.6s t.$ease-signature,
+    scale 1.2s t.$ease-signature;
+
+  .card[data-selected='true'] & {
+    opacity: 1;
+  }
+
+  @media #{t.$query-hover} {
+    .card:hover & {
+      scale: 1.05;
+      opacity: 1;
+    }
+  }
+}
+
+.cardImage {
+  object-fit: cover;
+}
+
+.cardFade {
+  position: absolute;
+  inset: 30% 0 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgb(17 16 17 / 86%) 50%,
+    rgb(17 16 17 / 97%) 100%
+  );
+}
+
+.cardRule {
+  position: absolute;
+  inset: 1rem;
+  border: 1px solid rgb(210 169 97 / 12%);
+  transition: border-color 0.5s t.$ease-signature;
+
+  .card[data-selected='true'] & {
+    border-color: rgb(210 169 97 / 45%);
+  }
+
+  @media #{t.$query-hover} {
+    .card:hover & {
+      border-color: rgb(210 169 97 / 30%);
+    }
+  }
+}
+
+.radio {
+  position: absolute;
+  top: 2.8rem;
+  right: 2.8rem;
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 1px solid rgb(221 207 178 / 50%);
+  border-radius: 50%;
+  background-color: rgb(12 12 12 / 50%);
+  transition: border-color 0.4s t.$ease-signature;
+
+  .card[data-selected='true'] & {
+    border-color: var(--color-gilt);
+  }
+}
+
+.radioDot {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background-color: var(--color-gilt);
+  scale: 0;
+  transition: scale 0.5s t.$ease-signature;
+
+  .card[data-selected='true'] & {
+    scale: 1;
+  }
+}
+
+.cardText {
+  position: absolute;
+  right: 2.8rem;
+  bottom: 2.8rem;
+  left: 2.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cardMeta {
+  @include b.mono(1rem, 0.4em);
+
+  line-height: 1.5;
+  color: var(--color-gilt);
+}
+
+.cardName {
+  @include b.caps(2.1rem);
+}
+
+.cardTagline {
+  @include b.body(1.4rem, rgb(221 207 178 / 75%));
+}
+
+// ---- The way on
+
+.nextSlot {
+  min-height: 9.6rem;
+  margin-top: 4rem;
+}
+
+.prompt {
+  @include b.mono(1rem, 0.4em);
+
+  padding-top: 2.4rem;
+  border-top: 1px solid rgb(182 158 124 / 10%);
+  color: var(--color-concrete-light);
+}
+
+.nextBar {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.4rem;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 2.4rem;
+}
+
+.nextRule {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background-color: rgb(210 169 97 / 35%);
+}
+
+.selection {
+  @include b.mono(1.1rem, 0.36em);
+
+  color: var(--color-cream);
+}
+
+.nextAction {
+  display: inline-flex;
+}

@@ -1,0 +1,137 @@
+{
+  "title": "Book a session with Candy Heist",
+  "stepsLabel": "Booking steps",
+  "price": "$ —",
+  "timeZone": "America/Halifax",
+  "timeZoneLabel": "Halifax time",
+  "intro": {
+    "video": {
+      "src": null,
+      "poster": "/img/sessions/intro-poster.jpeg",
+      "posterAlt": "Candy Heist at the decks on a stage lit crimson and gold",
+      "eyebrow": "Sessions with Candy Heist",
+      "title": "Why one on one",
+      "duration": "2:14",
+      "unavailable": "Intro video coming soon",
+      "chapters": [
+        { "at": 0, "label": "Intro" },
+        { "at": 21, "label": "The sessions" },
+        { "at": 68, "label": "How booking works" },
+        { "at": 104, "label": "Say hi" }
+      ]
+    },
+    "lead": "In the studio with",
+    "statement": "Candy Heist.",
+    "body": "Lessons, production sessions and honest feedback, built around the music you want to make. Watch the intro, then choose a session below.",
+    "jump": "Choose a session"
+  },
+  "choose": {
+    "label": "Choose a session",
+    "heading": "What do you want to work on?",
+    "sub": "Four ways to work together. Pick one to see everything it includes.",
+    "selected": "Selected",
+    "next": "Next",
+    "prompt": "Pick a session to continue"
+  },
+  "steps": {
+    "session": "Session",
+    "date": "Date & time",
+    "details": "Your details",
+    "payment": "Payment"
+  },
+  "session": {
+    "label": "Sessions",
+    "included": "What’s included",
+    "howItRuns": "How it runs",
+    "goodFor": "Good for",
+    "bring": "Have ready",
+    "cta": "Book this session",
+    "hint": "Next: pick a date"
+  },
+  "date": {
+    "label": "Date & time",
+    "heading": "When works for you?",
+    "sub": "Only free days can be picked. A gilt dot means there’s time open; times are in Halifax time.",
+    "openTimes": "open times",
+    "zone": "Halifax (AT)",
+    "pickDay": "Pick a day to see its open times.",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "back": "Back",
+    "cta": "Continue"
+  },
+  "details": {
+    "label": "Your details",
+    "heading": "Tell us a little about you",
+    "sub": "Name and email are all that’s needed. Add a phone number if a text before the session helps.",
+    "required": "Required",
+    "optional": "optional",
+    "name": { "label": "Name", "placeholder": "Your name" },
+    "email": { "label": "Email", "placeholder": "you@example.com" },
+    "phone": { "label": "Phone", "placeholder": "+1 (902) 555 0123" },
+    "note": {
+      "label": "A note for Candy Heist",
+      "placeholder": "Your goals, your setup, a reference track…"
+    },
+    "errors": {
+      "name": "Add your name.",
+      "email": "Add an email address we can reach you at.",
+      "emailInvalid": "That email address doesn’t look right.",
+      "phone": "That phone number doesn’t look right.",
+      "note": "Keep the note under 1000 characters."
+    },
+    "back": "Back",
+    "cta": "Continue to payment"
+  },
+  "payment": {
+    "label": "Payment",
+    "heading": "Lock in your session",
+    "sub": "An advance payment secures the time. The confirmation email follows straight after.",
+    "panel": "Advance payment",
+    "card": {
+      "number": "Card number",
+      "expiry": "Expiry",
+      "cvc": "CVC",
+      "name": "Name on card"
+    },
+    "secure": "Handled securely by Stripe. Your card details never touch this site.",
+    "notes": [
+      {
+        "title": "Secure checkout",
+        "text": "Card payments run through Stripe."
+      },
+      {
+        "title": "Confirmed by email",
+        "text": "Details and the call link, right after paying."
+      }
+    ],
+    "back": "Back",
+    "cta": "Pay {price} now",
+    "paying": "Confirming"
+  },
+  "summary": {
+    "label": "Your session",
+    "date": "Date",
+    "time": "Time",
+    "length": "Length",
+    "advance": "Advance payment",
+    "empty": "—"
+  },
+  "confirmation": {
+    "heading": "You’re booked.",
+    "body": "We’ve sent everything to {email}: the date, the call link and how to prepare.",
+    "session": "Session",
+    "when": "When",
+    "paid": "Paid",
+    "paidValue": "{price} advance",
+    "calendar": "Add to calendar",
+    "home": "Back to home",
+    "email": {
+      "sent": "Just sent",
+      "subject": "You’re booked: {service}",
+      "body": "{date}, {time} Halifax time. Your call link is below; send anything you want to go through before the day.",
+      "cta": "Join the call",
+      "signature": "Candy Heist · Halifax, Nova Scotia"
+    }
+  }
+}

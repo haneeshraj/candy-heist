@@ -1,0 +1,24 @@
+.rings {
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--color-gilt);
+  stroke-width: 1;
+
+  * {
+    vector-effect: non-scaling-stroke;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    &[data-spin='true'] {
+      animation: rings-turn 160s linear infinite;
+    }
+  }
+}
+
+@keyframes rings-turn {
+  to {
+    rotate: 360deg;
+  }
+}

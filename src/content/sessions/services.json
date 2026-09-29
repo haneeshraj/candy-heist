@@ -1,0 +1,237 @@
+[
+  {
+    "id": "production-session",
+    "name": "Production Session",
+    "icon": "production",
+    "summary": "Bring the track you’re stuck on and fix it together.",
+    "tagline": "Fix the track you’re stuck on.",
+    "meta": "90 min · Online",
+    "durationMinutes": 90,
+    "photos": {
+      "portrait": "/img/sessions/production-portrait.jpeg",
+      "wide": "/img/sessions/production-wide.jpeg",
+      "alt": "Candy Heist working the decks under crimson stage light"
+    },
+    "overview": [
+      "Bring a project you’re stuck on. We open it up together, fix what’s holding it back, and you learn every move along the way.",
+      "You drive in your own DAW while Candy Heist works through it with you over a shared screen: the arrangement, the sound design, the mixdown, whatever the track needs most."
+    ],
+    "included": [
+      "90 minutes, one on one",
+      "Live over video, screen shared",
+      "Notes and the recording afterwards"
+    ],
+    "howItRuns": [
+      {
+        "at": "0′",
+        "title": "Listen through",
+        "text": "The track top to bottom, and where you want it to go."
+      },
+      {
+        "at": "10′",
+        "title": "Work on it together",
+        "text": "Arrangement, sound design, the mixdown. You drive, he guides."
+      },
+      {
+        "at": "70′",
+        "title": "Walk through the changes",
+        "text": "What changed and why, so you can do it alone next time."
+      },
+      {
+        "at": "85′",
+        "title": "Next steps",
+        "text": "What to try before the next session."
+      }
+    ],
+    "goodFor": [
+      "A track that’s most of the way there and won’t finish",
+      "Learning a technique on your own music, not a tutorial’s",
+      "A trained second pair of ears on a mix"
+    ],
+    "bring": [
+      "Your project, open and ready to share",
+      "A reference track or two",
+      "The part you most want to fix"
+    ],
+    "facts": [
+      { "label": "Length", "value": "90 min" },
+      { "label": "Where", "value": "Online" },
+      { "label": "Advance", "value": "$ —" }
+    ]
+  },
+  {
+    "id": "dj-lessons",
+    "name": "DJ Lessons",
+    "icon": "dj",
+    "summary": "From your first blend to reading a room.",
+    "tagline": "From first blend to full set.",
+    "meta": "60 min · Halifax or online",
+    "durationMinutes": 60,
+    "photos": {
+      "portrait": "/img/sessions/dj-portrait.jpeg",
+      "wide": "/img/sessions/dj-wide.jpeg",
+      "alt": "Candy Heist mid-set, headphones on, hands on the mixer"
+    },
+    "overview": [
+      "Learn to DJ on your gear or his, from the first beatmatch to building a set that reads the room.",
+      "Lessons are paced to you. Beginners start with the fundamentals; working DJs bring the parts of their sets they want to push further."
+    ],
+    "included": [
+      "60 minutes, one on one",
+      "In Halifax or live over video",
+      "A practice plan for the week after"
+    ],
+    "howItRuns": [
+      {
+        "at": "0′",
+        "title": "Warm up",
+        "text": "Where you are, and what you want to be able to do."
+      },
+      {
+        "at": "10′",
+        "title": "Technique",
+        "text": "Beatmatching, phrasing and transitions, one at a time."
+      },
+      {
+        "at": "40′",
+        "title": "Play it out",
+        "text": "A short set of your own, with notes as you go."
+      },
+      {
+        "at": "55′",
+        "title": "Practice plan",
+        "text": "Exactly what to drill before the next lesson."
+      }
+    ],
+    "goodFor": [
+      "Complete beginners who want the fundamentals right",
+      "DJs moving from bedroom sets to real rooms",
+      "Anyone preparing for a first gig"
+    ],
+    "bring": [
+      "Your controller, if you have one",
+      "Headphones",
+      "A handful of tracks you love"
+    ],
+    "facts": [
+      { "label": "Length", "value": "60 min" },
+      { "label": "Where", "value": "Halifax or online" },
+      { "label": "Advance", "value": "$ —" }
+    ]
+  },
+  {
+    "id": "project-feedback",
+    "name": "Project Feedback",
+    "icon": "feedback",
+    "summary": "Honest notes on your track, with a video walkthrough.",
+    "tagline": "A second pair of ears.",
+    "meta": "Written + video notes",
+    "durationMinutes": 30,
+    "photos": {
+      "portrait": "/img/sessions/feedback-portrait.jpeg",
+      "wide": "/img/sessions/feedback-wide.jpeg",
+      "alt": "The laptop on Candy Heist’s booth, covered in stickers"
+    },
+    "overview": [
+      "Send a track and get clear, honest notes on the arrangement, the mixdown and the sound design, with a video walkthrough of the fixes that matter most.",
+      "The time you pick is a short call to go through the notes together, so nothing is left unclear."
+    ],
+    "included": [
+      "Written notes, point by point",
+      "A video walkthrough of the key fixes",
+      "A short call to go through them"
+    ],
+    "howItRuns": [
+      {
+        "at": "Before",
+        "title": "Send the track",
+        "text": "A bounce, plus the project if you want notes on it."
+      },
+      {
+        "at": "Notes",
+        "title": "Listen and write up",
+        "text": "Point-by-point notes and a video of the key fixes."
+      },
+      {
+        "at": "Call",
+        "title": "Go through them",
+        "text": "A short call at the time you pick, for any questions."
+      }
+    ],
+    "goodFor": [
+      "A finished track before you send it out",
+      "Knowing what to fix first",
+      "Feedback without scheduling a full session"
+    ],
+    "bring": [
+      "A high-quality bounce of the track",
+      "What you’re unsure about",
+      "Where you plan to release it"
+    ],
+    "facts": [
+      { "label": "Format", "value": "Written + video" },
+      { "label": "Where", "value": "Remote" },
+      { "label": "Advance", "value": "$ —" }
+    ]
+  },
+  {
+    "id": "mix-and-master",
+    "name": "Mix & Master",
+    "icon": "mix",
+    "summary": "Your finished track, mixed and mastered for release.",
+    "tagline": "Release-ready, by an engineer.",
+    "meta": "Per track",
+    "durationMinutes": 30,
+    "photos": {
+      "portrait": "/img/sessions/mix-portrait.jpeg",
+      "wide": "/img/sessions/mix-wide.jpeg",
+      "alt": "The stage beside Candy Heist’s booth, a microphone stand in gold light"
+    },
+    "overview": [
+      "Your finished track, mixed and mastered for release by a working sound engineer.",
+      "Send the stems and a reference. The mix comes back for a round of notes before the master is delivered, ready for streaming and the club."
+    ],
+    "included": [
+      "Mix and master of one track",
+      "One round of revisions",
+      "Masters for streaming and club play"
+    ],
+    "howItRuns": [
+      {
+        "at": "Call",
+        "title": "Kick-off",
+        "text": "A short call at the time you pick, to hear what you’re after."
+      },
+      {
+        "at": "Mix",
+        "title": "First mix",
+        "text": "Built from your stems and reference."
+      },
+      {
+        "at": "Notes",
+        "title": "Revisions",
+        "text": "One round of your notes, then the final mix."
+      },
+      {
+        "at": "Master",
+        "title": "Delivery",
+        "text": "Masters for streaming and for the club."
+      }
+    ],
+    "goodFor": [
+      "A finished track headed for release",
+      "Producers who want their mix done by an engineer",
+      "Getting a track club-ready"
+    ],
+    "bring": [
+      "Stems, exported from the start of the track",
+      "A reference track",
+      "Your release date, if there is one"
+    ],
+    "facts": [
+      { "label": "Length", "value": "Per track" },
+      { "label": "Where", "value": "Remote" },
+      { "label": "Advance", "value": "$ —" }
+    ]
+  }
+]

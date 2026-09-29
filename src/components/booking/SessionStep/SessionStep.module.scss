@@ -1,0 +1,365 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+@use '../booking' as b;
+
+.step {
+  @include b.column;
+
+  padding-top: 4.8rem;
+  padding-bottom: 12rem;
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+// Mobile: label, a swipeable row of sessions, the details, then the action
+// stuck to the bottom of the screen. Desktop: a sticky rail on the left.
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.4rem;
+
+  @media #{t.$query-desktop} {
+    grid-template-columns: 38.8rem minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    gap: 2.4rem 7.2rem;
+  }
+}
+
+.railLabel {
+  @include b.mono(1rem, 0.4em);
+
+  color: var(--color-concrete-light);
+
+  @media #{t.$query-desktop} {
+    grid-column: 1;
+  }
+}
+
+.rail {
+  display: contents;
+
+  @media #{t.$query-desktop} {
+    position: sticky;
+    top: 3.2rem;
+    display: flex;
+    flex-direction: column;
+    grid-row: 2;
+    grid-column: 1;
+    gap: 3.2rem;
+    align-self: start;
+  }
+}
+
+.options {
+  display: flex;
+  gap: 1.2rem;
+  overflow-x: auto;
+  margin-inline: calc(-1 * clamp(2.4rem, 6.67vw, 9.6rem));
+  padding-inline: clamp(2.4rem, 6.67vw, 9.6rem);
+  scroll-padding-inline: clamp(2.4rem, 6.67vw, 9.6rem);
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media #{t.$query-desktop} {
+    flex-direction: column;
+    overflow: visible;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+}
+
+.option {
+  position: relative;
+  display: flex;
+  flex: 0 0 min(28rem, 78vw);
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2.6rem 2.8rem 2.8rem;
+  border: 1px solid rgb(182 158 124 / 14%);
+  background-color: var(--color-obsidian-raised);
+  cursor: pointer;
+  scroll-snap-align: start;
+  transition:
+    border-color 0.5s t.$ease-signature,
+    background-color 0.5s t.$ease-signature;
+
+  &:has(:focus-visible) {
+    outline: 1px solid var(--color-gilt);
+    outline-offset: 4px;
+  }
+
+  &[data-selected='true'] {
+    border-color: rgb(210 169 97 / 85%);
+    background-color: rgb(210 169 97 / 5%);
+  }
+
+  @media #{t.$query-hover} {
+    &:not([data-selected='true']):hover {
+      border-color: rgb(182 158 124 / 32%);
+    }
+  }
+
+  @media #{t.$query-desktop} {
+    flex-basis: auto;
+  }
+}
+
+.optionTop {
+  display: flex;
+  gap: 1.6rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.optionName {
+  @include b.caps(1.9rem);
+
+  line-height: 1.15;
+}
+
+.radio {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 1px solid rgb(182 158 124 / 30%);
+  border-radius: 50%;
+  transition: border-color 0.4s t.$ease-signature;
+
+  .option[data-selected='true'] & {
+    border-color: var(--color-gilt);
+  }
+}
+
+.radioDot {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background-color: var(--color-gilt);
+  scale: 0;
+  transition: scale 0.5s t.$ease-signature;
+
+  .option[data-selected='true'] & {
+    scale: 1;
+  }
+}
+
+.optionMeta {
+  @include b.mono(1rem, 0.4em);
+
+  line-height: 1.4;
+  color: var(--color-gilt);
+}
+
+.optionTagline {
+  @include b.body(1.4rem, rgb(182 158 124 / 85%));
+
+  line-height: 1.5;
+}
+
+.action {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: center;
+  order: 10;
+  margin-inline: calc(-1 * clamp(2.4rem, 6.67vw, 9.6rem));
+  padding: 2rem clamp(2.4rem, 6.67vw, 9.6rem);
+  border-top: 1px solid rgb(182 158 124 / 12%);
+  background-color: rgb(12 12 12 / 92%);
+  backdrop-filter: blur(12px);
+
+  @media #{t.$query-desktop} {
+    position: static;
+    order: 0;
+    margin-inline: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    backdrop-filter: none;
+  }
+}
+
+.hint {
+  @include b.mono(1rem, 0.4em);
+
+  color: var(--color-concrete-light);
+}
+
+// ---- The details column
+
+.detailSlot {
+  min-width: 0;
+
+  @media #{t.$query-desktop} {
+    grid-row: 1 / span 2;
+    grid-column: 2;
+  }
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.photo {
+  position: relative;
+  align-self: stretch;
+  aspect-ratio: 788 / 260;
+  margin-bottom: 2.4rem;
+}
+
+.photoImage {
+  object-fit: cover;
+}
+
+.meta {
+  @include b.mono(1rem, 0.4em);
+
+  color: var(--color-gilt);
+}
+
+.title {
+  @include b.caps(clamp(2.8rem, 1.6rem + 2vw, 4rem));
+
+  margin-top: 2rem;
+  line-height: 1.05;
+}
+
+.lede {
+  @include b.body(1.7rem, rgb(221 207 178 / 85%));
+
+  max-width: 72rem;
+  margin-top: 2.4rem;
+}
+
+.paragraph {
+  @include b.body(1.6rem);
+
+  max-width: 72rem;
+  margin-top: 1.6rem;
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.4rem 4.8rem;
+  align-self: stretch;
+  margin-top: 4rem;
+  padding-block: 2.4rem;
+  border-block: 1px solid rgb(182 158 124 / 12%);
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.factValue {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--color-cream);
+}
+
+.block {
+  align-self: stretch;
+  margin-top: 4.8rem;
+}
+
+.blockLabel {
+  @include b.mono(1rem, 0.4em);
+
+  color: var(--color-concrete-light);
+}
+
+.bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-top: 1.8rem;
+  list-style: none;
+}
+
+.bullet {
+  @include b.body(1.5rem);
+
+  display: flex;
+  gap: 1.2rem;
+  align-items: baseline;
+}
+
+.bulletSigil {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-gilt);
+  translate: 0 0.1rem;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1.8rem;
+  list-style: none;
+}
+
+.timelineStep {
+  display: grid;
+  grid-template-columns: 8rem minmax(0, 1fr);
+  gap: 1.6rem;
+  padding-block: 1.8rem;
+  border-top: 1px solid rgb(182 158 124 / 12%);
+
+  &:last-child {
+    border-bottom: 1px solid rgb(182 158 124 / 12%);
+  }
+}
+
+.timelineAt {
+  @include b.mono(1.1rem, 0.2em);
+
+  padding-top: 0.3rem;
+  color: var(--color-gilt);
+}
+
+.timelineBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.timelineTitle {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: 1.7rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--color-cream);
+}
+
+.timelineText {
+  @include b.body(1.45rem);
+}
+
+.pair {
+  display: grid;
+  gap: 0 4.8rem;
+  align-self: stretch;
+
+  @media #{t.$query-tablet} {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

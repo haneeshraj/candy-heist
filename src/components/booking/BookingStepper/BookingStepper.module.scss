@@ -1,0 +1,143 @@
+@use '../../../styles/tokens' as t;
+@use '../booking' as b;
+
+.stepper {
+  @include b.column;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  padding: 4.8rem 0 2.8rem;
+  border-bottom: 1px solid rgb(182 158 124 / 12%);
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  flex: 1;
+  align-items: center;
+
+  &:last-child {
+    flex: none;
+  }
+}
+
+.step {
+  display: flex;
+  flex: none;
+  gap: 1.2rem;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: none;
+
+  &:is(button) {
+    cursor: pointer;
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--color-gilt);
+    outline-offset: 6px;
+  }
+}
+
+.marker {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 1px solid rgb(182 158 124 / 25%);
+  border-radius: 50%;
+  transition:
+    background-color 0.5s t.$ease-signature,
+    border-color 0.5s t.$ease-signature;
+
+  .item[data-state='active'] & {
+    border-color: var(--color-gilt);
+  }
+
+  .item[data-state='done'] & {
+    border-color: var(--color-gilt);
+    background-color: var(--color-gilt);
+  }
+}
+
+.glyph {
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-obsidian);
+}
+
+.dot {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background-color: var(--color-gilt);
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: step-dot 0.6s t.$ease-signature both;
+  }
+}
+
+@keyframes step-dot {
+  from {
+    scale: 0;
+  }
+}
+
+.label {
+  @include b.mono(1rem, 0.4em);
+
+  color: var(--color-concrete-light);
+  white-space: nowrap;
+  transition: color 0.5s t.$ease-signature;
+
+  .item[data-state='active'] & {
+    color: var(--color-cream);
+  }
+
+  .item[data-state='done'] & {
+    color: var(--color-gold);
+  }
+
+  @media #{t.$query-hover} {
+    button:hover > & {
+      color: var(--color-gilt);
+    }
+  }
+
+  // A phone keeps the markers and names only the current step.
+  @media not #{t.$query-tablet} {
+    .item:not([data-state='active']) & {
+      display: none;
+    }
+  }
+}
+
+.line {
+  position: relative;
+  flex: 1;
+  height: 1px;
+  margin-inline: 2rem;
+  background-color: rgb(182 158 124 / 16%);
+
+  @media not #{t.$query-tablet} {
+    margin-inline: 1rem;
+  }
+}
+
+.lineFill {
+  position: absolute;
+  inset: 0;
+  background-color: rgb(210 169 97 / 65%);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.9s t.$ease-signature;
+
+  .item[data-state='done'] & {
+    transform: scaleX(1);
+  }
+}
