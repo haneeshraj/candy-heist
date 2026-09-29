@@ -1,0 +1,72 @@
+{
+  "label": "Contact",
+  "headline": { "lead": "Let’s work on something", "statement": "Together." },
+  "intro": "A booking, a collaboration or just a question: fill in what you can and we’ll reply by email.",
+  "form": {
+    "required": "Required",
+    "fields": {
+      "name": { "label": "Name", "placeholder": "Your name" },
+      "email": { "label": "Email", "placeholder": "you@example.com" },
+      "subject": {
+        "label": "Subject",
+        "placeholder": "What’s it about, in a line"
+      },
+      "message": {
+        "label": "Message",
+        "placeholder": "Tell us everything: what, when, where, and anything we should hear first."
+      },
+      "phone": { "label": "Phone", "placeholder": "+1 (000) 000-0000" },
+      "organisation": {
+        "label": "Organisation",
+        "placeholder": "A label, a venue, a brand"
+      },
+      "date": {
+        "label": "Date",
+        "placeholder": "An event, a release, a deadline"
+      },
+      "location": { "label": "Location", "placeholder": "City or venue" },
+      "budget": { "label": "Budget", "placeholder": "A range is fine" },
+      "links": {
+        "label": "Links",
+        "placeholder": "A track, an event page, a press kit"
+      }
+    },
+    "details": "Additional details",
+    "privacy": "Your details are only used to reply to you.",
+    "send": "Send message",
+    "sending": "Sending",
+    "errors": {
+      "name": "Add your name.",
+      "email": "Add an email address we can reach you at.",
+      "emailInvalid": "That email address doesn’t look right.",
+      "subject": "Add a subject: one line is enough.",
+      "message": "Tell us a little about it.",
+      "phone": "That phone number doesn’t look right.",
+      "tooLong": "Keep it under {max} characters."
+    },
+    "summary": {
+      "one": "One thing needs a look before this can go.",
+      "other": "{count} things need a look before this can go.",
+      "counts": [
+        "One",
+        "Two",
+        "Three",
+        "Four",
+        "Five",
+        "Six",
+        "Seven",
+        "Eight",
+        "Nine",
+        "Ten"
+      ]
+    }
+  },
+  "sent": {
+    "label": "Message sent",
+    "lead": "Thank you, {name}.",
+    "statement": "Signal received.",
+    "body": "We’ll reply to {email}. If it’s about a date that’s close, call {phone}.",
+    "again": "Send another",
+    "home": { "label": "Back to home", "href": "/" }
+  }
+}

@@ -1,0 +1,24 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+.page {
+  container-type: inline-size;
+  min-height: 100svh;
+  background-color: var(--color-obsidian);
+}
+
+// The form's column: 784 wide, 80 under the horizon on desktop; the phone's
+// 24 gutters.
+.body {
+  @include m.design-scale;
+
+  width: 100%;
+  max-width: m.dp(390);
+  margin-inline: auto;
+  padding: m.dp(48) m.dp(24) m.dp(120);
+
+  @media #{t.$query-desktop} {
+    max-width: calc(#{m.dp(784)} + 2 * #{m.dp(96)});
+    padding: m.dp(80) m.dp(96) m.dp(160);
+  }
+}

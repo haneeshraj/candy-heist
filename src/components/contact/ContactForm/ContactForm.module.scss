@@ -1,0 +1,216 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// The form column from the Figma "Contact page form" frames: 784 wide and
+// centred under the horizon on desktop, one column on the phone. The fields
+// themselves are the shared Field (Figma "Booking / Field").
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+}
+
+.required {
+  align-self: flex-end;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-concrete-light);
+
+  > span {
+    color: var(--color-gilt);
+  }
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
+
+  @media #{t.$query-desktop} {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+// ---- Additional details: one bar that opens and closes the rest
+
+.detailsBlock {
+  margin-top: 1.2rem;
+}
+
+.toggle {
+  display: flex;
+  gap: 1.6rem;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 6.4rem;
+  padding: 0 1.8rem 0 2rem;
+  border: 1px solid rgb(182 158 124 / 18%);
+  background-color: var(--color-obsidian-raised);
+  font: inherit;
+  color: var(--color-cream);
+  cursor: pointer;
+  transition: border-color 0.35s t.$ease-signature;
+
+  &[aria-expanded='true'] {
+    border-color: rgb(182 158 124 / 30%);
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--color-gilt);
+    outline-offset: 4px;
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      border-color: rgb(182 158 124 / 36%);
+    }
+  }
+}
+
+.toggleLabel {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1.3rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  line-height: 1;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+// A ring holding + (closed) or − (open): the upright folds away.
+.sign {
+  position: relative;
+  flex: none;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid rgb(210 169 97 / 60%);
+  border-radius: 50%;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1rem;
+    height: 1px;
+    background-color: var(--color-gilt);
+    translate: -50% -50%;
+  }
+
+  &::after {
+    rotate: 90deg;
+    transition:
+      rotate 0.45s t.$ease-signature,
+      opacity 0.3s t.$ease-signature;
+  }
+
+  .toggle[aria-expanded='true'] &::after {
+    rotate: 0deg;
+    opacity: 0;
+  }
+}
+
+// Height from nothing to the fields' own, then the fields fade down in.
+.details {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.6s t.$ease-signature;
+
+  &[data-open='true'] {
+    grid-template-rows: 1fr;
+  }
+}
+
+.detailsClip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.detailsFields {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-top: 2.4rem;
+  opacity: 0;
+  translate: 0 -1.2rem;
+  transition:
+    opacity 0.35s t.$ease-signature,
+    translate 0.5s t.$ease-signature;
+
+  .details[data-open='true'] & {
+    opacity: 1;
+    translate: 0 0;
+    transition-delay: 0.12s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .details,
+  .detailsFields,
+  .sign::after {
+    transition: none;
+  }
+}
+
+// ---- The note (or what needs a look), then send, bottom right
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+  margin-top: 1.6rem;
+
+  @media #{t.$query-desktop} {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.note,
+.summary {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: 1.4rem;
+  line-height: 1.4;
+}
+
+.note {
+  color: var(--color-concrete-light);
+}
+
+// Marked like a field's error: a glowing crimson dot, lighter crimson words.
+.summary {
+  display: flex;
+  gap: 0.8rem;
+  align-items: baseline;
+  color: var(--color-crimson-light);
+
+  &::before {
+    content: '';
+    flex: none;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background-color: var(--color-crimson-glow);
+    box-shadow: 0 0 0.6rem 0 rgb(196 69 58 / 90%);
+    translate: 0 -0.1rem;
+  }
+}
+
+.send {
+  display: inline-flex;
+  flex: none;
+  align-self: flex-end;
+
+  @media #{t.$query-desktop} {
+    align-self: auto;
+  }
+}
