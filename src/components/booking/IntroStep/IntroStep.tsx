@@ -1,8 +1,6 @@
 'use client';
 
-import { useLenis } from 'lenis/react';
-import { useId, useRef, type MouseEvent } from 'react';
-import { ClipRevealText } from '@/components/common/ClipRevealText';
+import { useId, useRef } from 'react';
 import { ScrambleText } from '@/components/common/ScrambleText';
 import { SigilChip } from '@/components/common/SigilChip';
 import { VideoPlayer } from '@/components/common/VideoPlayer';
@@ -27,23 +25,12 @@ export default function IntroStep({
   onNext
 }: IntroStepProps) {
   const rootRef = useRef<HTMLElement | null>(null);
-  const chooseRef = useRef<HTMLDivElement | null>(null);
   const groupName = useId();
-  const chooseId = useId();
-  const lenis = useLenis();
   useEntrance(rootRef);
   useScrollReveal(rootRef);
 
   const { intro, choose } = content;
   const selected = services.find((service) => service.id === selectedId);
-
-  function jumpToChoose(event: MouseEvent<HTMLAnchorElement>) {
-    const target = chooseRef.current;
-    if (!target) return;
-    event.preventDefault();
-    if (lenis) lenis.scrollTo(target, { offset: -48 });
-    else target.scrollIntoView({ behavior: 'smooth' });
-  }
 
   return (
     <section
@@ -99,21 +86,6 @@ export default function IntroStep({
               startDelay={0.5}
               staggerDelay={0.02}
             />
-            <a
-              className={styles.jump}
-              href={`#${chooseId}`}
-              onClick={jumpToChoose}
-            >
-              <span className={styles.srOnly}>{intro.jump}</span>
-              <span aria-hidden="true">
-                <ClipRevealText
-                  text={`${intro.jump} ↓`}
-                  trigger="inView"
-                  startDelay={0.9}
-                  wipeColor="var(--color-gilt)"
-                />
-              </span>
-            </a>
           </div>
         </div>
 
@@ -123,7 +95,7 @@ export default function IntroStep({
           <span className={styles.dividerLine} />
         </div>
 
-        <div ref={chooseRef} id={chooseId} className={styles.choose}>
+        <div className={styles.choose}>
           <StepHeading
             label={choose.label}
             heading={choose.heading}

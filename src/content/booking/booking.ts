@@ -35,8 +35,7 @@ export const bookingContentSchema = z.object({
     }),
     lead: text,
     statement: text,
-    body: text,
-    jump: text
+    body: text
   }),
   choose: z.object({
     label: text,

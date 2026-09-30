@@ -78,24 +78,6 @@
   @include b.body(1.8rem, rgb(221 207 178 / 85%));
 }
 
-.jump {
-  @include b.mono(1rem, 0.4em);
-
-  color: var(--color-gilt);
-  text-decoration: none;
-
-  &:focus-visible {
-    outline: 1px solid var(--color-gilt);
-    outline-offset: 6px;
-  }
-
-  @media #{t.$query-hover} {
-    &:hover {
-      color: var(--color-gilt-bright);
-    }
-  }
-}
-
 .divider {
   display: flex;
   gap: 1.6rem;
