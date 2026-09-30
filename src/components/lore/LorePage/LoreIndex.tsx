@@ -6,7 +6,7 @@ import { useId } from 'react';
 import { ClipRevealText } from '@/components/common/ClipRevealText';
 import { SigilChip } from '@/components/common/SigilChip';
 import { WordReveal } from '@/components/common/WordReveal';
-import { ArrowIcon } from '@/components/icons';
+import { ArrowIcon, SigilIcon } from '@/components/icons';
 import {
   chapterHref,
   type LoreChapterSummary,
@@ -35,7 +35,6 @@ export default function LoreIndex({
 }: LoreIndexProps) {
   const headingId = useId();
   const chapter = chapters[selected];
-  const statement = intro.statement.split('\n');
 
   return (
     <section
@@ -48,50 +47,48 @@ export default function LoreIndex({
           <h2 id={headingId} className={styles.srOnly}>
             {copy.label}
           </h2>
-          <div className={styles.indexHead} aria-hidden="true">
-            <p className={styles.indexLabel}>{intro.label}</p>
-            <p className={styles.indexLead}>{intro.lead}</p>
-            <p className={styles.indexStatement}>
-              {statement.map((line) => (
-                <span key={line}>{line}</span>
-              ))}
+          {/* Only the chapter in view: the arrival has said the rest. */}
+          <div className={styles.aside}>
+            <p className={styles.indexLabel} aria-hidden="true">
+              <span className={styles.sigil}>
+                <SigilIcon />
+              </span>
+              {intro.label}
             </p>
+            {/* Keyed, so each preview writes itself in afresh. */}
+            <div
+              key={chapter.slug}
+              className={styles.preview}
+              style={
+                {
+                  '--preview-size': titleSize(chapter.title, 360, 64)
+                } as CSSProperties
+              }
+            >
+              <p className={styles.previewNumeral}>
+                {copy.chapter} {chapter.numeral}
+              </p>
+              <p className={styles.previewTitle}>
+                <ClipRevealText text={chapter.title} trigger="mount" />
+              </p>
+              <WordReveal
+                as="p"
+                className={styles.previewLine}
+                text={chapter.line}
+                trigger="mount"
+                startDelay={0.2}
+                staggerDelay={0.04}
+              />
+              <span className={styles.previewCta}>
+                <SigilChip
+                  href={chapterHref(chapter.slug)}
+                  icon={<ArrowIcon />}
+                >
+                  {copy.read}
+                </SigilChip>
+              </span>
+            </div>
           </div>
-
-          {/* Keyed, so each preview writes itself in afresh. */}
-          <div
-            key={chapter.slug}
-            className={styles.preview}
-            style={
-              {
-                '--preview-size': titleSize(chapter.title, 360, 64)
-              } as CSSProperties
-            }
-          >
-            <p className={styles.previewNumeral}>
-              {copy.chapter} {chapter.numeral}
-            </p>
-            <p className={styles.previewTitle}>
-              <ClipRevealText text={chapter.title} trigger="mount" />
-            </p>
-            <WordReveal
-              as="p"
-              className={styles.previewLine}
-              text={chapter.line}
-              trigger="mount"
-              startDelay={0.2}
-              staggerDelay={0.04}
-            />
-            <span className={styles.previewCta}>
-              <SigilChip href={chapterHref(chapter.slug)} icon={<ArrowIcon />}>
-                {copy.read}
-              </SigilChip>
-            </span>
-          </div>
-
-          <p className={styles.count}>
-            {copy.count.replace('{count}', String(chapters.length))}
-          </p>
 
           {/* The stacked page's list; on desktop, the orbit is it. */}
           <ol className={styles.list}>

@@ -10,8 +10,7 @@
     "label": "Chapters",
     "chapter": "Chapter",
     "read": "Read chapter",
-    "unwritten": "Still being written",
-    "count": "{count} chapters · the next is still being written"
+    "unwritten": "Still being written"
   },
   "menu": {
     "open": "Chapters",

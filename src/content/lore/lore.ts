@@ -76,9 +76,7 @@ export const loreCopySchema = z.object({
     label: text,
     chapter: text,
     read: text,
-    unwritten: text,
-    /** `{count}` becomes the number of chapters. */
-    count: text
+    unwritten: text
   }),
   menu: z.object({
     open: text,

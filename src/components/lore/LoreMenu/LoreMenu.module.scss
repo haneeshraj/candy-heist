@@ -55,6 +55,21 @@
   color: var(--color-cream);
 }
 
+.orbitMark {
+  position: relative;
+  display: block;
+}
+
+// Gold, like the navbar's: the orbit's current node is the one crimson.
+.vortex {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 56%;
+  color: var(--color-gilt);
+  translate: -50% -50%;
+}
+
 .mini {
   display: block;
   width: 5.6rem;

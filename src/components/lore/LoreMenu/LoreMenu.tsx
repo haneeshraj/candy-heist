@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useId, useRef, useState } from 'react';
+import { VortexMark } from '@/components/common/VortexMark';
 import {
   chapterHref,
   type LoreChapterSummary,
@@ -95,7 +96,11 @@ export default function LoreMenu({ copy, chapters, current }: LoreMenuProps) {
           <span className={styles.position} aria-hidden="true">
             {position}
           </span>
-          <MiniOrbit count={count} current={current} />
+          {/* The orbit in miniature, round the Candy Heist vortex. */}
+          <span className={styles.orbitMark}>
+            <MiniOrbit count={count} current={current} />
+            <VortexMark className={styles.vortex} />
+          </span>
           <span className={styles.srOnly}>{open ? copy.close : copy.open}</span>
         </button>
 

@@ -23,10 +23,10 @@ const POSE = {
       x: 0,
       y: 0,
       xPercent: -77.7778,
-      yPercent: -48.1481,
+      yPercent: -24.0741,
       scale: 1.1111
     },
-    orbit: { x: 0, y: 0, xPercent: -38.8889, yPercent: -24.0741, scale: 1.1111 }
+    orbit: { x: 0, y: 0, xPercent: -38.8889, yPercent: -12.037, scale: 1.1111 }
   },
   index: {
     planet: { x: 0, y: 0, xPercent: 0, yPercent: 0, scale: 1 },

@@ -3,7 +3,7 @@
 
 // Figma "LORE PAGE — A · Orrery", on the 1440 × 900 canvas in design
 // pixels. On the index the stage is laid out in its pose (A1: the planet
-// 270 across at 930, 470; the orbit 540 across round it) and
+// 270 across at 930, 405; the orbit 540 across round it) and
 // useLoreMotion brings it there from the arrival's. On a chapter
 // (data-layout="reader") the planet holds the left, 340 across at 350,
 // 450, and the text runs down the right. Desktop only: phones and reduced
@@ -57,11 +57,11 @@
 
 .planet {
   position: absolute;
-  top: 37.2222%;
+  top: 30%;
   left: 55.2083%;
   width: 18.75%;
   aspect-ratio: 1;
-  transform: translate(-77.7778%, -48.1481%) scale(1.1111);
+  transform: translate(-77.7778%, -24.0741%) scale(1.1111);
 
   // Hidden until useChapterMotion brings it in.
   [data-layout='reader'] & {
@@ -128,11 +128,11 @@
 
 .orbit {
   position: absolute;
-  top: 22.2222%;
+  top: 15%;
   left: 45.8333%;
   width: 37.5%;
   aspect-ratio: 1;
-  transform: translate(-38.8889%, -24.0741%) scale(1.1111);
+  transform: translate(-38.8889%, -12.037%) scale(1.1111);
 
   [data-layout='reader'] & {
     top: 23.3333%;

@@ -226,9 +226,10 @@
   margin-top: m.dp(32);
   color: var(--color-gold);
 
+  // Clear of the navbar pill, however short the screen.
   @include journey {
     position: absolute;
-    top: m.dp(824);
+    top: m.dp(764);
     right: 0;
     left: 0;
     margin: 0;
@@ -267,69 +268,32 @@
   }
 }
 
-.indexHead {
+// The chapter previewed, on the left, level with the orbit (at 405).
+// Its top holds still, so a longer title grows downwards.
+.aside {
   display: none;
-
-  @include journey {
-    position: absolute;
-    top: m.dp(96);
-    left: m.dp(96);
-    display: block;
-  }
 }
 
 .indexLabel {
   @include mono(12, 0.44em);
 
-  color: var(--color-gold);
-}
-
-.indexLead {
-  margin-top: m.dp(16);
-  font-family: var(--font-cormorant-garamond), serif;
-  font-size: m.dp(40);
-  font-style: italic;
-  line-height: 1.1;
-  color: var(--color-gold);
-}
-
-.indexStatement {
   display: flex;
-  flex-direction: column;
-  margin: m.dp(4) 0 0 m.dp(-3);
-  font-family: var(--font-archivo), sans-serif;
-  font-size: m.dp(48);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  line-height: 1;
-  text-transform: uppercase;
-  color: var(--color-cream);
+  gap: m.dp(10);
+  align-items: center;
+  color: var(--color-gold);
 }
 
-.preview,
-.count {
-  display: none;
+.preview {
+  margin-top: m.dp(40);
 }
 
 @include journey {
-  // Anchored at its foot (the chip where Figma has it), so a long title
-  // grows upwards, clear of the orbit's labels.
-  .preview {
+  .aside {
     position: absolute;
-    bottom: m.dp(92);
+    top: m.dp(255);
     left: m.dp(96);
     display: block;
     width: m.dp(360);
-  }
-
-  .count {
-    @include mono(9);
-
-    position: absolute;
-    top: m.dp(836);
-    right: m.dp(96);
-    display: block;
-    color: var(--color-concrete-light);
   }
 }
 
