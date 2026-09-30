@@ -2,141 +2,905 @@
   {
     "slug": "4x4",
     "title": "4x4",
+    "kind": "ep",
     "artist": "Candy Heist",
     "cover": {
       "src": "/img/discography/covers/4x4.webp",
       "alt": "4x4 cover: a grid of gold sigils on black"
     },
-    "tape": "/img/discography/tapes/4x4.webp"
+    "tape": "/img/discography/tapes/4x4.webp",
+    "tracks": [
+      {
+        "title": "Menace"
+      },
+      {
+        "title": "Title to come"
+      },
+      {
+        "title": "Title to come"
+      },
+      {
+        "title": "Title to come"
+      }
+    ],
+    "distribution": [
+      {
+        "platform": "spotify",
+        "streamUrl": "https://open.spotify.com/search/Candy%20Heist%204x4"
+      },
+      {
+        "platform": "apple-music",
+        "streamUrl": "https://music.apple.com/search?term=Candy%20Heist%204x4"
+      },
+      {
+        "platform": "youtube-music",
+        "streamUrl": "https://music.youtube.com/search?q=Candy%20Heist%204x4"
+      },
+      {
+        "platform": "soundcloud",
+        "streamUrl": "https://soundcloud.com/search?q=Candy%20Heist%204x4"
+      }
+    ]
   },
   {
     "slug": "portal",
     "title": "Portal",
+    "kind": "single",
     "artist": "Candy Heist",
+    "date": "2026-10-23",
+    "label": "Self-released",
     "cover": {
       "src": "/img/discography/covers/portal.webp",
       "alt": "Brass rings around a sigil on alabaster stone"
     },
-    "tape": "/img/discography/tapes/portal.webp"
+    "tape": "/img/discography/tapes/portal.webp",
+    "credits": [
+      {
+        "role": "Produced by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Mixed by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Mastered by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Artwork by",
+        "names": ["Candy Heist"]
+      }
+    ],
+    "tracks": [
+      {
+        "title": "Portal",
+        "duration": "3:40"
+      }
+    ],
+    "distribution": [
+      {
+        "platform": "spotify",
+        "streamUrl": "https://open.spotify.com/search/Candy%20Heist%20Portal",
+        "presaveUrl": "https://distrokid.com/hyperfollow/candyheist/portal"
+      },
+      {
+        "platform": "apple-music",
+        "streamUrl": "https://music.apple.com/search?term=Candy%20Heist%20Portal",
+        "presaveUrl": "https://distrokid.com/hyperfollow/candyheist/portal"
+      },
+      {
+        "platform": "youtube-music",
+        "streamUrl": "https://music.youtube.com/search?q=Candy%20Heist%20Portal"
+      },
+      {
+        "platform": "soundcloud",
+        "streamUrl": "https://soundcloud.com/search?q=Candy%20Heist%20Portal"
+      },
+      {
+        "platform": "deezer",
+        "streamUrl": "https://www.deezer.com/search/Candy%20Heist%20Portal",
+        "presaveUrl": "https://distrokid.com/hyperfollow/candyheist/portal"
+      },
+      {
+        "platform": "tidal",
+        "streamUrl": "https://listen.tidal.com/search?q=Candy%20Heist%20Portal",
+        "presaveUrl": "https://distrokid.com/hyperfollow/candyheist/portal"
+      }
+    ]
   },
   {
     "slug": "the-halls",
     "title": "The Halls",
+    "kind": "album",
     "artist": "Candy Heist",
+    "date": "2022-09-16",
+    "label": "Self-released",
     "cover": {
       "src": "/img/discography/covers/halls.webp",
       "alt": "Endless halls converging on a light"
     },
-    "tape": "/img/discography/tapes/halls.webp"
+    "tape": "/img/discography/tapes/halls.webp",
+    "credits": [
+      {
+        "role": "Produced by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Mixed by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Mastered by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Artwork by",
+        "names": ["Candy Heist"]
+      }
+    ],
+    "tracks": [
+      {
+        "title": "The Halls",
+        "duration": "4:30"
+      },
+      {
+        "title": "Nave",
+        "duration": "3:44"
+      },
+      {
+        "title": "Colonnade",
+        "duration": "4:08"
+      },
+      {
+        "title": "Vesper",
+        "duration": "5:16"
+      },
+      {
+        "title": "Reliquary",
+        "duration": "3:59"
+      },
+      {
+        "title": "Ember Hymn",
+        "duration": "4:41"
+      },
+      {
+        "title": "Choir Loft",
+        "duration": "3:37"
+      },
+      {
+        "title": "Cloister",
+        "duration": "4:55"
+      },
+      {
+        "title": "Lantern",
+        "duration": "3:48"
+      },
+      {
+        "title": "Last Light",
+        "duration": "6:02"
+      }
+    ],
+    "distribution": [
+      {
+        "platform": "spotify",
+        "streamUrl": "https://open.spotify.com/search/Candy%20Heist%20The%20Halls"
+      },
+      {
+        "platform": "apple-music",
+        "streamUrl": "https://music.apple.com/search?term=Candy%20Heist%20The%20Halls"
+      },
+      {
+        "platform": "youtube-music",
+        "streamUrl": "https://music.youtube.com/search?q=Candy%20Heist%20The%20Halls"
+      },
+      {
+        "platform": "soundcloud",
+        "streamUrl": "https://soundcloud.com/search?q=Candy%20Heist%20The%20Halls"
+      },
+      {
+        "platform": "deezer",
+        "streamUrl": "https://www.deezer.com/search/Candy%20Heist%20The%20Halls"
+      },
+      {
+        "platform": "tidal",
+        "streamUrl": "https://listen.tidal.com/search?q=Candy%20Heist%20The%20Halls"
+      }
+    ]
   },
   {
     "slug": "vortex",
     "title": "Vortex",
+    "subtitle": "Candy Heist Remix",
+    "kind": "remix",
     "artist": "Candy Heist",
+    "date": "2024-06-14",
+    "label": "Self-released",
     "cover": {
       "src": "/img/discography/covers/vortex.webp",
       "alt": "A stage photo poured into the vortex mark"
     },
-    "tape": "/img/discography/tapes/vortex.webp"
+    "tape": "/img/discography/tapes/vortex.webp",
+    "credits": [
+      {
+        "role": "Original by",
+        "names": ["Guest Artist"]
+      },
+      {
+        "role": "Remixed by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Mastered by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Artwork by",
+        "names": ["Candy Heist"]
+      }
+    ],
+    "tracks": [
+      {
+        "title": "Vortex (Candy Heist Remix)",
+        "duration": "4:44"
+      }
+    ],
+    "distribution": [
+      {
+        "platform": "spotify",
+        "streamUrl": "https://open.spotify.com/search/Candy%20Heist%20Vortex"
+      },
+      {
+        "platform": "apple-music",
+        "streamUrl": "https://music.apple.com/search?term=Candy%20Heist%20Vortex"
+      },
+      {
+        "platform": "youtube-music",
+        "streamUrl": "https://music.youtube.com/search?q=Candy%20Heist%20Vortex"
+      },
+      {
+        "platform": "soundcloud",
+        "streamUrl": "https://soundcloud.com/search?q=Candy%20Heist%20Vortex"
+      },
+      {
+        "platform": "deezer",
+        "streamUrl": "https://www.deezer.com/search/Candy%20Heist%20Vortex"
+      },
+      {
+        "platform": "tidal",
+        "streamUrl": "https://listen.tidal.com/search?q=Candy%20Heist%20Vortex"
+      }
+    ]
   },
   {
     "slug": "monolith",
     "title": "Monolith",
+    "kind": "album",
     "artist": "Candy Heist",
+    "date": "2025-05-12",
+    "label": "Self-released",
     "cover": {
       "src": "/img/discography/covers/monolith.webp",
       "alt": "A ribbed gold arch in a concrete wall"
     },
-    "tape": "/img/discography/tapes/monolith.webp"
+    "canvas": {
+      "src": "/img/discography/canvas/monolith.mp4",
+      "poster": "/img/discography/canvas/monolith.webp"
+    },
+    "tape": "/img/discography/tapes/monolith.webp",
+    "credits": [
+      {
+        "role": "Produced by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Mixed by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Mastered by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Artwork by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Vocals by",
+        "names": ["Guest Artist"]
+      }
+    ],
+    "tracks": [
+      {
+        "title": "Monolith",
+        "duration": "4:12"
+      },
+      {
+        "title": "Gilt",
+        "duration": "3:48"
+      },
+      {
+        "title": "The Long Hall",
+        "duration": "5:02"
+      },
+      {
+        "title": "Remembrance",
+        "duration": "4:36",
+        "featuring": ["Guest Artist"]
+      },
+      {
+        "title": "Omun",
+        "duration": "6:10"
+      },
+      {
+        "title": "Ledger of Days",
+        "duration": "3:55"
+      },
+      {
+        "title": "Crimson Glass",
+        "duration": "4:21"
+      },
+      {
+        "title": "Still Tuning",
+        "duration": "5:40"
+      }
+    ],
+    "distribution": [
+      {
+        "platform": "spotify",
+        "streamUrl": "https://open.spotify.com/search/Candy%20Heist%20Monolith"
+      },
+      {
+        "platform": "apple-music",
+        "streamUrl": "https://music.apple.com/search?term=Candy%20Heist%20Monolith"
+      },
+      {
+        "platform": "youtube-music",
+        "streamUrl": "https://music.youtube.com/search?q=Candy%20Heist%20Monolith"
+      },
+      {
+        "platform": "soundcloud",
+        "streamUrl": "https://soundcloud.com/search?q=Candy%20Heist%20Monolith"
+      },
+      {
+        "platform": "deezer",
+        "streamUrl": "https://www.deezer.com/search/Candy%20Heist%20Monolith"
+      },
+      {
+        "platform": "tidal",
+        "streamUrl": "https://listen.tidal.com/search?q=Candy%20Heist%20Monolith"
+      }
+    ]
   },
   {
     "slug": "truths-collide",
     "title": "Truths Collide",
+    "kind": "ep",
     "artist": "G.Roy, Candy Heist",
     "cover": {
       "src": "/img/discography/covers/truths-collide.webp",
       "alt": "Truths Collide cover: twin stone monoliths with a beam of light between them"
     },
-    "tape": "/img/discography/tapes/truths-collide.webp"
+    "tape": "/img/discography/tapes/truths-collide.webp",
+    "tracks": [
+      {
+        "title": "Truths Collide"
+      },
+      {
+        "title": "Title to come"
+      },
+      {
+        "title": "Title to come"
+      }
+    ],
+    "distribution": [
+      {
+        "platform": "spotify",
+        "streamUrl": "https://open.spotify.com/search/Candy%20Heist%20Truths%20Collide"
+      },
+      {
+        "platform": "apple-music",
+        "streamUrl": "https://music.apple.com/search?term=Candy%20Heist%20Truths%20Collide"
+      },
+      {
+        "platform": "youtube-music",
+        "streamUrl": "https://music.youtube.com/search?q=Candy%20Heist%20Truths%20Collide"
+      }
+    ]
   },
   {
     "slug": "resonance",
     "title": "Resonance",
-    "artist": "Candy Heist",
+    "kind": "compilation",
+    "artist": "Various Artists",
+    "date": "2023-03-03",
+    "label": "Self-released",
     "cover": {
       "src": "/img/discography/covers/resonance.webp",
       "alt": "Gold ripples crossed by one frequency line"
     },
-    "tape": "/img/discography/tapes/resonance.webp"
+    "tape": "/img/discography/tapes/resonance.webp",
+    "credits": [
+      {
+        "role": "Compiled by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Artwork by",
+        "names": ["Candy Heist"]
+      }
+    ],
+    "tracks": [
+      {
+        "title": "Resonance",
+        "duration": "4:02",
+        "artist": "Candy Heist"
+      },
+      {
+        "title": "Brass Choir",
+        "duration": "3:31",
+        "artist": "Guest Artist"
+      },
+      {
+        "title": "Marble Floor",
+        "duration": "4:47",
+        "artist": "Guest Artist"
+      },
+      {
+        "title": "Signal",
+        "duration": "3:58",
+        "artist": "Guest Artist"
+      },
+      {
+        "title": "Afterglass",
+        "duration": "5:05",
+        "artist": "Guest Artist"
+      },
+      {
+        "title": "Held Note",
+        "duration": "4:20",
+        "artist": "Guest Artist"
+      }
+    ],
+    "distribution": [
+      {
+        "platform": "spotify",
+        "streamUrl": "https://open.spotify.com/search/Candy%20Heist%20Resonance"
+      },
+      {
+        "platform": "apple-music",
+        "streamUrl": "https://music.apple.com/search?term=Candy%20Heist%20Resonance"
+      },
+      {
+        "platform": "youtube-music",
+        "streamUrl": "https://music.youtube.com/search?q=Candy%20Heist%20Resonance"
+      },
+      {
+        "platform": "soundcloud",
+        "streamUrl": "https://soundcloud.com/search?q=Candy%20Heist%20Resonance"
+      },
+      {
+        "platform": "deezer",
+        "streamUrl": "https://www.deezer.com/search/Candy%20Heist%20Resonance"
+      },
+      {
+        "platform": "tidal",
+        "streamUrl": "https://listen.tidal.com/search?q=Candy%20Heist%20Resonance"
+      }
+    ]
   },
   {
     "slug": "alabaster",
     "title": "Alabaster",
+    "kind": "single",
     "artist": "Candy Heist",
+    "date": "2020-06-12",
+    "label": "Self-released",
     "cover": {
       "src": "/img/discography/covers/alabaster.webp",
       "alt": "The black vortex mark on veined alabaster"
     },
-    "tape": "/img/discography/tapes/alabaster.webp"
+    "tape": "/img/discography/tapes/alabaster.webp",
+    "credits": [
+      {
+        "role": "Produced by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Mixed by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Mastered by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Artwork by",
+        "names": ["Candy Heist"]
+      }
+    ],
+    "tracks": [
+      {
+        "title": "Alabaster",
+        "duration": "3:57"
+      }
+    ],
+    "distribution": [
+      {
+        "platform": "spotify",
+        "streamUrl": "https://open.spotify.com/search/Candy%20Heist%20Alabaster"
+      },
+      {
+        "platform": "apple-music",
+        "streamUrl": "https://music.apple.com/search?term=Candy%20Heist%20Alabaster"
+      },
+      {
+        "platform": "youtube-music",
+        "streamUrl": "https://music.youtube.com/search?q=Candy%20Heist%20Alabaster"
+      },
+      {
+        "platform": "soundcloud",
+        "streamUrl": "https://soundcloud.com/search?q=Candy%20Heist%20Alabaster"
+      },
+      {
+        "platform": "deezer",
+        "streamUrl": "https://www.deezer.com/search/Candy%20Heist%20Alabaster"
+      },
+      {
+        "platform": "tidal",
+        "streamUrl": "https://listen.tidal.com/search?q=Candy%20Heist%20Alabaster"
+      }
+    ]
   },
   {
     "slug": "self-portrait",
     "title": "Self Portrait",
+    "kind": "ep",
     "artist": "Candy Heist",
+    "date": "2021-08-20",
+    "label": "Self-released",
     "cover": {
       "src": "/img/discography/covers/portrait.webp",
       "alt": "A portrait of Candy Heist in cream and concrete"
     },
-    "tape": "/img/discography/tapes/portrait.webp"
+    "tape": "/img/discography/tapes/portrait.webp",
+    "credits": [
+      {
+        "role": "Produced by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Mixed by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Mastered by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Artwork by",
+        "names": ["Candy Heist"]
+      }
+    ],
+    "tracks": [
+      {
+        "title": "Self Portrait",
+        "duration": "4:05"
+      },
+      {
+        "title": "Cream & Concrete",
+        "duration": "3:50"
+      },
+      {
+        "title": "Sitter",
+        "duration": "4:22"
+      },
+      {
+        "title": "Likeness",
+        "duration": "3:41"
+      },
+      {
+        "title": "Frame",
+        "duration": "4:59"
+      }
+    ],
+    "distribution": [
+      {
+        "platform": "spotify",
+        "streamUrl": "https://open.spotify.com/search/Candy%20Heist%20Self%20Portrait"
+      },
+      {
+        "platform": "apple-music",
+        "streamUrl": "https://music.apple.com/search?term=Candy%20Heist%20Self%20Portrait"
+      },
+      {
+        "platform": "youtube-music",
+        "streamUrl": "https://music.youtube.com/search?q=Candy%20Heist%20Self%20Portrait"
+      },
+      {
+        "platform": "soundcloud",
+        "streamUrl": "https://soundcloud.com/search?q=Candy%20Heist%20Self%20Portrait"
+      },
+      {
+        "platform": "deezer",
+        "streamUrl": "https://www.deezer.com/search/Candy%20Heist%20Self%20Portrait"
+      },
+      {
+        "platform": "tidal",
+        "streamUrl": "https://listen.tidal.com/search?q=Candy%20Heist%20Self%20Portrait"
+      }
+    ]
   },
   {
     "slug": "over-the-moon",
     "title": "Over The Moon",
+    "kind": "single",
     "artist": "Candy Heist",
     "cover": {
       "src": "/img/discography/covers/over-the-moon.webp",
       "alt": "Over The Moon cover: a brass moon over a concrete horizon"
     },
-    "tape": "/img/discography/tapes/over-the-moon.webp"
+    "canvas": {
+      "src": "/img/discography/canvas/over-the-moon.mp4",
+      "poster": "/img/discography/canvas/over-the-moon.webp"
+    },
+    "tape": "/img/discography/tapes/over-the-moon.webp",
+    "tracks": [
+      {
+        "title": "Over The Moon"
+      }
+    ],
+    "distribution": [
+      {
+        "platform": "soundcloud",
+        "streamUrl": "https://soundcloud.com/search?q=Candy%20Heist%20Over%20The%20Moon"
+      },
+      {
+        "platform": "youtube",
+        "streamUrl": "https://www.youtube.com/results?search_query=Candy%20Heist%20Over%20The%20Moon"
+      }
+    ]
   },
   {
     "slug": "ledger",
     "title": "Ledger",
+    "subtitle": "Candy Heist Flip",
+    "kind": "bootleg",
     "artist": "Candy Heist",
+    "date": "2021-02-12",
     "cover": {
       "src": "/img/discography/covers/ledger.webp",
       "alt": "An archive record card, most of it redacted"
     },
-    "tape": "/img/discography/tapes/ledger.webp"
+    "tape": "/img/discography/tapes/ledger.webp",
+    "credits": [
+      {
+        "role": "Flipped by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Artwork by",
+        "names": ["Candy Heist"]
+      }
+    ],
+    "tracks": [
+      {
+        "title": "Ledger (Candy Heist Flip)",
+        "duration": "3:33"
+      }
+    ],
+    "distribution": [
+      {
+        "platform": "soundcloud",
+        "streamUrl": "https://soundcloud.com/search?q=Candy%20Heist%20Ledger"
+      },
+      {
+        "platform": "youtube",
+        "streamUrl": "https://www.youtube.com/results?search_query=Candy%20Heist%20Ledger"
+      }
+    ]
   },
   {
     "slug": "orbits",
     "title": "Orbits",
+    "subtitle": "Candy Heist Remix",
+    "kind": "remix",
     "artist": "Candy Heist",
+    "date": "2022-03-11",
+    "label": "Self-released",
     "cover": {
       "src": "/img/discography/covers/orbits.webp",
       "alt": "Tilted gold orbits around a brass core"
     },
-    "tape": "/img/discography/tapes/orbits.webp"
+    "tape": "/img/discography/tapes/orbits.webp",
+    "credits": [
+      {
+        "role": "Original by",
+        "names": ["Guest Artist"]
+      },
+      {
+        "role": "Remixed by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Artwork by",
+        "names": ["Candy Heist"]
+      }
+    ],
+    "tracks": [
+      {
+        "title": "Orbits (Candy Heist Remix)",
+        "duration": "5:12"
+      }
+    ],
+    "distribution": [
+      {
+        "platform": "spotify",
+        "streamUrl": "https://open.spotify.com/search/Candy%20Heist%20Orbits"
+      },
+      {
+        "platform": "apple-music",
+        "streamUrl": "https://music.apple.com/search?term=Candy%20Heist%20Orbits"
+      },
+      {
+        "platform": "youtube-music",
+        "streamUrl": "https://music.youtube.com/search?q=Candy%20Heist%20Orbits"
+      },
+      {
+        "platform": "soundcloud",
+        "streamUrl": "https://soundcloud.com/search?q=Candy%20Heist%20Orbits"
+      },
+      {
+        "platform": "deezer",
+        "streamUrl": "https://www.deezer.com/search/Candy%20Heist%20Orbits"
+      },
+      {
+        "platform": "tidal",
+        "streamUrl": "https://listen.tidal.com/search?q=Candy%20Heist%20Orbits"
+      }
+    ]
   },
   {
     "slug": "oculus",
     "title": "Oculus",
+    "kind": "single",
     "artist": "Candy Heist",
+    "date": "2019-09-06",
+    "label": "Self-released",
     "cover": {
       "src": "/img/discography/covers/oculus.webp",
       "alt": "A studio photo seen through a round opening in concrete"
     },
-    "tape": "/img/discography/tapes/oculus.webp"
+    "tape": "/img/discography/tapes/oculus.webp",
+    "credits": [
+      {
+        "role": "Produced by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Mixed by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Mastered by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Artwork by",
+        "names": ["Candy Heist"]
+      }
+    ],
+    "tracks": [
+      {
+        "title": "Oculus",
+        "duration": "4:14"
+      }
+    ],
+    "distribution": [
+      {
+        "platform": "spotify",
+        "streamUrl": "https://open.spotify.com/search/Candy%20Heist%20Oculus"
+      },
+      {
+        "platform": "apple-music",
+        "streamUrl": "https://music.apple.com/search?term=Candy%20Heist%20Oculus"
+      },
+      {
+        "platform": "youtube-music",
+        "streamUrl": "https://music.youtube.com/search?q=Candy%20Heist%20Oculus"
+      },
+      {
+        "platform": "soundcloud",
+        "streamUrl": "https://soundcloud.com/search?q=Candy%20Heist%20Oculus"
+      },
+      {
+        "platform": "deezer",
+        "streamUrl": "https://www.deezer.com/search/Candy%20Heist%20Oculus"
+      },
+      {
+        "platform": "tidal",
+        "streamUrl": "https://listen.tidal.com/search?q=Candy%20Heist%20Oculus"
+      }
+    ]
   },
   {
     "slug": "gold-seam",
     "title": "Gold Seam",
+    "kind": "ep",
     "artist": "Candy Heist",
+    "date": "2026-11-13",
+    "label": "Self-released",
     "cover": {
       "src": "/img/discography/covers/seam.webp",
       "alt": "Raw concrete split by one gold seam"
     },
-    "tape": "/img/discography/tapes/seam.webp"
+    "tape": "/img/discography/tapes/seam.webp",
+    "credits": [
+      {
+        "role": "Produced by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Mixed by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Mastered by",
+        "names": ["Candy Heist"]
+      },
+      {
+        "role": "Artwork by",
+        "names": ["Candy Heist"]
+      }
+    ],
+    "tracks": [
+      {
+        "title": "Gold Seam",
+        "duration": "4:18"
+      },
+      {
+        "title": "Filigree",
+        "duration": "3:52"
+      },
+      {
+        "title": "Portal",
+        "duration": "3:40",
+        "single": "portal"
+      },
+      {
+        "title": "The Seventh Hall",
+        "duration": "5:11"
+      }
+    ],
+    "distribution": [
+      {
+        "platform": "spotify",
+        "streamUrl": "https://open.spotify.com/search/Candy%20Heist%20Gold%20Seam",
+        "presaveUrl": "https://distrokid.com/hyperfollow/candyheist/gold-seam"
+      },
+      {
+        "platform": "apple-music",
+        "streamUrl": "https://music.apple.com/search?term=Candy%20Heist%20Gold%20Seam",
+        "presaveUrl": "https://distrokid.com/hyperfollow/candyheist/gold-seam"
+      },
+      {
+        "platform": "youtube-music",
+        "streamUrl": "https://music.youtube.com/search?q=Candy%20Heist%20Gold%20Seam"
+      },
+      {
+        "platform": "soundcloud",
+        "streamUrl": "https://soundcloud.com/search?q=Candy%20Heist%20Gold%20Seam"
+      },
+      {
+        "platform": "deezer",
+        "streamUrl": "https://www.deezer.com/search/Candy%20Heist%20Gold%20Seam",
+        "presaveUrl": "https://distrokid.com/hyperfollow/candyheist/gold-seam"
+      },
+      {
+        "platform": "tidal",
+        "streamUrl": "https://listen.tidal.com/search?q=Candy%20Heist%20Gold%20Seam",
+        "presaveUrl": "https://distrokid.com/hyperfollow/candyheist/gold-seam"
+      }
+    ]
   }
 ]

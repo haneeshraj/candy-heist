@@ -3,7 +3,7 @@
 import { getImageProps } from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef } from 'react';
-import { releaseHref } from '@/content/discography/releases';
+import { releaseHref } from '@/content/discography/links';
 import { SHELF_POOL } from '@/lib/shelf/shelf';
 import { TAPE_HULL_CLIP, TAPE_SPRITE } from '@/lib/shelf/tapeSprite';
 import styles from './DiscographySection.module.scss';

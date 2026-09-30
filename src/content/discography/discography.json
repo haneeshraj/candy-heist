@@ -1,0 +1,85 @@
+{
+  "page": {
+    "label": "Discography",
+    "lead": "Every record,",
+    "statement": "Remembered.",
+    "views": {
+      "label": "View",
+      "vault": "Vault",
+      "monument": "Monument",
+      "index": "Index"
+    },
+    "filters": {
+      "button": "Filter & sort",
+      "region": "Filter and sort the releases",
+      "sort": "Sort",
+      "kind": "Kind",
+      "year": "Year",
+      "sorts": {
+        "newest": "Newest first",
+        "oldest": "Oldest first",
+        "title": "Title A–Z"
+      },
+      "count": "{shown} of {total} releases",
+      "clear": "Clear all",
+      "remove": "Remove {filter}",
+      "empty": "Nothing matches these filters."
+    },
+    "forthcoming": "Forthcoming",
+    "open": "Open release",
+    "scroll": "Scroll",
+    "goTo": "Go to {title}",
+    "meta": {
+      "title": "Discography · Candy Heist",
+      "description": "Every Candy Heist release: the albums, EPs, singles and remixes."
+    }
+  },
+  "release": {
+    "back": "Discography",
+    "cover": "Cover",
+    "canvas": "Canvas",
+    "viewArtwork": "View the artwork",
+    "viewCanvas": "View the canvas",
+    "close": "Close",
+    "pause": "Pause the canvas",
+    "play": "Play the canvas",
+    "listenOn": "Listen on {platform}",
+    "platforms": "Listen",
+    "out": "Out {date}",
+    "presave": "Pre-save",
+    "countdown": {
+      "label": "Out in",
+      "days": "Days",
+      "hours": "Hours",
+      "minutes": "Mins",
+      "seconds": "Secs"
+    },
+    "copyLink": "Copy link",
+    "copied": "Link copied",
+    "label": "Label",
+    "released": "Released",
+    "releaseDate": "Release date",
+    "runningOrder": "Running order",
+    "featuring": "feat. {names}",
+    "moreSingles": "More singles & remixes",
+    "moreCollections": "More albums & EPs",
+    "artworkBy": "Artwork by {names}",
+    "canvasNote": "Canvas · loops, silent",
+    "meta": {
+      "title": "{title} · Candy Heist",
+      "description": "{title}, {kind} by {artist}."
+    }
+  },
+  "share": {
+    "home": "Candy Heist",
+    "presave": "Pre-save",
+    "listen": "Play",
+    "copyright": "© {year} Candy Heist",
+    "copyrightUndated": "© Candy Heist",
+    "meta": {
+      "title": "{title} · {artist}",
+      "out": "Listen to {title} by {artist}.",
+      "soon": "{title} by {artist}, out {date}. Pre-save it now."
+    }
+  }
+}
