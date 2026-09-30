@@ -1,0 +1,288 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Figma "Share · Released — card" and "Upcoming — card": a 540 × 960
+// card, in its own design pixels (the card's width / 540), so all of it
+// scales with the card: the logo at 36, the cover 280 at 96, the title
+// in Archivo 40, full-width buttons 52 tall, 10 apart, and the copyright
+// at the foot. The card is 9:16 on every screen: it fits the height
+// where the screen is wide, the width where it's narrow.
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+.screen {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  overflow: hidden;
+  background-color: var(--color-obsidian);
+}
+
+.stars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.6;
+}
+
+.card {
+  --dp: calc(100cqw / 540);
+
+  position: relative;
+  width: min(100vw, calc(100svh * 9 / 16));
+  aspect-ratio: 9 / 16;
+  container-type: inline-size;
+  overflow: hidden;
+  background-color: var(--color-obsidian);
+}
+
+// ---- Behind it: the canvas, or the cover, blurred
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+.backdropMedia {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.backdropBlur {
+  object-fit: cover;
+  filter: blur(#{m.dp(28)});
+  scale: 1.2;
+}
+
+// Darker toward the foot, where the buttons are.
+.shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgb(12 12 12 / 55%) 0%,
+    rgb(12 12 12 / 55%) 30%,
+    rgb(12 12 12 / 88%) 62%,
+    rgb(12 12 12 / 96%) 100%
+  );
+}
+
+// ---- The card's contents, down its middle
+
+.content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  padding: m.dp(36) m.dp(32) m.dp(30);
+  overflow-y: auto;
+  text-align: center;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.logo {
+  display: block;
+  flex: none;
+  width: m.dp(40);
+  color: var(--color-gilt);
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 4px;
+  }
+}
+
+.logoMark {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.cover {
+  position: relative;
+  flex: none;
+  width: m.dp(280);
+  aspect-ratio: 1;
+  margin-top: m.dp(31);
+  box-shadow: 0 m.dp(8) m.dp(32) rgb(0 0 0 / 22%);
+}
+
+.coverImage {
+  object-fit: cover;
+}
+
+.title {
+  margin-top: m.dp(24);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(40);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+}
+
+.artist {
+  margin-top: m.dp(12);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(18);
+  font-weight: 500;
+  color: var(--color-gold);
+}
+
+.meta {
+  display: flex;
+  gap: 0.7em;
+  align-items: center;
+  margin-top: m.dp(12);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: m.dp(10);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--color-concrete-light);
+
+  &[data-forthcoming] {
+    color: var(--color-gilt);
+
+    &::before {
+      content: '';
+      width: 0.7em;
+      height: 0.7em;
+      border-radius: 50%;
+      background-color: var(--color-crimson-glow);
+    }
+  }
+}
+
+.countdown {
+  margin-top: m.dp(22);
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(10);
+  width: 100%;
+  margin-top: m.dp(28);
+  list-style: none;
+}
+
+// ---- A platform button
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: m.dp(52);
+  padding: 0 m.dp(20) 0 m.dp(10);
+  border: 1px solid rgb(182 158 124 / 28%);
+  background-color: rgb(12 12 12 / 62%);
+  color: var(--color-cream);
+  text-decoration: none;
+  transition:
+    background-color 0.35s t.$ease-signature,
+    border-color 0.35s t.$ease-signature;
+
+  // Before it's out: the name on the left, Pre-save on the right.
+  &[data-split] {
+    justify-content: space-between;
+  }
+
+  &[data-solid] {
+    border-color: var(--color-gilt);
+    background-color: var(--color-gilt);
+    color: var(--color-obsidian);
+  }
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 3px;
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      border-color: rgb(210 169 97 / 90%);
+    }
+
+    &[data-solid]:hover {
+      border-color: var(--color-gilt-bright);
+      background-color: var(--color-gilt-bright);
+    }
+  }
+}
+
+.buttonStart {
+  display: flex;
+  gap: m.dp(14);
+  align-items: center;
+}
+
+.ring {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: m.dp(32);
+  height: m.dp(32);
+  border: 1px solid rgb(210 169 97 / 70%);
+  border-radius: 50%;
+  color: var(--color-gilt);
+
+  .button[data-solid] & {
+    border-color: var(--color-obsidian);
+    background-color: var(--color-obsidian);
+  }
+}
+
+.ringGlyph {
+  width: m.dp(12);
+  height: m.dp(12);
+}
+
+.buttonName {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(15);
+  font-weight: 500;
+}
+
+.buttonAction {
+  display: flex;
+  gap: m.dp(10);
+  align-items: center;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: m.dp(10);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+
+  .button[data-solid] & {
+    color: var(--color-obsidian);
+  }
+}
+
+.buttonArrow {
+  width: m.dp(12);
+  height: m.dp(12);
+}
+
+.copyright {
+  margin-top: auto;
+  padding-top: m.dp(24);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: m.dp(9);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--color-concrete-light);
+}
