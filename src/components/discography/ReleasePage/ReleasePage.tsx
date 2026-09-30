@@ -2,12 +2,19 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useId, useRef, useState, type CSSProperties } from 'react';
+import {
+  Fragment,
+  useId,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode
+} from 'react';
 import { ClipRevealText } from '@/components/common/ClipRevealText';
 import { SigilChip } from '@/components/common/SigilChip';
 import { StarField } from '@/components/common/StarField';
 import { ArrowIcon } from '@/components/icons';
-import { shareHref } from '@/content/discography/links';
+import { releaseHref } from '@/content/discography/links';
 import { useEntrance } from '@/hooks/useEntrance';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { isOneTrack } from '@/lib/discography/catalogue';
@@ -18,7 +25,7 @@ import {
   totalDuration,
   trackCount
 } from '@/lib/discography/format';
-import { artistLine } from '@/lib/discography/summary';
+import { billing, pageRecord, rowHref } from '@/lib/discography/tracks';
 import { fill } from '@/lib/text/fill';
 import { titleSize } from '@/lib/text/titleSize';
 import { ArtworkViewer, COVER_SIZES, type ArtworkFace } from '../ArtworkViewer';
@@ -35,13 +42,21 @@ import type { ReleasePageProps } from './ReleasePage.types';
 // canvas; either opens large), and on the right the kind and date, the
 // title, the artist, then the platforms it's on, or, before it's out, the
 // countdown and Pre-save; copy link after either; and the credits and
-// label as one table. An album or EP adds its running order under that;
-// more releases to go on to close the page. On the day it's out, the page
-// turns from the countdown to the platforms by itself.
+// label as one table. An album or EP adds its running order under that,
+// each named track a link to its own page; more releases to go on to
+// close the page. On the day it's out, the page turns from the countdown
+// to the platforms by itself.
+//
+// A track's own page is the same page of its release, of the track: its
+// title and artist in the release's cover, "From" the release where the
+// kind would be, and the running order marking where it sits. A single
+// an album carries says it's also on it.
 export default function ReleasePage({
   copy,
   forthcoming,
   release,
+  position,
+  alsoOn = [],
   more,
   renderedAt
 }: ReleasePageProps) {
@@ -55,16 +70,29 @@ export default function ReleasePage({
   useEntrance(rootRef, { delay: 0.1 });
   useScrollReveal(rootRef);
 
+  const record = pageRecord(release, position);
   const date = release.date ? formatDate(release.date) : null;
-  const kicker = [
-    KIND_LABEL[release.kind].one,
-    date && (out ? date : fill(copy.out, { date }))
-  ]
-    .filter(Boolean)
-    .join(' · ');
-  // The credits, then the label and the date, two to a row; the label
-  // always starts a row, so the two of them close the table together.
-  const details: Array<{ key: string; value: string; col: 0 | 1 }> = [
+  const when = date && (out ? date : fill(copy.out, { date }));
+  // The albums a single is also on, a row of their own; then the credits,
+  // the label and the date, two to a row. The label always starts a row,
+  // so the two of them close the table together.
+  const details: Array<{ key: string; value: ReactNode; col: 0 | 1 }> = [
+    ...(alsoOn.length
+      ? [
+          {
+            key: copy.alsoOn,
+            value: alsoOn.map((r, i) => (
+              <Fragment key={r.slug}>
+                {i > 0 && ', '}
+                <Link className={styles.link} href={releaseHref(r.slug)}>
+                  {r.title}
+                </Link>
+              </Fragment>
+            )),
+            col: 0 as const
+          }
+        ]
+      : []),
     ...release.credits.map((c, i) => ({
       key: c.role,
       value: c.names.join(', '),
@@ -88,7 +116,6 @@ export default function ReleasePage({
   const time = totalDuration(tracks);
   // The running order runs down two columns, the first half on the left.
   const rows = Math.ceil(tracks.length / 2);
-  const share = shareHref(release.slug);
 
   return (
     <div
@@ -96,8 +123,8 @@ export default function ReleasePage({
       className={styles.page}
       style={
         {
-          '--title-size': titleSize(release.title, 608, 96),
-          '--title-size-sm': titleSize(release.title, 342, 48)
+          '--title-size': titleSize(record.title, 608, 96),
+          '--title-size-sm': titleSize(record.title, 342, 48)
         } as CSSProperties
       }
     >
@@ -108,13 +135,18 @@ export default function ReleasePage({
       </div>
 
       <div className={styles.body}>
-        <Link className={styles.back} href="/discography" data-enter>
-          ← {copy.back}
+        {/* A track's way back is its release. */}
+        <Link
+          className={styles.back}
+          href={record.from?.href ?? '/discography'}
+          data-enter
+        >
+          ← {record.from?.title ?? copy.back}
         </Link>
 
         <div className={styles.top}>
           <div className={styles.art} data-enter>
-            {release.canvas && (
+            {record.canvas && (
               <div className={styles.faces}>
                 {(['cover', 'canvas'] as const).map((f) => (
                   <button
@@ -135,11 +167,11 @@ export default function ReleasePage({
               className={styles.artButton}
               onClick={() => setViewer(face)}
             >
-              {face === 'canvas' && release.canvas ? (
+              {face === 'canvas' && record.canvas ? (
                 <video
                   className={styles.canvas}
-                  src={release.canvas.src}
-                  poster={release.canvas.poster}
+                  src={record.canvas.src}
+                  poster={record.canvas.poster}
                   autoPlay
                   loop
                   muted
@@ -168,20 +200,38 @@ export default function ReleasePage({
               data-forthcoming={!out || undefined}
               data-enter
             >
-              {kicker}
+              <span>
+                {record.from ? (
+                  <>
+                    {copy.from}{' '}
+                    <Link className={styles.link} href={record.from.href}>
+                      {record.from.title}
+                    </Link>
+                  </>
+                ) : (
+                  KIND_LABEL[release.kind].one
+                )}
+                {/* Kept whole, so a line too narrow breaks at the dot. */}
+                {when && (
+                  <>
+                    {' · '}
+                    <span className={styles.when}>{when}</span>
+                  </>
+                )}
+              </span>
             </p>
             <h1 className={styles.title}>
-              <span className={styles.srOnly}>{release.title}</span>
+              <span className={styles.srOnly}>{record.title}</span>
               <span aria-hidden="true">
                 <ClipRevealText
-                  text={release.title}
+                  text={record.title}
                   trigger="mount"
                   startDelay={0.15}
                 />
               </span>
             </h1>
             <p className={styles.artist} data-enter>
-              {artistLine(release)}
+              {billing(record, copy.featuring)}
             </p>
 
             <div className={styles.actions} data-enter>
@@ -220,13 +270,17 @@ export default function ReleasePage({
                       copy={copy.countdown}
                     />
                   )}
-                  <SigilChip variant="solid" href={share} icon={<ArrowIcon />}>
+                  <SigilChip
+                    variant="solid"
+                    href={record.share}
+                    icon={<ArrowIcon />}
+                  >
                     {copy.presave}
                   </SigilChip>
                 </>
               )}
               <CopyLinkButton
-                path={share}
+                path={record.share}
                 label={copy.copyLink}
                 copiedLabel={copy.copied}
               />
@@ -260,34 +314,50 @@ export default function ReleasePage({
               className={styles.tracks}
               style={{ '--rows': rows } as CSSProperties}
             >
-              {tracks.map((track, i) => (
-                <li
-                  key={`${i}-${track.title}`}
-                  className={styles.track}
-                  data-column-start={i === 0 || i === rows || undefined}
-                  data-reveal
-                >
-                  <span className={styles.trackNumber}>
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <span className={styles.trackTitle}>
-                    {track.title}
-                    {track.featuring && (
-                      <span className={styles.trackAside}>
-                        {fill(copy.featuring, {
-                          names: track.featuring.join(', ')
-                        })}
-                      </span>
-                    )}
-                    {track.artist && track.artist !== release.artist && (
-                      <span className={styles.trackAside}>{track.artist}</span>
-                    )}
-                  </span>
-                  <span className={styles.trackTime}>
-                    {track.duration ?? '—'}
-                  </span>
-                </li>
-              ))}
+              {tracks.map((track, i) => {
+                // This page's own track is marked, not linked.
+                const current = position === i + 1;
+                const href = current ? null : rowHref(release, track);
+                return (
+                  <li
+                    key={`${i}-${track.title}`}
+                    className={styles.track}
+                    data-column-start={i === 0 || i === rows || undefined}
+                    data-current={current || undefined}
+                    data-reveal
+                  >
+                    <span className={styles.trackNumber}>
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <span className={styles.trackTitle}>
+                      {href ? (
+                        <Link className={styles.trackLink} href={href}>
+                          {track.title}
+                        </Link>
+                      ) : (
+                        <span aria-current={current ? 'page' : undefined}>
+                          {track.title}
+                        </span>
+                      )}
+                      {track.featuring && (
+                        <span className={styles.trackAside}>
+                          {fill(copy.featuring, {
+                            names: track.featuring.join(', ')
+                          })}
+                        </span>
+                      )}
+                      {track.artist && track.artist !== release.artist && (
+                        <span className={styles.trackAside}>
+                          {track.artist}
+                        </span>
+                      )}
+                    </span>
+                    <span className={styles.trackTime}>
+                      {track.duration ?? '—'}
+                    </span>
+                  </li>
+                );
+              })}
             </ol>
           </section>
         )}
@@ -315,7 +385,14 @@ export default function ReleasePage({
       </div>
 
       <ArtworkViewer
-        release={release}
+        // The artwork is the release's, a track's page's too: the caption
+        // names it. A track has no canvas of its own.
+        release={{
+          title: release.title,
+          cover: release.cover,
+          canvas: record.canvas,
+          credits: release.credits
+        }}
         copy={copy}
         open={viewer}
         originRef={artRef}

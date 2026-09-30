@@ -1,7 +1,13 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { findRelease, releaseHref, releases } from './releases';
+import {
+  findRelease,
+  releaseHref,
+  releases,
+  releaseSchema,
+  trackHref
+} from './releases';
 
 const publicFile = (src: string) => join(process.cwd(), 'public', src);
 
@@ -29,5 +35,38 @@ describe('releases', () => {
     expect(findRelease('4x4')?.title).toBe('4x4');
     expect(findRelease('nope')).toBeUndefined();
     expect(releaseHref('over-the-moon')).toBe('/discography/over-the-moon');
+    expect(trackHref('the-halls', 'nave')).toBe('/discography/the-halls/nave');
+  });
+
+  it('gives a track a page of its own or its single’s, never both, once per release', () => {
+    const halls = findRelease('the-halls')!;
+    const withTracks = (tracks: typeof halls.tracks) => ({ ...halls, tracks });
+    expect(releaseSchema.safeParse(halls).success).toBe(true);
+    expect(
+      releaseSchema.safeParse(
+        withTracks(
+          halls.tracks.map((t, i) => (i ? t : { ...t, single: 'alabaster' }))
+        )
+      ).success
+    ).toBe(false);
+    expect(
+      releaseSchema.safeParse(
+        withTracks(
+          halls.tracks.map((t, i) =>
+            i === 1 ? { ...t, slug: halls.tracks[0].slug } : t
+          )
+        )
+      ).success
+    ).toBe(false);
+  });
+
+  it('keeps a single to its own page: its one track has none', () => {
+    const single = findRelease('alabaster')!;
+    expect(
+      releaseSchema.safeParse({
+        ...single,
+        tracks: [{ ...single.tracks[0], slug: 'alabaster' }]
+      }).success
+    ).toBe(false);
   });
 });

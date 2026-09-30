@@ -5,6 +5,7 @@ import { discographyCopy } from '@/content/discography/discography';
 import { findRelease, releases } from '@/content/discography/releases';
 import { moreLike } from '@/lib/discography/catalogue';
 import { summarize } from '@/lib/discography/summary';
+import { appearsOn, findAlbumTrack } from '@/lib/discography/tracks';
 import ReleasePage from './ReleasePage';
 
 vi.mock('next/link', () => ({
@@ -31,6 +32,7 @@ const copy = discographyCopy.release;
 const now = new Date(2026, 8, 30, 12).getTime();
 const all = { hidden: true } as const;
 
+// As the routes do: a release's page, and a track's under it.
 function renderRelease(slug: string) {
   const release = findRelease(slug)!;
   render(
@@ -38,12 +40,33 @@ function renderRelease(slug: string) {
       copy={copy}
       forthcoming={discographyCopy.page.forthcoming}
       release={release}
+      alsoOn={appearsOn(release, releases)}
       more={moreLike(release, releases).map((r) => summarize(r, now))}
       renderedAt={now}
     />
   );
   return release;
 }
+
+function renderTrack(slug: string, track: string) {
+  const found = findAlbumTrack(releases, slug, track)!;
+  render(
+    <ReleasePage
+      copy={copy}
+      forthcoming={discographyCopy.page.forthcoming}
+      release={found.release}
+      position={found.position}
+      more={moreLike(found.release, releases).map((r) => summarize(r, now))}
+      renderedAt={now}
+    />
+  );
+  return found;
+}
+
+const runningOrder = () =>
+  screen
+    .getByRole('heading', { ...all, name: copy.runningOrder })
+    .closest('section') as HTMLElement;
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -109,6 +132,77 @@ describe('ReleasePage', () => {
     expect(
       screen.getByRole('heading', { ...all, name: copy.moreCollections })
     ).toBeInTheDocument();
+  });
+
+  it('links each named track to its page, and a single first to the single', () => {
+    renderRelease('gold-seam');
+    const running = runningOrder();
+    expect(
+      within(running).getByRole('link', { ...all, name: 'Filigree' })
+    ).toHaveAttribute('href', '/discography/gold-seam/filigree');
+    expect(
+      within(running).getByRole('link', { ...all, name: 'Portal' })
+    ).toHaveAttribute('href', '/discography/portal');
+  });
+
+  it('says which albums a single is also on', () => {
+    renderRelease('portal');
+    expect(screen.getByText(copy.alsoOn)).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { ...all, name: 'Gold Seam' })
+    ).toHaveAttribute('href', '/discography/gold-seam');
+  });
+
+  it('gives a track its own page, in its album’s cover, from its album', () => {
+    const { release } = renderTrack('the-halls', 'vesper');
+    expect(
+      screen.getByRole('heading', { ...all, level: 1, name: 'Vesper' })
+    ).toBeInTheDocument();
+    // "From" the album where the kind would be, and back to it.
+    expect(screen.getByText(copy.from, { exact: false })).toHaveTextContent(
+      `${copy.from} ${release.title} · 16 September 2022`
+    );
+    expect(
+      screen.getByRole('link', { ...all, name: `← ${release.title}` })
+    ).toHaveAttribute('href', '/discography/the-halls');
+    // The album's running order, with this track marked and the rest linked.
+    const running = runningOrder();
+    expect(within(running).getByText('Vesper')).toHaveAttribute(
+      'aria-current',
+      'page'
+    );
+    expect(
+      within(running).queryByRole('link', { ...all, name: 'Vesper' })
+    ).toBeNull();
+    expect(
+      within(running).getByRole('link', { ...all, name: 'Nave' })
+    ).toHaveAttribute('href', '/discography/the-halls/nave');
+    // The artwork it opens is the album's.
+    fireEvent.click(
+      screen.getByRole('button', { ...all, name: copy.viewArtwork })
+    );
+    const dialog = document.querySelector('dialog') as HTMLDialogElement;
+    expect(
+      within(dialog).getByRole('img', { ...all, name: release.cover.alt })
+    ).toBeInTheDocument();
+  });
+
+  it('bills a track with who’s featured on it, without the album’s canvas', () => {
+    renderTrack('monolith', 'remembrance');
+    expect(
+      screen.getByText('Candy Heist feat. Guest Artist')
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('button', { ...all, name: copy.canvas })).toBe(
+      null
+    );
+  });
+
+  it('sends a forthcoming track to its own share page to pre-save', () => {
+    renderTrack('gold-seam', 'filigree');
+    expect(screen.getByText(/Out 13 November 2026/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { ...all, name: new RegExp(copy.presave, 'i') })
+    ).toHaveAttribute('href', '/listen/gold-seam/filigree');
   });
 
   it('keeps a real release to what is known: no date, no credits', () => {

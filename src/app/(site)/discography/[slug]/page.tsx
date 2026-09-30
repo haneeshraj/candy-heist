@@ -6,12 +6,14 @@ import { findRelease, releases } from '@/content/discography/releases';
 import { moreLike } from '@/lib/discography/catalogue';
 import { KIND_LABEL } from '@/lib/discography/format';
 import { summarize } from '@/lib/discography/summary';
+import { appearsOn } from '@/lib/discography/tracks';
 import { fill } from '@/lib/text/fill';
 
 // Every release page is built ahead of time, and made again each hour so
 // one turns from its countdown to its platforms on the day; any other
 // slug is a 404. (A single inside an album still has its page, though the
-// grid shows only the album.)
+// grid shows only the album; so does each track that came out with an
+// album, under the album's: see ./[track].)
 export const dynamicParams = false;
 export const revalidate = 3600;
 
@@ -49,6 +51,7 @@ export default async function ReleaseRoute(
         copy={discographyCopy.release}
         forthcoming={discographyCopy.page.forthcoming}
         release={release}
+        alsoOn={appearsOn(release, releases)}
         more={moreLike(release, releases).map((r) => summarize(r, now))}
         renderedAt={now}
       />

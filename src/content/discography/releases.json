@@ -11,7 +11,8 @@
     "tape": "/img/discography/tapes/4x4.webp",
     "tracks": [
       {
-        "title": "Menace"
+        "title": "Menace",
+        "slug": "menace"
       },
       {
         "title": "Title to come"
@@ -142,42 +143,52 @@
     "tracks": [
       {
         "title": "The Halls",
+        "slug": "the-halls",
         "duration": "4:30"
       },
       {
         "title": "Nave",
+        "slug": "nave",
         "duration": "3:44"
       },
       {
         "title": "Colonnade",
+        "slug": "colonnade",
         "duration": "4:08"
       },
       {
         "title": "Vesper",
+        "slug": "vesper",
         "duration": "5:16"
       },
       {
         "title": "Reliquary",
+        "slug": "reliquary",
         "duration": "3:59"
       },
       {
         "title": "Ember Hymn",
+        "slug": "ember-hymn",
         "duration": "4:41"
       },
       {
         "title": "Choir Loft",
+        "slug": "choir-loft",
         "duration": "3:37"
       },
       {
         "title": "Cloister",
+        "slug": "cloister",
         "duration": "4:55"
       },
       {
         "title": "Lantern",
+        "slug": "lantern",
         "duration": "3:48"
       },
       {
         "title": "Last Light",
+        "slug": "last-light",
         "duration": "6:02"
       }
     ],
@@ -313,35 +324,43 @@
     "tracks": [
       {
         "title": "Monolith",
+        "slug": "monolith",
         "duration": "4:12"
       },
       {
         "title": "Gilt",
+        "slug": "gilt",
         "duration": "3:48"
       },
       {
         "title": "The Long Hall",
+        "slug": "the-long-hall",
         "duration": "5:02"
       },
       {
         "title": "Remembrance",
+        "slug": "remembrance",
         "duration": "4:36",
         "featuring": ["Guest Artist"]
       },
       {
         "title": "Omun",
+        "slug": "omun",
         "duration": "6:10"
       },
       {
         "title": "Ledger of Days",
+        "slug": "ledger-of-days",
         "duration": "3:55"
       },
       {
         "title": "Crimson Glass",
+        "slug": "crimson-glass",
         "duration": "4:21"
       },
       {
         "title": "Still Tuning",
+        "slug": "still-tuning",
         "duration": "5:40"
       }
     ],
@@ -384,7 +403,8 @@
     "tape": "/img/discography/tapes/truths-collide.webp",
     "tracks": [
       {
-        "title": "Truths Collide"
+        "title": "Truths Collide",
+        "slug": "truths-collide"
       },
       {
         "title": "Title to come"
@@ -433,31 +453,37 @@
     "tracks": [
       {
         "title": "Resonance",
+        "slug": "resonance",
         "duration": "4:02",
         "artist": "Candy Heist"
       },
       {
         "title": "Brass Choir",
+        "slug": "brass-choir",
         "duration": "3:31",
         "artist": "Guest Artist"
       },
       {
         "title": "Marble Floor",
+        "slug": "marble-floor",
         "duration": "4:47",
         "artist": "Guest Artist"
       },
       {
         "title": "Signal",
+        "slug": "signal",
         "duration": "3:58",
         "artist": "Guest Artist"
       },
       {
         "title": "Afterglass",
+        "slug": "afterglass",
         "duration": "5:05",
         "artist": "Guest Artist"
       },
       {
         "title": "Held Note",
+        "slug": "held-note",
         "duration": "4:20",
         "artist": "Guest Artist"
       }
@@ -585,22 +611,27 @@
     "tracks": [
       {
         "title": "Self Portrait",
+        "slug": "self-portrait",
         "duration": "4:05"
       },
       {
         "title": "Cream & Concrete",
+        "slug": "cream-and-concrete",
         "duration": "3:50"
       },
       {
         "title": "Sitter",
+        "slug": "sitter",
         "duration": "4:22"
       },
       {
         "title": "Likeness",
+        "slug": "likeness",
         "duration": "3:41"
       },
       {
         "title": "Frame",
+        "slug": "frame",
         "duration": "4:59"
       }
     ],
@@ -856,10 +887,12 @@
     "tracks": [
       {
         "title": "Gold Seam",
+        "slug": "gold-seam",
         "duration": "4:18"
       },
       {
         "title": "Filigree",
+        "slug": "filigree",
         "duration": "3:52"
       },
       {
@@ -869,6 +902,7 @@
       },
       {
         "title": "The Seventh Hall",
+        "slug": "the-seventh-hall",
         "duration": "5:11"
       }
     ],

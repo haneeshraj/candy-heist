@@ -60,6 +60,8 @@
     "released": "Released",
     "releaseDate": "Release date",
     "runningOrder": "Running order",
+    "from": "From",
+    "alsoOn": "Also on",
     "featuring": "feat. {names}",
     "moreSingles": "More singles & remixes",
     "moreCollections": "More albums & EPs",
@@ -67,7 +69,8 @@
     "canvasNote": "Canvas · loops, silent",
     "meta": {
       "title": "{title} · Candy Heist",
-      "description": "{title}, {kind} by {artist}."
+      "description": "{title}, {kind} by {artist}.",
+      "track": "{title} by {artist}, from {release}."
     }
   },
   "share": {

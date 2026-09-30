@@ -171,24 +171,56 @@
   min-width: 0;
 }
 
+// A link in a line of text: a track's release in its kicker, the albums
+// a single is also on. Underlined faintly, brighter on hover.
+.link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgb(210 169 97 / 45%);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  transition:
+    color 0.3s t.$ease-signature,
+    text-decoration-color 0.3s t.$ease-signature;
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 3px;
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      color: var(--color-gilt-bright);
+      text-decoration-color: currentcolor;
+    }
+  }
+}
+
 .kicker {
   @include mono(11);
 
   display: flex;
   gap: 0.7em;
-  align-items: center;
+  align-items: flex-start;
   color: var(--color-gilt);
 
-  // Not out yet: the view's one crimson dot.
+  // Not out yet: the view's one crimson dot, centred on the first line
+  // (a track's kicker can take two).
   &[data-forthcoming] {
     &::before {
       content: '';
+      flex: none;
       width: 0.64em;
       height: 0.64em;
+      margin-top: 0.33em;
       border-radius: 50%;
       background-color: var(--color-crimson-glow);
     }
   }
+}
+
+.when {
+  white-space: nowrap;
 }
 
 .title {
@@ -368,6 +400,7 @@
 }
 
 .track {
+  position: relative;
   display: grid;
   grid-template-columns: m.dp(44) 1fr auto;
   gap: m.dp(8);
@@ -418,6 +451,49 @@
   @include mono(10);
 
   color: var(--color-concrete-light);
+}
+
+// A track with a page: the whole row is its link, and lights on hover.
+.trackLink {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.3s t.$ease-signature;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  &:focus-visible {
+    outline: none;
+
+    &::after {
+      outline: 1.5px solid rgb(227 194 134 / 90%);
+      outline-offset: -1px;
+    }
+  }
+}
+
+@media #{t.$query-hover} {
+  .track:has(.trackLink:hover) {
+    .trackLink {
+      color: var(--color-gilt-bright);
+    }
+
+    .trackNumber,
+    .trackTime {
+      color: var(--color-cream);
+    }
+  }
+}
+
+// The page's own track, on a track's page.
+.track[data-current] {
+  .trackNumber,
+  .trackTitle {
+    color: var(--color-gilt);
+  }
 }
 
 .more {

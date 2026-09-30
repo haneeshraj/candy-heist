@@ -58,12 +58,16 @@ export const discographyCopySchema = z.object({
     released: text,
     releaseDate: text,
     runningOrder: text,
+    /** A track's page: "From {the release}". */
+    from: text,
+    /** A single's page: the albums that carry it. */
+    alsoOn: text,
     featuring: text,
     moreSingles: text,
     moreCollections: text,
     artworkBy: text,
     canvasNote: text,
-    meta
+    meta: meta.extend({ track: text })
   }),
   share: z.object({
     home: text,

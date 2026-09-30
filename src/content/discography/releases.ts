@@ -43,19 +43,32 @@ const credit = z.object({
   names: z.array(text).min(1)
 });
 
-const track = z.object({
-  title: text,
-  /** Minutes and seconds, "4:12". Missing while it isn't known. */
-  duration: z
-    .string()
-    .regex(/^\d+:[0-5]\d$/)
-    .optional(),
-  /** Its artist, where it isn't the release's (a compilation's tracks). */
-  artist: text.optional(),
-  featuring: z.array(text).optional(),
-  /** The recording's own single, when it was also released as one. */
-  single: slug.optional()
-});
+// A track of a release. On an album, an EP or a compilation, a track that
+// came out with it has a page of its own under the release's (its slug),
+// in the release's cover; the grid leaves it out and reaches it through
+// the release (Candy Haven's "track of", D30). A track that came out as a
+// single first is that single's own record (single): its row goes to the
+// single's page, in the single's own cover. A track still to be named has
+// neither.
+const track = z
+  .object({
+    title: text,
+    /** Minutes and seconds, "4:12". Missing while it isn't known. */
+    duration: z
+      .string()
+      .regex(/^\d+:[0-5]\d$/)
+      .optional(),
+    /** Its artist, where it isn't the release's (a compilation's tracks). */
+    artist: text.optional(),
+    featuring: z.array(text).optional(),
+    /** Its page's URL segment, under the release's. */
+    slug: slug.optional(),
+    /** The recording's own single, when it was also released as one. */
+    single: slug.optional()
+  })
+  .refine((t) => !(t.slug && t.single), {
+    message: "A track has a page of its own or its single's, not both"
+  });
 
 // A platform the release is on: where to stream it once it's out, and
 // where to pre-save it before (DistroKid's HyperFollow, say).
@@ -95,6 +108,17 @@ export const releaseSchema = z
     (r) =>
       !['single', 'remix', 'bootleg'].includes(r.kind) || r.tracks.length === 1,
     { message: 'A single, remix or bootleg holds exactly one track' }
+  )
+  // Its page is its one track's page already.
+  .refine((r) => r.tracks.length > 1 || !r.tracks[0].slug, {
+    message: 'Only a track of a release with several has a page of its own'
+  })
+  .refine(
+    (r) => {
+      const slugs = r.tracks.flatMap((t) => (t.slug ? [t.slug] : []));
+      return new Set(slugs).size === slugs.length;
+    },
+    { message: "A release's track slugs must be unique" }
   );
 
 export type Release = z.infer<typeof releaseSchema>;
@@ -114,4 +138,4 @@ export function findRelease(slug: string | null | undefined) {
   return releases.find((release) => release.slug === slug);
 }
 
-export { releaseHref, shareHref } from './links';
+export { releaseHref, shareHref, trackHref, trackShareHref } from './links';

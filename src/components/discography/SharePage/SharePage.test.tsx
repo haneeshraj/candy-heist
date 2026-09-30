@@ -2,7 +2,8 @@ import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { discographyCopy } from '@/content/discography/discography';
-import { findRelease } from '@/content/discography/releases';
+import { findRelease, releases } from '@/content/discography/releases';
+import { findAlbumTrack } from '@/lib/discography/tracks';
 import SharePage from './SharePage';
 
 vi.mock('next/link', () => ({
@@ -64,6 +65,31 @@ describe('SharePage', () => {
     expect(screen.getAllByText(discographyCopy.share.presave).length).toBe(
       presaves.length - 1
     );
+  });
+
+  it('shares a track in its release’s cover, from its release', () => {
+    const { release, position } = findAlbumTrack(
+      releases,
+      'the-halls',
+      'nave'
+    )!;
+    render(
+      <SharePage
+        copy={discographyCopy}
+        release={release}
+        position={position}
+        renderedAt={now}
+      />
+    );
+    expect(
+      screen.getByRole('heading', { ...all, level: 1, name: 'Nave' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(`From ${release.title} · 16 September 2022`)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('img', { ...all, name: release.cover.alt })
+    ).toBeInTheDocument();
   });
 
   it('gives an undated release a copyright without a year', () => {

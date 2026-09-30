@@ -12,7 +12,7 @@ import {
   KIND_LABEL,
   PRESAVE_LABEL
 } from '@/lib/discography/format';
-import { artistLine } from '@/lib/discography/summary';
+import { billing, pageRecord } from '@/lib/discography/tracks';
 import { fill } from '@/lib/text/fill';
 import { Countdown, useReleaseClock } from '../Countdown';
 import PlatformButton from './PlatformButton';
@@ -21,6 +21,8 @@ import styles from './SharePage.module.scss';
 interface SharePageProps {
   copy: DiscographyCopy;
   release: Release;
+  /** A track's share page: its place in the release's running order, from 1. */
+  position?: number;
   /** When the server made the page: the clock's first reading. */
   renderedAt: number;
 }
@@ -30,17 +32,22 @@ interface SharePageProps {
 // screenshots as a story). The canvas loops behind it; without one, the
 // cover, blurred. Once it's out: the platforms to play it on. Before: the
 // countdown and where to pre-save it; it turns by itself on the day. No
-// navbar or footer, only the copyright.
+// navbar or footer, only the copyright. A track on a release has one too:
+// the track, in the release's cover, "From" the release.
 export default function SharePage({
   copy,
   release,
+  position,
   renderedAt
 }: SharePageProps) {
   const titleId = useId();
   const { out, left } = useReleaseClock(release.date, renderedAt);
+  const record = pageRecord(release, position);
   const date = release.date ? formatDate(release.date) : null;
   const meta = [
-    KIND_LABEL[release.kind].one,
+    record.from
+      ? `${copy.release.from} ${record.from.title}`
+      : KIND_LABEL[release.kind].one,
     date && (out ? date : fill(copy.release.out, { date }))
   ]
     .filter(Boolean)
@@ -61,7 +68,7 @@ export default function SharePage({
   const copyright = release.date
     ? fill(copy.share.copyright, { year: release.date.slice(0, 4) })
     : copy.share.copyrightUndated;
-  const canvas = out ? release.canvas : undefined;
+  const canvas = out ? record.canvas : undefined;
 
   return (
     <main className={styles.screen}>
@@ -79,10 +86,12 @@ export default function SharePage({
               playsInline
             />
           ) : (
+            // The largest thing on the card, so it loads at once.
             <Image
               src={release.cover.src}
               alt=""
               fill
+              loading="eager"
               sizes="540px"
               className={styles.backdropBlur}
             />
@@ -106,9 +115,11 @@ export default function SharePage({
             />
           </div>
           <h1 id={titleId} className={styles.title}>
-            {release.title}
+            {record.title}
           </h1>
-          <p className={styles.artist}>{artistLine(release)}</p>
+          <p className={styles.artist}>
+            {billing(record, copy.release.featuring)}
+          </p>
           <p className={styles.meta} data-forthcoming={!out || undefined}>
             {meta}
           </p>
