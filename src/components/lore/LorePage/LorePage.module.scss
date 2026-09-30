@@ -1,0 +1,425 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Figma "LORE PAGE — A · Orrery", the way in, in design pixels (m.dp). On
+// desktop the arrival and the index scroll over the pinned orrery
+// (LoreStage) and place their copy on the same 1440 × 900 frame as its
+// canvas, so the two line up. Stacked (phones, reduced motion), each is a
+// column, the arrival with its own still of the planet.
+
+@mixin journey {
+  @media #{t.$query-desktop} and (prefers-reduced-motion: no-preference) {
+    @content;
+  }
+}
+
+@mixin mono($size, $spacing: 0.4em) {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp($size)}, 0.8rem);
+  font-weight: 500;
+  letter-spacing: $spacing;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+.lore {
+  @include m.design-scale;
+
+  position: relative;
+  container-type: inline-size;
+  overflow-x: clip;
+  background-color: var(--color-obsidian);
+
+  @include journey {
+    @include m.screen-scale(900);
+  }
+}
+
+// The frame the copy is placed on: a column when stacked, the 1440 × 900
+// canvas (centred in the screen, like the stage's) in the journey.
+.frame {
+  position: relative;
+  max-width: m.dp(390);
+  margin-inline: auto;
+  padding: 0 m.dp(24);
+
+  @media #{t.$query-desktop} {
+    max-width: m.dp(800);
+    padding: 0 m.dp(80);
+  }
+
+  @include journey {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: m.dp(1440);
+    max-width: none;
+    height: m.dp(900);
+    padding: 0;
+    translate: -50% -50%;
+  }
+}
+
+// The sections scroll over the stage without catching its pointer: only
+// their own links and text do.
+.arrival,
+.index {
+  position: relative;
+  z-index: 1;
+
+  @include journey {
+    pointer-events: none;
+
+    a,
+    button,
+    p,
+    h1,
+    h2 {
+      pointer-events: auto;
+    }
+  }
+}
+
+.sigil {
+  display: block;
+  flex: none;
+  width: m.dp(12);
+  height: m.dp(12);
+  color: var(--color-gilt);
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// ---- A0 · The arrival
+
+.arrival {
+  padding: m.dp(56) 0 m.dp(64);
+  text-align: center;
+
+  @include journey {
+    height: 100svh;
+    padding: 0;
+  }
+}
+
+.arrivalLabel {
+  @include mono(10, 0.44em);
+
+  display: flex;
+  gap: m.dp(10);
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gold);
+
+  @include journey {
+    position: absolute;
+    top: m.dp(96);
+    right: 0;
+    left: 0;
+    font-size: max(#{m.dp(12)}, 1rem);
+  }
+}
+
+.arrivalFigure {
+  width: m.dp(260);
+  margin: m.dp(40) auto 0;
+
+  @include journey {
+    display: none;
+  }
+}
+
+.arrivalHeading {
+  margin-top: m.dp(40);
+  font-weight: 400;
+
+  // Under the planet (300 across at 720, 340) and its Omun ring.
+  @include journey {
+    position: absolute;
+    top: m.dp(580);
+    right: 0;
+    left: 0;
+    margin: 0;
+  }
+}
+
+.headingVisual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lead {
+  display: block;
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(32);
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(40);
+  }
+}
+
+.statement {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: m.dp(6);
+
+  @include journey {
+    flex-direction: row;
+    gap: 0.28em;
+    font-size: m.dp(56);
+  }
+}
+
+.statementLine {
+  display: block;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(40);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(56);
+  }
+}
+
+.arrivalSub {
+  max-width: m.dp(320);
+  margin: m.dp(18) auto 0;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(15)}, 1.4rem);
+  line-height: 1.5;
+  color: rgb(221 207 178 / 75%);
+
+  @include journey {
+    position: absolute;
+    top: m.dp(710);
+    right: 0;
+    left: 0;
+    max-width: none;
+    margin: 0;
+  }
+}
+
+.cue {
+  @include mono(10);
+
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(8);
+  align-items: center;
+  margin-top: m.dp(32);
+  color: var(--color-gold);
+
+  @include journey {
+    position: absolute;
+    top: m.dp(824);
+    right: 0;
+    left: 0;
+    margin: 0;
+  }
+}
+
+.cueLine {
+  display: block;
+  width: 1px;
+  height: m.dp(26);
+  background-color: rgb(210 169 97 / 50%);
+
+  @include journey {
+    display: none;
+  }
+}
+
+// ---- A1 · The chapters
+
+.index {
+  padding: m.dp(24) 0 m.dp(40);
+
+  // The orbit draws in as it comes up, then holds for half a screen more
+  // before the footer.
+  @include journey {
+    height: 150svh;
+    padding: 0;
+  }
+}
+
+.pin {
+  @include journey {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+  }
+}
+
+.indexHead {
+  display: none;
+
+  @include journey {
+    position: absolute;
+    top: m.dp(96);
+    left: m.dp(96);
+    display: block;
+  }
+}
+
+.indexLabel {
+  @include mono(12, 0.44em);
+
+  color: var(--color-gold);
+}
+
+.indexLead {
+  margin-top: m.dp(16);
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(40);
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--color-gold);
+}
+
+.indexStatement {
+  display: flex;
+  flex-direction: column;
+  margin: m.dp(4) 0 0 m.dp(-3);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(48);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+}
+
+.preview,
+.count {
+  display: none;
+}
+
+@include journey {
+  // Anchored at its foot (the chip where Figma has it), so a long title
+  // grows upwards, clear of the orbit's labels.
+  .preview {
+    position: absolute;
+    bottom: m.dp(92);
+    left: m.dp(96);
+    display: block;
+    width: m.dp(360);
+  }
+
+  .count {
+    @include mono(9);
+
+    position: absolute;
+    top: m.dp(836);
+    right: m.dp(96);
+    display: block;
+    color: var(--color-concrete-light);
+  }
+}
+
+.previewNumeral {
+  @include mono(10);
+
+  color: var(--color-gilt);
+}
+
+.previewTitle {
+  margin: m.dp(12) 0 0 m.dp(-4);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: calc(var(--preview-size) * var(--dp));
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+}
+
+.previewLine {
+  margin-top: m.dp(16);
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(24);
+  font-style: italic;
+  line-height: 1.25;
+  color: var(--color-gold);
+}
+
+.previewCta {
+  display: inline-block;
+  margin-top: m.dp(28);
+}
+
+// The stacked page's list of chapters.
+.list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  border-top: 1px solid rgb(182 158 124 / 20%);
+
+  @include journey {
+    display: none;
+  }
+}
+
+.listLink,
+.listNext {
+  display: grid;
+  grid-template-columns: m.dp(44) 1fr;
+  row-gap: m.dp(6);
+  padding: m.dp(16) 0;
+  border-bottom: 1px solid rgb(182 158 124 / 20%);
+  color: inherit;
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 2px;
+  }
+}
+
+.listNumeral {
+  @include mono(10);
+
+  grid-row: span 2;
+  padding-top: m.dp(3);
+  color: var(--color-gilt);
+}
+
+.listTitle {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(16);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-cream);
+}
+
+.listLine {
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(18);
+  font-style: italic;
+  line-height: 1.2;
+  color: var(--color-gold);
+}
+
+.listUnwritten {
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(18);
+  font-style: italic;
+  color: rgb(221 207 178 / 50%);
+}

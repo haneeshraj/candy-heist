@@ -1,0 +1,36 @@
+{
+  "intro": {
+    "label": "The lore of Nayara",
+    "lead": "The world is fiction.",
+    "statement": "The story\nis not.",
+    "sub": "The world behind the music of Candy Heist, told chapter by chapter.",
+    "cue": "Scroll to enter the orbit"
+  },
+  "index": {
+    "label": "Chapters",
+    "chapter": "Chapter",
+    "read": "Read chapter",
+    "unwritten": "Still being written",
+    "count": "{count} chapters · the next is still being written"
+  },
+  "menu": {
+    "open": "Chapters",
+    "close": "Close chapters",
+    "position": "{current} / {total}"
+  },
+  "reader": {
+    "read": "Chapter {numeral} read",
+    "next": "Next",
+    "nextChapter": "Chapter {numeral}",
+    "all": "All chapters"
+  },
+  "end": {
+    "label": "All {total} chapters read",
+    "line": "The next chapter\nis still being written.",
+    "epigraph": "Imagine a civilization that achieved perfect harmony by carefully forgetting part of itself. That is Nayara.",
+    "listen": {
+      "label": "Listen",
+      "href": "/discography"
+    }
+  }
+}

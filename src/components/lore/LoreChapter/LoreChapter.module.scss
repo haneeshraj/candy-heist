@@ -1,0 +1,214 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Figma "Lore A · 2" and "3": a chapter's title card and text. The page
+// places it (on desktop, the column right of the orrery, 644 wide);
+// stacked, it opens on a still of the planet. Design pixels come from the
+// page (m.dp).
+
+@mixin journey {
+  @media #{t.$query-desktop} and (prefers-reduced-motion: no-preference) {
+    @content;
+  }
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+.chapter {
+  position: relative;
+}
+
+// ---- The title card
+
+.figure {
+  width: m.dp(180);
+  margin-bottom: m.dp(32);
+
+  @include journey {
+    display: none;
+  }
+}
+
+.numeral {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp(10)}, 0.9rem);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-gilt);
+}
+
+.title {
+  margin: m.dp(14) 0 0 -0.04em;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: calc(var(--title-size-sm) * var(--dp));
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(18);
+    font-size: calc(var(--title-size) * var(--dp));
+  }
+}
+
+.line {
+  margin-top: m.dp(16);
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(24);
+  font-style: italic;
+  line-height: 1.2;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(22);
+    font-size: m.dp(30);
+  }
+}
+
+// ---- The text
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(24);
+  margin-top: m.dp(48);
+
+  @media #{t.$query-desktop} {
+    gap: m.dp(30);
+    margin-top: m.dp(72);
+  }
+}
+
+.paragraph {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(16)}, 1.4rem);
+  line-height: 1.65;
+  color: rgb(221 207 178 / 88%);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(19);
+  }
+}
+
+// The markdown's voices: *emphasis* in the accent italic, **strong** in
+// the heavy cream.
+.emphasis {
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: 1.12em;
+  font-style: italic;
+  color: var(--color-gold);
+}
+
+.strong {
+  font-weight: 600;
+  color: var(--color-cream);
+}
+
+.heading {
+  margin-top: m.dp(24);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(22);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(36);
+    font-size: m.dp(28);
+  }
+}
+
+.quote {
+  margin: m.dp(12) 0;
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(30);
+  font-style: italic;
+  line-height: 1.15;
+  color: var(--color-gilt);
+
+  @media #{t.$query-desktop} {
+    margin: m.dp(18) 0;
+    font-size: m.dp(38);
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(12);
+  list-style: none;
+}
+
+.item {
+  position: relative;
+  padding-left: m.dp(22);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp(11)}, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  color: var(--color-gold);
+
+  // A gilt tick, like the ruler's.
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0.72em;
+    left: 0;
+    width: m.dp(10);
+    height: 1px;
+    background-color: var(--color-gilt);
+  }
+}
+
+.entries {
+  display: flex;
+  flex-direction: column;
+}
+
+.entry {
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(6);
+  padding: m.dp(16) 0;
+  border-top: 1px solid rgb(182 158 124 / 20%);
+
+  &:last-child {
+    border-bottom: 1px solid rgb(182 158 124 / 20%);
+  }
+}
+
+.term {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(15);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--color-cream);
+}
+
+.entryText {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(15)}, 1.3rem);
+  line-height: 1.6;
+  color: var(--color-concrete-light);
+}
+
+// The page scrolls over the orrery without catching its pointer (its
+// nodes stay clickable on the left); the text itself still does.
+@include journey {
+  .header,
+  .body {
+    pointer-events: auto;
+  }
+}

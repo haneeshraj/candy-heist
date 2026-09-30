@@ -1,0 +1,164 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Figma "LORE PAGE — A · Orrery", a chapter's page, in design pixels
+// (m.dp). On desktop the orrery (LoreStage) pins on the left of the
+// 1440 canvas and the text runs down a column from 700 to 1344 over it;
+// stacked (phones, reduced motion), the page is one column.
+
+@mixin journey {
+  @media #{t.$query-desktop} and (prefers-reduced-motion: no-preference) {
+    @content;
+  }
+}
+
+@mixin mono($size, $spacing: 0.4em) {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp($size)}, 0.8rem);
+  font-weight: 500;
+  letter-spacing: $spacing;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+.page {
+  @include m.design-scale;
+
+  position: relative;
+  container-type: inline-size;
+  overflow-x: clip;
+  background-color: var(--color-obsidian);
+
+  @include journey {
+    @include m.screen-scale(900);
+  }
+}
+
+.column {
+  position: relative;
+  z-index: 1;
+  max-width: m.dp(390);
+  margin-inline: auto;
+  padding: m.dp(72) m.dp(24) m.dp(112);
+
+  @media #{t.$query-desktop} {
+    max-width: m.dp(760);
+    padding: m.dp(160) m.dp(60) m.dp(160);
+  }
+
+  // The canvas is centred, so the column's 700 is 20 left of the middle.
+  @include journey {
+    width: m.dp(644);
+    max-width: none;
+    margin: 0 0 0 calc(50% - #{m.dp(20)});
+    padding: m.dp(200) 0 m.dp(180);
+    pointer-events: none;
+  }
+}
+
+// ---- The way on (and, under the last chapter, the end)
+
+.next,
+.end {
+  margin-top: m.dp(96);
+  padding-top: m.dp(40);
+  border-top: 1px solid rgb(182 158 124 / 22%);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(140);
+    padding-top: m.dp(48);
+  }
+
+  @include journey {
+    pointer-events: auto;
+  }
+}
+
+.nextRead {
+  @include mono(10);
+
+  color: var(--color-gilt);
+}
+
+.nextLabel {
+  @include mono(10);
+
+  margin-top: m.dp(40);
+  color: var(--color-concrete-light);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(56);
+  }
+}
+
+.nextTitle {
+  margin: m.dp(14) 0 0 -0.04em;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: calc(var(--next-size-sm) * var(--dp));
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    font-size: calc(var(--next-size) * var(--dp));
+  }
+}
+
+.nextLine {
+  margin-top: m.dp(14);
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(22);
+  font-style: italic;
+  line-height: 1.2;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(18);
+    font-size: m.dp(28);
+  }
+}
+
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.6rem;
+  margin-top: m.dp(32);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(40);
+  }
+}
+
+.endLine {
+  max-width: 11em;
+  margin-top: m.dp(20);
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(36);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(48);
+  }
+}
+
+.epigraph {
+  max-width: m.dp(460);
+  margin-top: m.dp(24);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(16)}, 1.4rem);
+  line-height: 1.6;
+  color: rgb(221 207 178 / 80%);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(18);
+  }
+}

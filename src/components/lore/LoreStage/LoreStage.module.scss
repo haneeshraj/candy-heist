@@ -1,0 +1,410 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Figma "LORE PAGE — A · Orrery", on the 1440 × 900 canvas in design
+// pixels. On the index the stage is laid out in its pose (A1: the planet
+// 270 across at 930, 470; the orbit 540 across round it) and
+// useLoreMotion brings it there from the arrival's. On a chapter
+// (data-layout="reader") the planet holds the left, 340 across at 350,
+// 450, and the text runs down the right. Desktop only: phones and reduced
+// motion read the stacked pages without it.
+
+.track {
+  display: none;
+
+  @media #{t.$query-desktop} and (prefers-reduced-motion: no-preference) {
+    @include m.screen-scale(900);
+
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    overflow: clip;
+    pointer-events: none;
+  }
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+// Oversized, so its drift never bares an edge.
+.stars {
+  position: absolute;
+  inset: -8%;
+  width: 116%;
+  height: 116%;
+}
+
+.canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: m.dp(1440);
+  height: m.dp(900);
+  translate: -50% -50%;
+}
+
+// ---- Nayara (the index pose; the arrival's is its first transform:
+// 300 across at 720, 340)
+
+.planet {
+  position: absolute;
+  top: 37.2222%;
+  left: 55.2083%;
+  width: 18.75%;
+  aspect-ratio: 1;
+  transform: translate(-77.7778%, -48.1481%) scale(1.1111);
+
+  // Hidden until useChapterMotion brings it in.
+  [data-layout='reader'] & {
+    top: 31.1111%;
+    left: 13.1944%;
+    width: 23.6111%;
+    visibility: hidden;
+    opacity: 0;
+    transform: none;
+  }
+}
+
+.planetTurn {
+  position: absolute;
+  inset: 0;
+}
+
+.planetDrawing {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.omunRing,
+.heartbeat,
+.pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  aspect-ratio: 1;
+  border: 1px dashed rgb(182 158 124 / 16%);
+  border-radius: 50%;
+  pointer-events: none;
+  translate: -50% -50%;
+}
+
+.omunRing {
+  width: 140%;
+  animation: turn 180s linear infinite;
+
+  // The orbit is close round the planet here; the pulses are the Omun.
+  [data-layout='reader'] & {
+    display: none;
+  }
+}
+
+// A resonance ring every few seconds, on the index only; a chapter's
+// pulses come as its passages arrive (useChapterMotion).
+.heartbeat {
+  width: 110%;
+  border-color: rgb(210 169 97 / 40%);
+  opacity: 0;
+  animation: heartbeat 6s cubic-bezier(0.2, 0.6, 0.35, 1) 1.5s infinite;
+}
+
+.pulse {
+  width: 110%;
+  border-color: rgb(210 169 97 / 45%);
+  visibility: hidden;
+  opacity: 0;
+}
+
+// ---- The orbit
+
+.orbit {
+  position: absolute;
+  top: 22.2222%;
+  left: 45.8333%;
+  width: 37.5%;
+  aspect-ratio: 1;
+  transform: translate(-38.8889%, -24.0741%) scale(1.1111);
+
+  [data-layout='reader'] & {
+    top: 23.3333%;
+    left: 7.6389%;
+    width: 33.3333%;
+    transform: none;
+  }
+}
+
+// ---- The dust: three rings of motes, each turning at a steady rate,
+// reaching half the orbit's radius beyond it.
+
+// Hidden until the orbit draws in (useLoreMotion, useChapterMotion).
+.motes {
+  position: absolute;
+  inset: -25%;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.moteRing {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: var(--color-gold);
+  animation: turn 120s linear infinite;
+  will-change: transform;
+
+  &[data-reverse] {
+    animation-direction: reverse;
+  }
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  fill: none;
+}
+
+.ringLine {
+  stroke: var(--color-gold);
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  stroke-opacity: 0.28;
+  stroke-width: 1;
+}
+
+// The chapters read, from the top clockwise.
+// The chapters read, clockwise from the first; turned in the markup.
+.arc {
+  stroke: var(--color-gilt);
+  stroke-dasharray: 0 1;
+  stroke-width: 2;
+  transform-origin: 50% 50%;
+}
+
+.nodes {
+  position: absolute;
+  inset: 0;
+  list-style: none;
+}
+
+.node {
+  position: absolute;
+  width: 0;
+  height: 0;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.nodeLink {
+  position: absolute;
+  pointer-events: auto;
+  top: 0;
+  left: 0;
+  display: block;
+  color: inherit;
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: none;
+
+    .dot {
+      outline: 1.5px solid rgb(227 194 134 / 90%);
+      outline-offset: 4px;
+    }
+  }
+}
+
+.dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: m.dp(9);
+  height: m.dp(9);
+  border: 1px solid rgb(210 169 97 / 60%);
+  border-radius: 50%;
+  background-color: var(--color-obsidian);
+  translate: -50% -50%;
+  transition:
+    scale 0.35s t.$ease-signature,
+    border-color 0.35s t.$ease-signature,
+    background-color 0.35s t.$ease-signature;
+
+  // A bigger hit area than the dot.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -1.2rem;
+  }
+
+  [data-state='read'] & {
+    border-color: var(--color-gilt);
+    background-color: var(--color-gilt);
+  }
+
+  [data-state='current'] & {
+    width: m.dp(11);
+    height: m.dp(11);
+    border-color: var(--color-crimson-glow);
+    background-color: var(--color-crimson-glow);
+    box-shadow:
+      0 0 0 m.dp(9) rgb(12 12 12 / 0%),
+      0 0 0 calc(#{m.dp(9)} + 1px) rgb(196 69 58 / 50%);
+  }
+
+  [data-state='next'] & {
+    border-style: dashed;
+    border-color: rgb(210 169 97 / 50%);
+  }
+
+  // The way on, once it's in view: the next node takes a crimson edge.
+  [data-upcoming] & {
+    border-color: var(--color-crimson-glow);
+    scale: 1.35;
+  }
+
+  @media #{t.$query-hover} {
+    .nodeLink:hover & {
+      scale: 1.35;
+    }
+  }
+}
+
+// Out along the ring's normal, aligned away from the centre.
+.nodeLabel {
+  position: absolute;
+  top: calc(var(--node-dy) * #{m.dp(22)});
+  left: calc(var(--node-dx) * #{m.dp(22)});
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(4);
+  white-space: nowrap;
+  translate: 0 -50%;
+
+  [data-side='left'] & {
+    align-items: flex-end;
+    translate: -100% -50%;
+  }
+
+  // Above a node at the top, below one at the foot, clear of its ring.
+  [data-side='middle'] & {
+    align-items: center;
+    translate: -50% calc(-50% + var(--node-dy) * 50%);
+  }
+}
+
+.nodeNumeral {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp(9)}, 0.8rem);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  line-height: 1;
+  color: var(--color-gilt);
+
+  [data-state='current'] & {
+    color: var(--color-crimson-glow);
+  }
+}
+
+// A chapter's orbit keeps to numerals, so it stays clear of the text;
+// the caption under it names the node pointed at.
+.nodeTitle,
+.nodeUnwritten {
+  [data-layout='reader'] & {
+    display: none;
+  }
+}
+
+.nodeTitle {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(12)}, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: rgb(221 207 178 / 55%);
+  transition: color 0.35s t.$ease-signature;
+
+  [data-state='read'] &,
+  [data-state='current'] &,
+  .nodeLink:hover &,
+  .nodeLink:focus-visible & {
+    color: var(--color-cream);
+  }
+}
+
+.nodeUnwritten {
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(15);
+  font-style: italic;
+  line-height: 1;
+  color: rgb(221 207 178 / 55%);
+}
+
+// ---- The caption (a chapter's orbit only)
+
+.caption {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  top: 83.3333%;
+  left: 24.3056%;
+  display: flex;
+  flex-direction: column;
+  gap: m.dp(8);
+  align-items: center;
+  white-space: nowrap;
+  translate: -50% 0;
+}
+
+.captionNumeral {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp(10)}, 0.8rem);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-gilt);
+}
+
+.captionTitle {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(13)}, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+}
+
+@keyframes turn {
+  to {
+    rotate: 1turn;
+  }
+}
+
+@keyframes heartbeat {
+  0% {
+    opacity: 0.8;
+    scale: 1;
+  }
+
+  70%,
+  100% {
+    opacity: 0;
+    scale: 1.9;
+  }
+}
