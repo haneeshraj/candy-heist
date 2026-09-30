@@ -49,6 +49,25 @@ html {
   font-size: 62.5%;
 }
 
+// Anything that scrolls inside the page: a slim gilt scrollbar.
+* {
+  scrollbar-color: rgb(210 169 97 / 55%) transparent;
+  scrollbar-width: thin;
+}
+
+// The page's own scrollbar is the site's on screens with a mouse (see
+// SiteScrollbar), so the browser's is hidden there from the first paint,
+// and nothing shifts when it comes in. Touch screens keep theirs.
+@media (hover: hover) and (pointer: fine) {
+  html {
+    scrollbar-width: none;
+  }
+
+  html::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 body {
   font-family: var(--font-archivo), sans-serif;
   background-color: var(--color-obsidian);

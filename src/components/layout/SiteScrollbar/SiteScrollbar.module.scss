@@ -1,0 +1,94 @@
+@use '../../../styles/tokens' as t;
+
+// The site's scrollbar: a hairline down the right edge and a gilt thumb
+// on it, the site's rule colour and its gold. On screens with a mouse
+// only (touch keeps the browser's own), in fixed rem sizes, over the page
+// but under the navbar and its menu. The thumb's hit area is the bar's
+// width; the gilt is a line inside it.
+
+.bar {
+  display: none;
+
+  @media #{t.$query-hover} {
+    position: fixed;
+    top: 1.2rem;
+    right: 0;
+    bottom: 1.2rem;
+    z-index: 80;
+    display: block;
+    width: 1.6rem;
+
+    // The line it runs along.
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0.6rem;
+      bottom: 0;
+      width: 1px;
+      background-color: rgb(182 158 124 / 14%);
+      transition: background-color 0.4s t.$ease-signature;
+    }
+  }
+
+  // Nothing to scroll: out of sight, but still its size, to be measured.
+  &[data-hidden] {
+    visibility: hidden;
+  }
+}
+
+.thumb {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--thumb-size, 0);
+  transform: translate3d(0, var(--thumb-offset, 0), 0);
+  cursor: grab;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0.5rem;
+    bottom: 0;
+    width: 0.3rem;
+    background-color: var(--color-gilt);
+    opacity: 0.5;
+    transition:
+      opacity 0.4s t.$ease-signature,
+      right 0.3s t.$ease-signature,
+      width 0.3s t.$ease-signature,
+      background-color 0.3s t.$ease-signature;
+  }
+}
+
+// Bright while the page moves; wider under the pointer and in the hand.
+.bar[data-active] .thumb::before {
+  opacity: 1;
+}
+
+.bar:hover,
+.bar[data-dragging] {
+  &::before {
+    background-color: rgb(182 158 124 / 26%);
+  }
+
+  .thumb::before {
+    right: 0.4rem;
+    width: 0.5rem;
+    background-color: var(--color-gilt-bright);
+    opacity: 1;
+  }
+}
+
+.bar[data-dragging] .thumb {
+  cursor: grabbing;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar::before,
+  .thumb::before {
+    transition: none;
+  }
+}
