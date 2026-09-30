@@ -1,0 +1,440 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Measured in design pixels (m.dp) against the Figma "IV v2 · By service"
+// frame: 1440 × 960 on desktop, scaled like the other one-screen sections
+// (m.screen-scale), the photo the left 560 of it and the column from 656,
+// 688 wide. The phone, on the 390 grid, puts the photo in a band across the
+// top that fades into the column.
+
+.testimonials {
+  position: relative;
+  overflow: hidden;
+  container-type: inline-size;
+  background-color: var(--color-obsidian);
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+// ---- The photo, and the dark it fades into
+
+.backdrop {
+  @include m.screen-scale(960);
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 0;
+  height: m.dp(400);
+
+  @media #{t.$query-desktop} {
+    right: auto;
+    bottom: 0;
+    width: calc(560 * var(--dpx));
+    height: auto;
+  }
+}
+
+.photo {
+  position: relative;
+  transform-origin: 40% 60%;
+}
+
+.photoImage {
+  object-fit: cover;
+  object-position: 42% 50%;
+}
+
+.shade,
+.fade {
+  position: absolute;
+  pointer-events: none;
+}
+
+.shade {
+  inset: 0;
+  background-color: rgb(12 12 12 / 35%);
+}
+
+// Phone: into the column below. Desktop: into the page on the right.
+.fade {
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 70%;
+  background: linear-gradient(to bottom, transparent, var(--color-obsidian));
+
+  @media #{t.$query-desktop} {
+    top: 0;
+    left: 50%;
+    height: auto;
+    background: linear-gradient(to right, transparent, var(--color-obsidian));
+  }
+}
+
+// ---- The column
+
+.inner {
+  @include m.screen-scale(960);
+
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: m.dp(390);
+  margin-inline: auto;
+  padding: m.dp(300) m.dp(24) m.dp(72);
+
+  @media #{t.$query-desktop} {
+    max-width: calc(1440 * var(--dpx));
+    min-height: m.dp(960);
+    padding: m.dp(96) calc(96 * var(--dpx)) m.dp(96) calc(656 * var(--dpx));
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+
+  @media #{t.$query-desktop} {
+    max-width: m.dp(688);
+  }
+}
+
+.label {
+  display: flex;
+  gap: m.dp(10);
+  align-items: center;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp(10)}, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.44em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    gap: m.dp(12);
+    font-size: max(#{m.dp(12)}, 1rem);
+  }
+}
+
+.labelSigil {
+  display: block;
+  width: m.dp(10);
+  height: m.dp(10);
+  color: var(--color-gilt);
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  @media #{t.$query-desktop} {
+    width: m.dp(12);
+    height: m.dp(12);
+  }
+}
+
+.headline {
+  margin-top: m.dp(18);
+  font-weight: 400;
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(24);
+  }
+}
+
+.headlineVisual {
+  display: flex;
+  flex-direction: column;
+}
+
+.lead {
+  display: block;
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(36);
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(48);
+  }
+}
+
+// Two lines on the phone (ASK THE / ROOM.), one on desktop.
+.statement {
+  display: block;
+  margin-top: m.dp(4);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(44);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(1);
+    font-size: m.dp(64);
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+  }
+}
+
+// ---- One quote at a time
+
+.carousel {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  margin-top: m.dp(36);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(86);
+  }
+}
+
+.quoteMark {
+  display: block;
+  height: m.dp(62);
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(84);
+  font-style: italic;
+  line-height: 1;
+  color: var(--color-gilt);
+  opacity: 0.9;
+
+  @media #{t.$query-desktop} {
+    height: m.dp(90);
+    font-size: m.dp(120);
+  }
+}
+
+// All the quotes share one cell: the tallest sets the height.
+.slides {
+  display: grid;
+}
+
+.slide {
+  grid-area: 1 / 1;
+  margin: 0;
+  visibility: hidden;
+  opacity: 0;
+
+  &[data-active] {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+.quote {
+  margin: 0;
+}
+
+.quoteText {
+  display: block;
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: m.dp(28);
+  font-style: italic;
+  line-height: 1.22;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(44);
+    line-height: 1.2;
+  }
+}
+
+// Who said it, and, quietly, what they booked.
+.credit {
+  display: flex;
+  flex-wrap: wrap;
+  gap: m.dp(8) m.dp(12);
+  align-items: center;
+  margin-top: m.dp(20);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(28);
+  }
+}
+
+.creditName {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(15)}, 1.4rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    font-size: max(#{m.dp(16)}, 1.4rem);
+  }
+}
+
+.creditRole,
+.creditSep,
+.creditService {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp(10)}, 0.9rem);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.creditRole {
+  color: var(--color-gilt);
+}
+
+.creditSep {
+  letter-spacing: 0;
+  color: var(--color-concrete);
+}
+
+.creditService {
+  display: inline-flex;
+  gap: m.dp(8);
+  align-items: center;
+  color: var(--color-concrete-light);
+}
+
+.creditGlyph {
+  flex: none;
+  width: max(#{m.dp(12)}, 1rem);
+  height: max(#{m.dp(12)}, 1rem);
+  color: var(--color-gold-dim);
+}
+
+// ---- Dots and dashes, centred under the quote
+
+.controls {
+  display: flex;
+  gap: m.dp(4);
+  align-items: center;
+  align-self: center;
+  margin-top: m.dp(44);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(88);
+  }
+}
+
+.dots {
+  display: flex;
+  align-items: center;
+  list-style: none;
+}
+
+// Each is a 24 px target however small it's drawn.
+.dot,
+.toggle {
+  display: grid;
+  place-items: center;
+  min-width: 2.4rem;
+  height: 2.4rem;
+  padding: 0 m.dp(5);
+  border: 0;
+  background: none;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 2px;
+  }
+}
+
+.dash {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  width: m.dp(56);
+  height: 2px;
+  background-color: rgb(182 158 124 / 25%);
+}
+
+// The rotation's clock: the next quote comes in as it fills.
+.dashFill {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background-color: var(--color-gilt);
+  animation: dash-fill var(--quote-interval, 7s) linear forwards;
+  animation-play-state: paused;
+
+  &[data-running] {
+    animation-play-state: running;
+  }
+
+  // Not rotating: the dash just marks the quote showing.
+  &[data-still] {
+    transform: none;
+    animation: none;
+  }
+}
+
+@keyframes dash-fill {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.diamond {
+  display: block;
+  width: max(#{m.dp(6)}, 5px);
+  height: max(#{m.dp(6)}, 5px);
+  background-color: rgb(143 125 99 / 80%);
+  transform: rotate(45deg);
+  transition: background-color 0.3s t.$ease-signature;
+}
+
+.toggle {
+  color: var(--color-gold-dim);
+  transition: color 0.3s t.$ease-signature;
+}
+
+.toggleGlyph {
+  width: 1rem;
+  height: 1rem;
+}
+
+@media #{t.$query-hover} {
+  .dot:hover .diamond {
+    background-color: var(--color-gilt);
+  }
+
+  .toggle:hover {
+    color: var(--color-gilt);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashFill {
+    transform: none;
+    animation: none;
+  }
+}
+
+// ---- The one action, bottom right
+
+.cta {
+  display: inline-flex;
+  align-self: flex-end;
+  margin-top: m.dp(40);
+
+  @media #{t.$query-desktop} {
+    position: absolute;
+    right: calc(96 * var(--dpx));
+    bottom: m.dp(96);
+    margin-top: 0;
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "label": "Testimonials",
+  "headline": { "lead": "The work speaks,", "statement": "Ask the room." },
+  "cta": { "label": "Book a session", "href": "/sessions" },
+  "photo": {
+    "src": "/img/home/about-photo.jpeg",
+    "alt": "Candy Heist at the decks beneath the vaulted, crimson-lit ceiling of a gothic hall"
+  },
+  "controls": {
+    "slide": "{n} of {total}",
+    "show": "Show quote {n} of {total}",
+    "pause": "Pause the quotes",
+    "play": "Play the quotes"
+  },
+  "testimonials": [
+    {
+      "quote": "He heard what the track was missing before I could name it. Now it sounds like the record in my head.",
+      "name": "J.M.",
+      "role": "Artist",
+      "service": "mix-and-master"
+    },
+    {
+      "quote": "Three sessions in, I stopped playing songs and started reading the room.",
+      "name": "A.R.",
+      "role": "DJ",
+      "service": "dj-lessons"
+    },
+    {
+      "quote": "I brought a loop I’d been stuck on for months. We left with a finished track.",
+      "name": "K.O.",
+      "role": "Producer",
+      "service": "production-session"
+    },
+    {
+      "quote": "Honest notes, no fluff, and a walkthrough I still go back to.",
+      "name": "D.L.",
+      "role": "Artist",
+      "service": "project-feedback"
+    }
+  ]
+}
