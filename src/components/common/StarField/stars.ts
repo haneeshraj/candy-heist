@@ -9,6 +9,8 @@ export interface Star {
   y: number;
   r: number;
   opacity: number;
+  /** For the stars that twinkle (every fourth): its cycle, in seconds. */
+  twinkle?: { duration: string; delay: string };
 }
 
 const f1 = (n: number) => n.toFixed(1);
@@ -32,13 +34,26 @@ export const STARS: { stars: Star[]; links: string } = (() => {
         links.push(
           `M ${f1(points[i][0])} ${f1(points[i][1])} L ${f1(points[j][0])} ${f1(points[j][1])}`
         );
+  // Seeded apart from the field, so the stars stay where the frames have
+  // them. Each twinkles on its own cycle, started partway through.
+  const phase = mulberry32(5);
   return {
-    stars: points.map(([x, y], i) => ({
-      x: +f1(x),
-      y: +f1(y),
-      r: i % 5 ? 1 : 1.5,
-      opacity: (i % 5 ? 0.35 : 0.6) * 0.8
-    })),
+    stars: points.map(([x, y], i) => {
+      const star: Star = {
+        x: +f1(x),
+        y: +f1(y),
+        r: i % 5 ? 1 : 1.5,
+        opacity: (i % 5 ? 0.35 : 0.6) * 0.8
+      };
+      if (i % 4 === 0) {
+        const duration = 3.5 + phase() * 4;
+        star.twinkle = {
+          duration: `${duration.toFixed(2)}s`,
+          delay: `${(-phase() * duration).toFixed(2)}s`
+        };
+      }
+      return star;
+    }),
     links: links.join(' ')
   };
 })();

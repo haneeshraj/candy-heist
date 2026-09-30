@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { StarField } from '../StarField';
+import { StarField } from '@/components/common/StarField';
 import BehindPanel from './BehindPanel';
 import FrameChrome from './FrameChrome';
 import Instrument from './Instrument';

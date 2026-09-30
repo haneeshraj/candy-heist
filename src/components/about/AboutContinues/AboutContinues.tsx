@@ -8,7 +8,7 @@ import { WordReveal } from '@/components/common/WordReveal';
 import { ArrowIcon } from '@/components/icons';
 import { AboutBanner } from '../AboutBanner';
 import { AboutLabel } from '../AboutLabel';
-import { StarField } from '../StarField';
+import { StarField } from '@/components/common/StarField';
 import styles from './AboutContinues.module.scss';
 import type { AboutContinuesProps } from './AboutContinues.types';
 import { useContinuesMotion } from './useContinuesMotion';

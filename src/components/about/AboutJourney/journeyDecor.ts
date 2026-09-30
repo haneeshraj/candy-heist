@@ -3,7 +3,11 @@
 // the same seeded generators the frames were drawn with, so the server and
 // the client render identical markup and the page matches the storyboard.
 
-import { mulberry32 } from '@/lib/random/mulberry32';
+import {
+  GRATICULE,
+  PLANET_R,
+  VEINS
+} from '@/components/common/NayaraPlanet/planetGeometry';
 
 export const CANVAS = { width: 1440, height: 900 } as const;
 
@@ -54,64 +58,9 @@ export const OMUN_RINGS = [
   { r: 250, opacity: 0.15 }
 ] as const;
 
-// ---- Nayara, in the planet's own box (0 to 355), tilted a little.
-export const PLANET = { r: 177.5 } as const;
-
-const TILT = -0.32;
-const pr = PLANET.r;
-const tilted = (x: number, y: number): [number, number] => [
-  pr + x * Math.cos(TILT) - y * Math.sin(TILT),
-  pr + x * Math.sin(TILT) + y * Math.cos(TILT)
-];
-const polyline = (points: Array<[number, number]>) =>
-  points.map(([x, y], i) => `${i ? 'L' : 'M'} ${f1(x)} ${f1(y)}`).join(' ');
-const loop = (point: (t: number) => [number, number]) =>
-  polyline(Array.from({ length: 97 }, (_, i) => point((i / 96) * Math.PI * 2)));
-
-export const PLANET_GRATICULE = [
-  ...[0.3, 0.64, 0.9].map((k) =>
-    loop((t) => tilted(k * pr * Math.cos(t), pr * Math.sin(t)))
-  ),
-  ...[-0.62, -0.3, 0, 0.3, 0.62].map((s) => {
-    const y0 = s * pr;
-    const w = Math.sqrt(pr * pr - y0 * y0);
-    return loop((t) => tilted(w * Math.cos(t), y0 + 0.16 * w * Math.sin(t)));
-  })
-].join(' ');
-
-// The fungal network: nine veins branching out from the core.
-export const PLANET_VEINS: string[] = (() => {
-  const random = mulberry32(31);
-  const veins: string[] = [];
-  const grow = (
-    x: number,
-    y: number,
-    a: number,
-    steps: number,
-    depth: number
-  ) => {
-    const points: Array<[number, number]> = [[x, y]];
-    for (let s = 0; s < steps; s++) {
-      a += (random() - 0.5) * 0.7;
-      x += Math.cos(a) * 11;
-      y += Math.sin(a) * 11;
-      if (Math.hypot(x - pr, y - pr) > pr * 0.96) break;
-      points.push([x, y]);
-      if (depth < 2 && random() < 0.16)
-        grow(
-          x,
-          y,
-          a + (random() < 0.5 ? 0.9 : -0.9),
-          Math.floor(steps * 0.55),
-          depth + 1
-        );
-    }
-    if (points.length > 1) veins.push(polyline(points));
-  };
-  for (let i = 0; i < 9; i++)
-    grow(pr, pr, (i / 9) * Math.PI * 2 + random() * 0.4, 16, 0);
-  return veins;
-})();
+// ---- Nayara: the shared drawing (the lore page's planet is the same one).
+export const PLANET = { r: PLANET_R } as const;
+export { GRATICULE as PLANET_GRATICULE, VEINS as PLANET_VEINS };
 
 // ---- Behind the signal: the 3:4 frame the orb squares into.
 export const FRAME = { x: 876, y: 150, width: 420, height: 560 } as const;

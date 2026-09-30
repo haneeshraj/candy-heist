@@ -10,3 +10,24 @@
   stroke-opacity: 0.08;
   stroke-width: 0.6;
 }
+
+// Each star's cycle is set on it; this is the shape of one.
+.twinkle {
+  animation: twinkle 5s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    opacity: 0.4;
+    animation: none;
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
