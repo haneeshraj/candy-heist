@@ -207,3 +207,92 @@ export function SpotifyIcon(props: IconProps) {
 export function YouTubeIcon(props: IconProps) {
   return <Icon path={YOUTUBE_PATH} fillRule="evenodd" {...props} />;
 }
+
+// ---- Discography: the other platforms (drawn stand-ins until the official
+// marks), the page's view switch, and its small actions
+
+// Two beamed notes.
+const APPLE_MUSIC_PATHS = [
+  'M0.4 9.8A2 1.6 0 1 0 4.4 9.8A2 1.6 0 1 0 0.4 9.8Z',
+  'M7.2 8.6A2 1.6 0 1 0 11.2 8.6A2 1.6 0 1 0 7.2 8.6Z',
+  'M3.2 1.6H4.4V9.8H3.2Z',
+  'M10 0.4H11.2V8.6H10Z',
+  'M3.2 0.4H11.2V2.6H3.2Z'
+] as const;
+
+// A row of level bars.
+const DEEZER_PATH =
+  'M0 8H2V12H0Z M2.5 5H4.5V12H2.5Z M5 2H7V12H5Z M7.5 5H9.5V12H7.5Z M10 0H12V12H10Z';
+
+// Four diamonds, three over one.
+const TIDAL_PATH =
+  'M0 4.2L2.2 2L4.4 4.2L2.2 6.4Z M3.8 4.2L6 2L8.2 4.2L6 6.4Z M7.6 4.2L9.8 2L12 4.2L9.8 6.4Z M3.8 8L6 5.8L8.2 8L6 10.2Z';
+
+export function AppleMusicIcon(props: IconProps) {
+  return <Icon path={APPLE_MUSIC_PATHS} {...props} />;
+}
+
+export function DeezerIcon(props: IconProps) {
+  return <Icon path={DEEZER_PATH} {...props} />;
+}
+
+export function TidalIcon(props: IconProps) {
+  return <Icon path={TIDAL_PATH} {...props} />;
+}
+
+// Two chain links; each is its own path, so where they cross both fill.
+const LINK_PATHS = [
+  'M6.19 5.81C5.58 5.21 4.6 5.21 3.99 5.81L2.01 7.79C1.41 8.4 1.41 9.38 2.01 9.99C2.62 10.59 3.6 10.59 4.21 9.99L6.19 8.01C6.79 7.4 6.79 6.42 6.19 5.81ZM7.11 4.9C8.22 6.01 8.22 7.81 7.11 8.93L5.13 10.9C4.01 12.02 2.21 12.02 1.09 10.91C-0.02 9.79 -0.02 7.99 1.09 6.87L3.07 4.89C4.19 3.78 5.99 3.78 7.11 4.9Z',
+  'M9.99 2.01C9.38 1.41 8.4 1.41 7.79 2.01L5.81 3.99C5.21 4.6 5.21 5.58 5.81 6.19C6.42 6.79 7.4 6.79 8.01 6.19L9.99 4.21C10.59 3.6 10.59 2.62 9.99 2.01ZM10.91 1.1C12.02 2.21 12.02 4.01 10.91 5.13L8.93 7.1C7.81 8.22 6.01 8.22 4.89 7.11C3.78 5.99 3.78 4.19 4.89 3.07L6.87 1.09C7.99 -0.02 9.79 -0.02 10.91 1.1Z'
+] as const;
+
+export function LinkIcon(props: IconProps) {
+  return <Icon path={LINK_PATHS} {...props} />;
+}
+
+export function CloseIcon(props: IconProps) {
+  return (
+    <Icon
+      path={[
+        'M0.56 10.45L10.46 0.56L11.45 1.55L1.55 11.44Z',
+        'M1.54 0.56L11.44 10.45L10.45 11.44L0.55 1.55Z'
+      ]}
+      {...props}
+    />
+  );
+}
+
+export function CheckIcon(props: IconProps) {
+  return (
+    <Icon
+      path="M0.9 6.3L2.1 5.1L4.5 7.5L9.9 2.1L11.1 3.3L4.5 9.9Z"
+      {...props}
+    />
+  );
+}
+
+// The view switch: the grid, one release framed, the list.
+export function VaultViewIcon(props: IconProps) {
+  return (
+    <Icon
+      path="M0 0H5V5H0Z M7 0H12V5H7Z M0 7H5V12H0Z M7 7H12V12H7Z"
+      {...props}
+    />
+  );
+}
+
+export function MonumentViewIcon(props: IconProps) {
+  return (
+    <Icon
+      path={['M0 0H12V12H0Z M1 1V11H11V1Z', 'M3 3H9V9H3Z']}
+      fillRule="evenodd"
+      {...props}
+    />
+  );
+}
+
+export function IndexViewIcon(props: IconProps) {
+  return (
+    <Icon path="M0 1H12V2.5H0Z M0 5.25H12V6.75H0Z M0 9.5H12V11H0Z" {...props} />
+  );
+}

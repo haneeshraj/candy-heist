@@ -19,6 +19,15 @@ export {
   InstagramIcon,
   SoundCloudIcon,
   SpotifyIcon,
-  YouTubeIcon
+  YouTubeIcon,
+  AppleMusicIcon,
+  DeezerIcon,
+  TidalIcon,
+  LinkIcon,
+  CloseIcon,
+  CheckIcon,
+  VaultViewIcon,
+  MonumentViewIcon,
+  IndexViewIcon
 } from './glyphs';
 export type { IconProps, BaseIconProps } from './Icon.types';
