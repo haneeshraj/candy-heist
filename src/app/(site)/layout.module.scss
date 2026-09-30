@@ -1,3 +1,11 @@
+// On phones the navbar's bar spans the foot of the screen, so the site
+// ends above it. (Pages outside the site, like a share link, have no bar.)
+.site {
+  @media (width < 768px) {
+    padding-bottom: var(--navbar-clearance);
+  }
+}
+
 // The page's content, drawn over the footer. When the footer is pinned
 // behind it (SiteFooter's curtain), the content's bottom edge lifts away to
 // uncover the footer, casting a soft shadow onto it as it goes.

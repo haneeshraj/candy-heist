@@ -53,9 +53,4 @@ body {
   font-family: var(--font-archivo), sans-serif;
   background-color: var(--color-obsidian);
   color: var(--color-cream);
-
-  // On phones the bar spans the screen, so the page ends above it.
-  @media (width < 768px) {
-    padding-bottom: var(--navbar-clearance);
-  }
 }
