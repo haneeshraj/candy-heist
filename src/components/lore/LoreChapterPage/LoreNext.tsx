@@ -11,7 +11,7 @@ import {
   type LoreChapterSummary,
   type LoreCopy
 } from '@/content/lore/lore';
-import { titleSize } from '../titleSize';
+import { titleSize } from '@/lib/text/titleSize';
 import styles from './LoreChapterPage.module.scss';
 
 interface LoreNextProps {

@@ -7,7 +7,7 @@ import { NayaraPlanet } from '@/components/common/NayaraPlanet';
 import { WordReveal } from '@/components/common/WordReveal';
 import type { LoreBlock, LoreChapter as Chapter } from '@/content/lore/lore';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
-import { titleSize } from '../titleSize';
+import { titleSize } from '@/lib/text/titleSize';
 import LoreText, { Runs } from './LoreText';
 import styles from './LoreChapter.module.scss';
 
