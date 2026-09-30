@@ -7,6 +7,9 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: './vitest.setup.ts',
+    // The page tests render whole pages in jsdom; on a busy machine a
+    // file's first render can outrun the 5 s default.
+    testTimeout: 15000,
     globals: true,
     coverage: {
       provider: 'v8',

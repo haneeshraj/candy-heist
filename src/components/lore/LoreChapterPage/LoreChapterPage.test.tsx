@@ -27,6 +27,11 @@ vi.mock('@/lib/animation/gsap', async (importOriginal) => {
   return { ...actual, gsap: { ...actual.gsap, set: () => undefined } };
 });
 
+// Nayara in all her looks is thousands of SVG paths, and not under test.
+vi.mock('@/components/common/NayaraPlanet', () => ({
+  NayaraPlanet: () => <svg data-testid="planet" />
+}));
+
 const lore = loadLore();
 const copy = copyOf(lore);
 const chapters = lore.chapters.map(summarize);
