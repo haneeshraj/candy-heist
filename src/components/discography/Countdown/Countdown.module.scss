@@ -1,0 +1,67 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Figma "Countdown": figures in Archivo SemiBold over mono labels, a gold
+// hairline between each. Design pixels come from the page (m.dp).
+
+.countdown {
+  --figure: #{m.dp(44)};
+  --pitch: #{m.dp(88)};
+
+  &[data-size='card'] {
+    --figure: #{m.dp(36)};
+    --pitch: #{m.dp(76)};
+  }
+}
+
+.cells {
+  display: flex;
+  list-style: none;
+}
+
+.cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--figure) * 0.22);
+  width: var(--pitch);
+
+  &:last-child {
+    width: auto;
+  }
+
+  // The hairline between this figure and the next.
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: calc(var(--figure) * 0.1);
+    right: calc(var(--pitch) - var(--figure) * 1.64);
+    width: 1px;
+    height: calc(var(--figure) * 0.8);
+    background-color: rgb(182 158 124 / 25%);
+  }
+}
+
+.number {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: var(--figure);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--color-cream);
+}
+
+.unit {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(calc(var(--figure) * 0.21), 0.8rem);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-concrete-light);
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}

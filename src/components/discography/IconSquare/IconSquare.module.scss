@@ -1,0 +1,63 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Figma "Navbar / Social" (square) at the release page's 44: a gilt
+// hairline on the raised obsidian, the glyph in the middle.
+
+.square {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: max(#{m.dp(44)}, 4rem);
+  height: max(#{m.dp(44)}, 4rem);
+  padding: 0;
+  border: 1px solid rgb(210 169 97 / 35%);
+  background-color: var(--color-obsidian-raised);
+  color: var(--color-gilt);
+  cursor: pointer;
+  transition:
+    background-color 0.35s t.$ease-signature,
+    border-color 0.35s t.$ease-signature,
+    color 0.35s t.$ease-signature;
+
+  // The magnetic catch zone: the pull starts just before the edge.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -0.6rem;
+  }
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 3px;
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      border-color: rgb(210 169 97 / 90%);
+      background-color: var(--color-gilt);
+      color: var(--color-obsidian);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.glyph {
+  display: block;
+  width: 45%;
+  height: 45%;
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}

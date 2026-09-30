@@ -1,10 +1,19 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import ReleasePlaceholder from '@/components/discography/ReleasePlaceholder';
+import { ReleasePage } from '@/components/discography/ReleasePage';
+import { discographyCopy } from '@/content/discography/discography';
 import { findRelease, releases } from '@/content/discography/releases';
+import { moreLike } from '@/lib/discography/catalogue';
+import { KIND_LABEL } from '@/lib/discography/format';
+import { summarize } from '@/lib/discography/summary';
+import { fill } from '@/lib/text/fill';
 
-// Every release page is built ahead of time; any other slug is a 404.
+// Every release page is built ahead of time, and made again each hour so
+// one turns from its countdown to its platforms on the day; any other
+// slug is a 404. (A single inside an album still has its page, though the
+// grid shows only the album.)
 export const dynamicParams = false;
+export const revalidate = 3600;
 
 export function generateStaticParams() {
   return releases.map((release) => ({ slug: release.slug }));
@@ -15,17 +24,34 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const release = findRelease((await props.params).slug);
   if (!release) return {};
+  const values = {
+    title: release.title,
+    artist: release.artist,
+    kind: KIND_LABEL[release.kind].one.toLowerCase()
+  };
   return {
-    title: `${release.title} · Candy Heist`,
-    description: `${release.title} by ${release.artist}.`
+    title: fill(discographyCopy.release.meta.title, values),
+    description: fill(discographyCopy.release.meta.description, values)
   };
 }
 
-// Placeholder until the release page is designed.
-export default async function ReleasePage(
+export default async function ReleaseRoute(
   props: PageProps<'/discography/[slug]'>
 ) {
   const release = findRelease((await props.params).slug);
   if (!release) notFound();
-  return <ReleasePlaceholder release={release} />;
+  // A Server Component, made once per revalidation: its clock's start.
+  // eslint-disable-next-line react-hooks/purity
+  const now = Date.now();
+  return (
+    <main>
+      <ReleasePage
+        copy={discographyCopy.release}
+        forthcoming={discographyCopy.page.forthcoming}
+        release={release}
+        more={moreLike(release, releases).map((r) => summarize(r, now))}
+        renderedAt={now}
+      />
+    </main>
+  );
 }

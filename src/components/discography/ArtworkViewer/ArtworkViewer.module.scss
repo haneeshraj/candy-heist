@@ -1,0 +1,204 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Figma "Release · Single — artwork open": the artwork 680 in the middle
+// of the dark, Cover | Canvas top left, close top right, the caption
+// under it in mono. Fixed rem sizes: it sits over the page.
+
+// The dialog is only a full-screen layer: the dark is its own element
+// (.shade), so the flight can bring it up and down, and the content sits
+// over it. The content lets clicks through to the dark except on its
+// controls and the artwork, so a click anywhere else shuts it.
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+.viewer {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: none;
+  color: var(--color-cream);
+
+  &::backdrop {
+    background: none;
+  }
+
+  &[open] {
+    display: block;
+  }
+}
+
+.shade {
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-obsidian);
+}
+
+.layer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 2.4rem;
+  pointer-events: none;
+
+  @media #{t.$query-desktop} {
+    padding: 4.4rem 9.6rem;
+  }
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  button {
+    pointer-events: auto;
+  }
+}
+
+.faces {
+  display: flex;
+  gap: 2.4rem;
+}
+
+.face {
+  padding: 0.4rem 0;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: none;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  cursor: pointer;
+
+  &[aria-pressed='true'] {
+    border-bottom-color: var(--color-gilt);
+    color: var(--color-cream);
+  }
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 4px;
+  }
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 4.4rem;
+  height: 4.4rem;
+  padding: 0;
+  border: 1px solid rgb(210 169 97 / 35%);
+  background-color: var(--color-obsidian-raised);
+  color: var(--color-gilt);
+  cursor: pointer;
+  transition:
+    background-color 0.35s t.$ease-signature,
+    color 0.35s t.$ease-signature;
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 3px;
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      background-color: var(--color-gilt);
+      color: var(--color-obsidian);
+    }
+  }
+}
+
+.closeGlyph {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.figure {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  margin: 2rem 0 0;
+}
+
+// The artwork fits the screen's shorter side.
+.art {
+  position: relative;
+  pointer-events: auto;
+  will-change: transform;
+  width: min(68rem, 100%, calc(100dvh - 18rem));
+  aspect-ratio: 1;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.canvas {
+  position: relative;
+  pointer-events: auto;
+  will-change: transform;
+  height: min(68rem, calc(100dvh - 18rem));
+  aspect-ratio: 9 / 16;
+  max-width: 100%;
+  background-color: var(--color-obsidian-raised);
+}
+
+.video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.play {
+  position: absolute;
+  right: 1.2rem;
+  bottom: 1.2rem;
+  display: grid;
+  place-items: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  padding: 0;
+  border: 1px solid rgb(210 169 97 / 35%);
+  background-color: rgb(17 16 17 / 85%);
+  color: var(--color-gilt);
+  cursor: pointer;
+
+  > svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 3px;
+  }
+}
+
+.caption {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--color-concrete-light);
+}

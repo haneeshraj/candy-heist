@@ -1,0 +1,448 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Figma "Release · Single — released" and its album and forthcoming
+// siblings, in design pixels (m.dp): on the 1440 frame the cover is 560
+// at 96, 150; the right column is 608 from 736, its kind and date level
+// with the cover's top. The running order runs under both, 560 and 608
+// wide; more releases close it, four of 294. Phones stack it all.
+
+@mixin mono($size, $spacing: 0.4em) {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp($size)}, 0.9rem);
+  font-weight: 500;
+  letter-spacing: $spacing;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+// The container the design pixels measure; the body takes the gutters.
+.page {
+  @include m.design-scale;
+
+  --gutter: #{m.dp(24)};
+
+  position: relative;
+  container-type: inline-size;
+  min-height: 100svh;
+  overflow-x: clip;
+  background-color: var(--color-obsidian);
+
+  @media #{t.$query-desktop} {
+    --gutter: #{m.dp(96)};
+  }
+}
+
+.sky {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.skyPin {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.stars {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.6;
+}
+
+.body {
+  position: relative;
+  padding: m.dp(48) var(--gutter)
+    calc(var(--navbar-clearance, 0px) + #{m.dp(120)});
+
+  @media #{t.$query-desktop} {
+    padding: m.dp(72) var(--gutter) m.dp(200);
+  }
+}
+
+.back {
+  @include mono(11);
+
+  display: inline-block;
+  color: var(--color-gold);
+  text-decoration: none;
+  transition: color 0.3s t.$ease-signature;
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 4px;
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      color: var(--color-gilt-bright);
+    }
+  }
+}
+
+// ---- The first row: the cover | the release
+
+.top {
+  display: grid;
+  gap: m.dp(32);
+  margin-top: m.dp(64);
+
+  @media #{t.$query-desktop} {
+    grid-template-columns: m.dp(560) m.dp(608);
+    gap: m.dp(80);
+    align-items: start;
+    margin-top: m.dp(78);
+  }
+}
+
+.art {
+  position: relative;
+}
+
+// Cover | Canvas, just above the cover.
+.faces {
+  position: absolute;
+  bottom: calc(100% + #{m.dp(12)});
+  left: 0;
+  display: flex;
+  gap: m.dp(24);
+}
+
+.face {
+  @include mono(10);
+
+  padding: 0 0 m.dp(4);
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: none;
+  color: var(--color-gold);
+  cursor: pointer;
+
+  &[aria-pressed='true'] {
+    border-bottom-color: var(--color-gilt);
+    color: var(--color-cream);
+  }
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 4px;
+  }
+}
+
+.artButton {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  background-color: var(--color-obsidian-raised);
+  cursor: zoom-in;
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: m.dp(8);
+  }
+}
+
+.cover {
+  object-fit: cover;
+}
+
+// The canvas is 9:16: it sits in the square, the dark either side.
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.kicker {
+  @include mono(11);
+
+  display: flex;
+  gap: 0.7em;
+  align-items: center;
+  color: var(--color-gilt);
+
+  // Not out yet: the view's one crimson dot.
+  &[data-forthcoming] {
+    &::before {
+      content: '';
+      width: 0.64em;
+      height: 0.64em;
+      border-radius: 50%;
+      background-color: var(--color-crimson-glow);
+    }
+  }
+}
+
+.title {
+  margin: m.dp(14) 0 0 -0.04em;
+  font-family: var(--font-archivo), sans-serif;
+
+  // Sized so the longest word fits the column (see lib/text/titleSize).
+  font-size: calc(var(--title-size-sm) * var(--dp));
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(18);
+    font-size: calc(var(--title-size) * var(--dp));
+  }
+}
+
+.artist {
+  margin-top: m.dp(16);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(20);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(24);
+    font-size: m.dp(26);
+  }
+}
+
+// The platforms (or the countdown and Pre-save), then copy link.
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: m.dp(12);
+  align-items: center;
+  margin-top: m.dp(24);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(32);
+  }
+}
+
+.platforms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: m.dp(12);
+  list-style: none;
+}
+
+.divider {
+  display: none;
+  width: 1px;
+  height: max(#{m.dp(28)}, 2.6rem);
+  margin: 0 m.dp(4);
+  background-color: rgb(182 158 124 / 30%);
+
+  @media #{t.$query-tablet} {
+    display: block;
+  }
+}
+
+.countdown {
+  width: 100%;
+  margin-bottom: m.dp(8);
+
+  @media #{t.$query-desktop} {
+    width: auto;
+    margin: 0 m.dp(32) 0 0;
+  }
+}
+
+// The credits and the label, one table in two columns: on the frame the
+// left pair's key is at 736 and its value at 916, the right pair's key at
+// 1078 and its value set to the column's right edge.
+.details {
+  display: grid;
+  gap: m.dp(16) m.dp(24);
+  margin-top: m.dp(32);
+  padding-top: m.dp(24);
+  border-top: 1px solid rgb(182 158 124 / 22%);
+
+  @media #{t.$query-desktop} {
+    grid-template-columns: m.dp(318) 1fr;
+    margin-top: m.dp(58);
+    padding-top: m.dp(26);
+  }
+}
+
+.detail {
+  display: grid;
+  grid-template-columns: m.dp(150) 1fr;
+  gap: m.dp(12);
+  align-items: baseline;
+
+  @media #{t.$query-desktop} {
+    grid-template-columns: m.dp(180) 1fr;
+    gap: 0;
+
+    &[data-col='0'] {
+      grid-column: 1;
+    }
+
+    &[data-col='1'] {
+      grid-template-columns: 1fr auto;
+      grid-column: 2;
+
+      .detailValue {
+        text-align: right;
+      }
+    }
+  }
+}
+
+.detailKey {
+  @include mono(10);
+
+  color: var(--color-gold);
+}
+
+.detailValue {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(15)}, 1.4rem);
+  line-height: 1.4;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(16);
+  }
+}
+
+// ---- Under it: the running order, and more to go on to
+
+.sectionHead {
+  display: flex;
+  gap: m.dp(16);
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.sectionLabel {
+  @include mono(11);
+
+  color: var(--color-gold);
+}
+
+.sectionNote {
+  @include mono(10);
+
+  color: var(--color-concrete-light);
+}
+
+.running {
+  margin-top: m.dp(64);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(80);
+  }
+}
+
+.tracks {
+  display: grid;
+  margin-top: m.dp(20);
+  list-style: none;
+
+  @media #{t.$query-desktop} {
+    grid-template-rows: repeat(var(--rows), auto);
+    grid-template-columns: m.dp(560) m.dp(608);
+    grid-auto-flow: column;
+    column-gap: m.dp(80);
+  }
+}
+
+.track {
+  display: grid;
+  grid-template-columns: m.dp(44) 1fr auto;
+  gap: m.dp(8);
+  align-items: baseline;
+  padding: m.dp(16) 0;
+  border-bottom: 1px solid rgb(182 158 124 / 22%);
+
+  &:first-child {
+    border-top: 1px solid rgb(182 158 124 / 22%);
+  }
+
+  @media #{t.$query-desktop} {
+    grid-template-columns: m.dp(52) 1fr auto;
+    padding: m.dp(17) 0;
+
+    &[data-column-start] {
+      border-top: 1px solid rgb(182 158 124 / 22%);
+    }
+  }
+}
+
+.trackNumber {
+  @include mono(10);
+
+  color: var(--color-concrete-light);
+}
+
+.trackTitle {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(16)}, 1.4rem);
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--color-cream);
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(18);
+  }
+}
+
+.trackAside {
+  margin-left: m.dp(10);
+  font-size: 0.82em;
+  font-weight: 400;
+  color: var(--color-gold);
+}
+
+.trackTime {
+  @include mono(10);
+
+  color: var(--color-concrete-light);
+}
+
+.more {
+  margin-top: m.dp(80);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(100);
+  }
+
+  .sectionHead {
+    padding-bottom: m.dp(16);
+    border-bottom: 1px solid rgb(182 158 124 / 22%);
+  }
+}
+
+.moreGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: m.dp(32) m.dp(16);
+  margin-top: m.dp(28);
+  list-style: none;
+
+  @media #{t.$query-desktop} {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: m.dp(24);
+    margin-top: m.dp(40);
+  }
+}
