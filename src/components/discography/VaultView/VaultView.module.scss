@@ -1,0 +1,17 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Figma "Discography — Vault view": four covers of 294 across the 1248,
+// 24 apart, rows 132 apart under their captions; two across on phones.
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: m.dp(40) m.dp(16);
+  list-style: none;
+
+  @media #{t.$query-desktop} {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: m.dp(56) m.dp(24);
+  }
+}

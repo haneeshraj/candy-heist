@@ -1,0 +1,230 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Figma "Discography — Index view", in design pixels (m.dp): rows 104 tall
+// between hairlines, the number, the title in Archivo 76, the artists and
+// the kind and year in mono to the right. The cover of the row pointed at
+// (280) sits at 880 on the frame (784 into the list), level with it.
+
+@mixin mono($size) {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp($size)}, 0.9rem);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.index {
+  position: relative;
+}
+
+.list {
+  list-style: none;
+  border-bottom: 1px solid rgb(182 158 124 / 16%);
+}
+
+.row {
+  border-top: 1px solid rgb(182 158 124 / 16%);
+  transition: border-color 0.35s t.$ease-signature;
+
+  &[data-active] {
+    border-top-color: rgb(210 169 97 / 60%);
+  }
+}
+
+.link {
+  display: grid;
+  grid-template-columns: m.dp(56) 1fr auto;
+  gap: m.dp(4) m.dp(14);
+  align-items: center;
+  padding: m.dp(14) 0;
+  color: inherit;
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: -2px;
+  }
+
+  @media #{t.$query-desktop} {
+    grid-template-columns: m.dp(54) 1fr auto m.dp(180);
+    gap: m.dp(16);
+    align-items: start;
+    padding: m.dp(16) 0 m.dp(12);
+  }
+}
+
+.number {
+  @include mono(10);
+
+  display: none;
+  color: var(--color-concrete-light);
+
+  @media #{t.$query-desktop} {
+    display: block;
+    padding-top: m.dp(14);
+  }
+}
+
+// A small cover, on phones only.
+.thumb {
+  position: relative;
+  grid-row: span 2;
+  width: m.dp(56);
+  aspect-ratio: 1;
+  background-color: var(--color-obsidian-raised);
+
+  img {
+    object-fit: cover;
+  }
+
+  @media #{t.$query-desktop} {
+    display: none;
+  }
+}
+
+.title {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: m.dp(26);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+  opacity: 0.85;
+  transition:
+    color 0.35s t.$ease-signature,
+    opacity 0.35s t.$ease-signature;
+
+  @media #{t.$query-desktop} {
+    font-size: m.dp(76);
+    opacity: 0.72;
+  }
+
+  .row[data-active] & {
+    color: var(--color-gilt-bright);
+    opacity: 1;
+  }
+}
+
+.artist {
+  @include mono(10);
+
+  display: none;
+  color: var(--color-concrete-light);
+
+  @media #{t.$query-desktop} {
+    display: block;
+    max-width: m.dp(320);
+    padding-top: m.dp(22);
+    text-align: right;
+    transition: opacity 0.3s t.$ease-signature;
+  }
+
+  // The cover of the row pointed at sits over its artists.
+  @media #{t.$query-desktop} and #{t.$query-hover} {
+    .row[data-active] & {
+      opacity: 0;
+    }
+  }
+}
+
+.facts {
+  @include mono(9);
+
+  display: flex;
+  grid-column: 3;
+  flex-direction: column;
+  gap: m.dp(6);
+  align-items: flex-end;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    grid-column: 4;
+    padding-top: m.dp(10);
+    font-size: m.dp(10);
+  }
+
+  .row[data-active] & {
+    color: var(--color-cream);
+  }
+}
+
+.when {
+  display: flex;
+  gap: 0.7em;
+  align-items: center;
+  color: var(--color-concrete-light);
+
+  &[data-forthcoming] {
+    color: var(--color-cream);
+
+    &::before {
+      content: '';
+      width: 0.8em;
+      height: 0.8em;
+      border-radius: 50%;
+      background-color: var(--color-crimson-glow);
+    }
+  }
+}
+
+// The cover of the row pointed at: fine pointers only.
+.preview {
+  position: absolute;
+  left: calc(784 / 1248 * 100%);
+  display: none;
+  width: m.dp(280);
+  aspect-ratio: 1;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  scale: 0.96;
+  transition:
+    opacity 0.35s t.$ease-signature,
+    scale 0.35s t.$ease-signature,
+    top 0.45s t.$ease-signature,
+    visibility 0s 0.35s;
+
+  @media #{t.$query-desktop} and #{t.$query-hover} {
+    display: block;
+  }
+
+  &[data-shown='true'] {
+    visibility: visible;
+    opacity: 1;
+    scale: 1;
+    transition:
+      opacity 0.35s t.$ease-signature,
+      scale 0.35s t.$ease-signature,
+      top 0.45s t.$ease-signature;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.previewImage {
+  object-fit: cover;
+}
+
+.previewRing {
+  position: absolute;
+  top: m.dp(12);
+  right: m.dp(12);
+  display: grid;
+  place-items: center;
+  width: m.dp(32);
+  height: m.dp(32);
+  border: 1px solid var(--color-gilt);
+  border-radius: 50%;
+  background-color: rgb(12 12 12 / 85%);
+  color: var(--color-gilt);
+
+  > svg {
+    width: 36%;
+    height: 36%;
+  }
+}

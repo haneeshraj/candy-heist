@@ -1,13 +1,29 @@
 import type { Metadata } from 'next';
-import DiscographyPlaceholder from '@/components/discography/DiscographyPlaceholder';
+import { DiscographyPage } from '@/components/discography/DiscographyPage';
+import { discographyCopy } from '@/content/discography/discography';
 import { releases } from '@/content/discography/releases';
+import { gridReleases } from '@/lib/discography/catalogue';
+import { summarize } from '@/lib/discography/summary';
 
-export const metadata: Metadata = {
-  title: 'Discography · Candy Heist',
-  description: 'Every Candy Heist release.'
-};
+export const metadata: Metadata = discographyCopy.page.meta;
 
-// Placeholder until the discography page is designed.
-export default function DiscographyPage() {
-  return <DiscographyPlaceholder releases={releases} />;
+// Made again every hour, so a release turns from forthcoming to out on
+// its day (the page's own clock turns it as well, for whoever has it open).
+export const revalidate = 3600;
+
+// The catalogue's grid: an album's tracks sit inside it, not beside it,
+// and every list sends only the summaries it shows.
+export default function DiscographyRoute() {
+  // A Server Component, made once per revalidation: the time it's made
+  // is what "forthcoming" is measured against.
+  // eslint-disable-next-line react-hooks/purity
+  const now = Date.now();
+  return (
+    <main>
+      <DiscographyPage
+        copy={discographyCopy.page}
+        releases={gridReleases(releases).map((r) => summarize(r, now))}
+      />
+    </main>
+  );
 }

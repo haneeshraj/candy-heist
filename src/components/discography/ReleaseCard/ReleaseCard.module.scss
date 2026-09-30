@@ -1,0 +1,167 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// Figma "A · Vault" tile, in design pixels (m.dp): the cover, the title
+// 20 under it, the artists, then the kind in mono. The frame around the
+// cover on hover sits 8 outside it.
+
+.card {
+  display: flex;
+  flex-direction: column;
+  color: inherit;
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: none;
+
+    .cover {
+      outline: 1.5px solid rgb(227 194 134 / 90%);
+      outline-offset: m.dp(8);
+    }
+  }
+}
+
+.cover {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  background-color: var(--color-obsidian-raised);
+
+  // The gilt frame, drawn in on hover.
+  &::after {
+    content: '';
+    position: absolute;
+    inset: m.dp(-8);
+    border: 1px solid rgb(210 169 97 / 70%);
+    opacity: 0;
+    scale: 0.98;
+    transition:
+      opacity 0.4s t.$ease-signature,
+      scale 0.4s t.$ease-signature;
+  }
+}
+
+.image {
+  object-fit: cover;
+}
+
+// The way in: an arrow in a gilt ring, top right.
+.ring {
+  position: absolute;
+  top: m.dp(12);
+  right: m.dp(12);
+  display: grid;
+  place-items: center;
+  width: max(#{m.dp(36)}, 3rem);
+  height: max(#{m.dp(36)}, 3rem);
+  border: 1px solid var(--color-gilt);
+  border-radius: 50%;
+  background-color: rgb(12 12 12 / 85%);
+  color: var(--color-gilt);
+  opacity: 0;
+  translate: 0 0.4rem;
+  transition:
+    opacity 0.4s t.$ease-signature,
+    translate 0.4s t.$ease-signature;
+
+  > svg {
+    width: 34%;
+    height: 34%;
+  }
+}
+
+@media #{t.$query-hover} {
+  .card:hover {
+    .cover::after {
+      opacity: 1;
+      scale: 1;
+    }
+
+    .ring {
+      opacity: 1;
+      translate: 0 0;
+    }
+
+    .title {
+      color: var(--color-gilt-bright);
+    }
+  }
+}
+
+.title {
+  margin-top: m.dp(16);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(15)}, 1.4rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+  transition: color 0.35s t.$ease-signature;
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(20);
+    font-size: m.dp(19);
+  }
+}
+
+.artist {
+  margin-top: m.dp(6);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(12)}, 1.2rem);
+  line-height: 1.35;
+  color: var(--color-gold);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(8);
+    font-size: m.dp(14);
+  }
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.7em;
+  align-items: center;
+  margin-top: m.dp(8);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp(9)}, 0.9rem);
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--color-concrete-light);
+
+  @media #{t.$query-desktop} {
+    margin-top: m.dp(12);
+    font-size: m.dp(10);
+    letter-spacing: 0.4em;
+  }
+
+  // Not out yet: cream, after the view's one crimson dot.
+  &[data-forthcoming] {
+    color: var(--color-cream);
+
+    &::before {
+      content: '';
+      flex: none;
+      width: 0.7em;
+      height: 0.7em;
+      border-radius: 50%;
+      background-color: var(--color-crimson-glow);
+    }
+  }
+}
+
+// Each part after the kind, after a middle dot.
+.part::before {
+  content: '·';
+  margin-right: 0.7em;
+}
+
+// Phones leave out the track count, so the line keeps to one row.
+.tracks {
+  @media not #{t.$query-desktop} {
+    display: none;
+  }
+}
