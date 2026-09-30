@@ -12,9 +12,9 @@ import type {
 } from './RichWordReveal.types';
 
 // WordReveal for copy with a change of voice in it (a phrase in the accent
-// italic, a placeholder still to be written): each run is its own
-// WordReveal, and the runs rise one after another as a single reveal, the
-// stagger carrying straight on from one run into the next.
+// italic, a heavier word, a placeholder still to be written): each run is
+// its own WordReveal, and the runs rise one after another as a single
+// reveal, the stagger carrying straight on from one run into the next.
 const RichWordReveal = forwardRef<RichWordRevealHandle, RichWordRevealProps>(
   function RichWordReveal(
     {
@@ -22,6 +22,7 @@ const RichWordReveal = forwardRef<RichWordRevealHandle, RichWordRevealProps>(
       as: Tag = 'p',
       className,
       emphasisClassName,
+      strongClassName,
       placeholderClassName,
       staggerDelay = 0.04,
       wordDuration = 0.9
@@ -62,9 +63,11 @@ const RichWordReveal = forwardRef<RichWordRevealHandle, RichWordRevealProps>(
             (/^\s/.test(segment.text) || /\s$/.test(segments[i - 1].text));
           const voice = segment.emphasis
             ? emphasisClassName
-            : segment.placeholder
-              ? placeholderClassName
-              : undefined;
+            : segment.strong
+              ? strongClassName
+              : segment.placeholder
+                ? placeholderClassName
+                : undefined;
           return (
             <Fragment key={i}>
               {spaced ? ' ' : null}

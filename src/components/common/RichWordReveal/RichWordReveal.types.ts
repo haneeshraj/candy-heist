@@ -4,6 +4,8 @@ export interface RichWordRevealSegment {
   text: string;
   /** Set with `emphasisClassName` (the accent italic, say). */
   emphasis?: boolean;
+  /** Set with `strongClassName` (a heavier weight, say). */
+  strong?: boolean;
   /** Set with `placeholderClassName` (copy still to come, say). */
   placeholder?: boolean;
 }
@@ -15,6 +17,7 @@ export interface RichWordRevealProps {
   as?: ElementType;
   className?: string;
   emphasisClassName?: string;
+  strongClassName?: string;
   placeholderClassName?: string;
   /** Seconds between each word's start, across all the runs. @default 0.04 */
   staggerDelay?: number;
