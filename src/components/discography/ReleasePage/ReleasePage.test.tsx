@@ -187,14 +187,11 @@ describe('ReleasePage', () => {
     ).toBeInTheDocument();
   });
 
-  it('bills a track with who’s featured on it, without the album’s canvas', () => {
+  it('bills a track with who’s featured on it', () => {
     renderTrack('monolith', 'remembrance');
     expect(
       screen.getByText('Candy Heist feat. Guest Artist')
     ).toBeInTheDocument();
-    expect(screen.queryByRole('button', { ...all, name: copy.canvas })).toBe(
-      null
-    );
   });
 
   it('sends a forthcoming track to its own share page to pre-save', () => {
@@ -241,20 +238,17 @@ describe('ReleasePage', () => {
     expect(dialog).not.toHaveAttribute('open');
   });
 
-  it('switches the page to the face the viewer switches to', () => {
+  it('shows the cover alone, on the page and in the viewer, with no video', () => {
     renderRelease('over-the-moon');
     const dialog = document.querySelector('dialog') as HTMLDialogElement;
     fireEvent.click(
       screen.getByRole('button', { ...all, name: copy.viewArtwork })
     );
-    fireEvent.click(
-      within(dialog).getByRole('button', { ...all, name: copy.canvas })
-    );
-    expect(dialog.querySelector('video')).not.toBeNull();
-    // The page's own switch follows, so the flight back lands on the canvas.
-    const pageCanvas = screen
-      .getAllByRole('button', { ...all, name: copy.canvas })
-      .find((b) => !dialog.contains(b));
-    expect(pageCanvas).toHaveAttribute('aria-pressed', 'true');
+    expect(document.querySelector('video')).toBeNull();
+    // Only the cover's own button and the viewer's close: no Cover | Canvas.
+    expect(
+      screen.queryByRole('button', { ...all, name: /canvas/i })
+    ).toBeNull();
+    expect(within(dialog).getAllByRole('button', all)).toHaveLength(1);
   });
 });

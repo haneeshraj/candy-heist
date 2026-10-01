@@ -43,13 +43,8 @@
   },
   "release": {
     "back": "Discography",
-    "cover": "Cover",
-    "canvas": "Canvas",
     "viewArtwork": "View the artwork",
-    "viewCanvas": "View the canvas",
     "close": "Close",
-    "pause": "Pause the canvas",
-    "play": "Play the canvas",
     "listenOn": "Listen on {platform}",
     "platforms": "Listen",
     "out": "Out {date}",
@@ -73,7 +68,6 @@
     "moreSingles": "More singles & remixes",
     "moreCollections": "More albums & EPs",
     "artworkBy": "Artwork by {names}",
-    "canvasNote": "Canvas · loops, silent",
     "meta": {
       "title": "{title} · Candy Heist",
       "description": "{title}, {kind} by {artist}.",

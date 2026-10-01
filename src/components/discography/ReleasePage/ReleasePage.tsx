@@ -28,7 +28,7 @@ import {
 import { billing, pageRecord, rowHref } from '@/lib/discography/tracks';
 import { fill } from '@/lib/text/fill';
 import { titleSize } from '@/lib/text/titleSize';
-import { ArtworkViewer, COVER_SIZES, type ArtworkFace } from '../ArtworkViewer';
+import { ArtworkViewer, COVER_SIZES } from '../ArtworkViewer';
 import { CopyLinkButton } from '../CopyLinkButton';
 import { Countdown, useReleaseClock } from '../Countdown';
 import { IconSquare } from '../IconSquare';
@@ -38,11 +38,10 @@ import styles from './ReleasePage.module.scss';
 import type { ReleasePageProps } from './ReleasePage.types';
 
 // Figma "Release page · released" and "· forthcoming", one template for
-// every kind: the cover on the left (Cover | Canvas when there's a
-// canvas; either opens large), and on the right the kind and date, the
-// title, the artist, then the platforms it's on, or, before it's out, the
-// countdown and Pre-save; copy link after either; and the credits and
-// label as one table. An album or EP adds its running order under that,
+// every kind: the cover on the left (it opens large), and on the right
+// the kind and date, the title, the artist, then the platforms it's on,
+// or, before it's out, the countdown and Pre-save; copy link after
+// either; and the credits and label as one table. An album or EP adds its running order under that,
 // each named track a link to its own page; more releases to go on to
 // close the page. On the day it's out, the page turns from the countdown
 // to the platforms by itself.
@@ -64,8 +63,7 @@ export default function ReleasePage({
   const artRef = useRef<HTMLButtonElement | null>(null);
   const runningId = useId();
   const moreId = useId();
-  const [face, setFace] = useState<ArtworkFace>('cover');
-  const [viewer, setViewer] = useState<ArtworkFace | null>(null);
+  const [viewer, setViewer] = useState(false);
   const { out, left } = useReleaseClock(release.date, renderedAt);
   useEntrance(rootRef, { delay: 0.1 });
   useScrollReveal(rootRef);
@@ -146,51 +144,22 @@ export default function ReleasePage({
 
         <div className={styles.top}>
           <div className={styles.art} data-enter>
-            {record.canvas && (
-              <div className={styles.faces}>
-                {(['cover', 'canvas'] as const).map((f) => (
-                  <button
-                    key={f}
-                    type="button"
-                    className={styles.face}
-                    aria-pressed={face === f}
-                    onClick={() => setFace(f)}
-                  >
-                    {copy[f]}
-                  </button>
-                ))}
-              </div>
-            )}
             <button
               ref={artRef}
               type="button"
               className={styles.artButton}
-              onClick={() => setViewer(face)}
+              onClick={() => setViewer(true)}
             >
-              {face === 'canvas' && record.canvas ? (
-                <video
-                  className={styles.canvas}
-                  src={record.canvas.src}
-                  poster={record.canvas.poster}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                />
-              ) : (
-                // The button says what it does; the viewer describes the art.
-                <Image
-                  src={release.cover.src}
-                  alt=""
-                  fill
-                  priority
-                  sizes={COVER_SIZES}
-                  className={styles.cover}
-                />
-              )}
-              <span className={styles.srOnly}>
-                {face === 'canvas' ? copy.viewCanvas : copy.viewArtwork}
-              </span>
+              {/* The button says what it does; the viewer describes the art. */}
+              <Image
+                src={release.cover.src}
+                alt=""
+                fill
+                priority
+                sizes={COVER_SIZES}
+                className={styles.cover}
+              />
+              <span className={styles.srOnly}>{copy.viewArtwork}</span>
             </button>
           </div>
 
@@ -386,22 +355,12 @@ export default function ReleasePage({
 
       <ArtworkViewer
         // The artwork is the release's, a track's page's too: the caption
-        // names it. A track has no canvas of its own.
-        release={{
-          title: release.title,
-          cover: release.cover,
-          canvas: record.canvas,
-          credits: release.credits
-        }}
+        // names it.
+        release={release}
         copy={copy}
         open={viewer}
         originRef={artRef}
-        // The page shows the same face, so it flies back into the right one.
-        onFace={(f) => {
-          setFace(f);
-          setViewer(f);
-        }}
-        onClose={() => setViewer(null)}
+        onClose={() => setViewer(false)}
       />
     </div>
   );

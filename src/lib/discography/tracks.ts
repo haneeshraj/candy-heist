@@ -67,15 +67,13 @@ export function appearsOn(release: Release, releases: readonly Release[]) {
 /**
  * What a page is of: the release, or on a track's page the track. A track
  * shows its own title and artist in the release's cover, and borrows the
- * release's date, label, credits and platforms; the release's canvas loop
- * is its own, so a track goes without.
+ * release's date, label, credits and platforms.
  */
 export interface PageRecord {
   title: string;
   /** The billed artist line (a remix's subtitle after it). */
   artist: string;
   featuring?: string[];
-  canvas?: Release['canvas'];
   /** Its share link page. */
   share: string;
   /** On a track's page: the release it came out on. */
@@ -96,7 +94,6 @@ export function pageRecord(release: Release, position?: number): PageRecord {
     title: release.title,
     artist: artistLine(release),
     featuring: isOneTrack(release) ? release.tracks[0].featuring : undefined,
-    canvas: release.canvas,
     share: shareHref(release.slug)
   };
 }

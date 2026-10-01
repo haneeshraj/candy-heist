@@ -294,10 +294,6 @@
       "src": "/img/discography/covers/monolith.webp",
       "alt": "A ribbed gold arch in a concrete wall"
     },
-    "canvas": {
-      "src": "/img/discography/canvas/monolith.mp4",
-      "poster": "/img/discography/canvas/monolith.webp"
-    },
     "tape": "/img/discography/tapes/monolith.webp",
     "credits": [
       {
@@ -670,10 +666,6 @@
     "cover": {
       "src": "/img/discography/covers/over-the-moon.webp",
       "alt": "Over The Moon cover: a brass moon over a concrete horizon"
-    },
-    "canvas": {
-      "src": "/img/discography/canvas/over-the-moon.mp4",
-      "poster": "/img/discography/canvas/over-the-moon.webp"
     },
     "tape": "/img/discography/tapes/over-the-moon.webp",
     "tracks": [

@@ -42,13 +42,8 @@ export const discographyCopySchema = z.object({
   }),
   release: z.object({
     back: text,
-    cover: text,
-    canvas: text,
     viewArtwork: text,
-    viewCanvas: text,
     close: text,
-    pause: text,
-    play: text,
     listenOn: text,
     platforms: text,
     out: text,
@@ -74,7 +69,6 @@ export const discographyCopySchema = z.object({
     moreSingles: text,
     moreCollections: text,
     artworkBy: text,
-    canvasNote: text,
     meta: meta.extend({ track: text })
   }),
   share: z.object({

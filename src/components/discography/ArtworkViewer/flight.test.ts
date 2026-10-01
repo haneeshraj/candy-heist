@@ -1,22 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { faceBox, ownBox, placeOver } from './flight';
+import { ownBox, placeOver } from './flight';
 
 const square = { left: 96, top: 150, width: 560, height: 560 };
 
 describe('the viewer’s flight', () => {
-  it('flies the cover from the whole square', () => {
-    expect(faceBox(square, 'cover')).toEqual(square);
-  });
-
-  it('flies the canvas from the 9:16 strip down the square’s middle', () => {
-    expect(faceBox(square, 'canvas')).toEqual({
-      left: 96 + (560 - 315) / 2,
-      top: 150,
-      width: 315,
-      height: 560
-    });
-  });
-
   it('places an element over another box, scaled about its corner', () => {
     const viewer = { left: 380, top: 112, width: 680, height: 680 };
     expect(placeOver(viewer, square)).toEqual({

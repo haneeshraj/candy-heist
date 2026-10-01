@@ -66,16 +66,14 @@ describe('pageRecord', () => {
     const moon = release('over-the-moon');
     const record = pageRecord(moon);
     expect(record.title).toBe(moon.title);
-    expect(record.canvas).toEqual(moon.canvas);
     expect(record.share).toBe('/listen/over-the-moon');
     expect(record.from).toBeUndefined();
   });
 
-  it('is the track on a track’s page, from its release, without the release’s canvas', () => {
+  it('is the track on a track’s page, from its release', () => {
     const monolith = release('monolith');
     const record = pageRecord(monolith, 4);
     expect(record.title).toBe('Remembrance');
-    expect(record.canvas).toBeUndefined();
     expect(record.share).toBe('/listen/monolith/remembrance');
     expect(record.from).toEqual({
       title: monolith.title,

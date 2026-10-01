@@ -29,8 +29,8 @@ interface SharePageProps {
 
 // Figma "Share link page": a page per release, made to be shared, always
 // 9:16 (it fits the screen's height on desktop, its width on phones, and
-// screenshots as a story). The canvas loops behind it; without one, the
-// cover, blurred. Once it's out: the platforms to play it on. Before: the
+// screenshots as a story). The cover, blurred, behind it. Once it's out:
+// the platforms to play it on. Before: the
 // countdown and where to pre-save it; it turns by itself on the day. No
 // navbar or footer, only the copyright. A track on a release has one too:
 // the track, in the release's cover, "From" the release.
@@ -68,34 +68,21 @@ export default function SharePage({
   const copyright = release.date
     ? fill(copy.share.copyright, { year: release.date.slice(0, 4) })
     : copy.share.copyrightUndated;
-  const canvas = out ? record.canvas : undefined;
 
   return (
     <main className={styles.screen}>
       <StarField className={styles.stars} />
       <article className={styles.card} aria-labelledby={titleId}>
         <div className={styles.backdrop} aria-hidden="true">
-          {canvas ? (
-            <video
-              className={styles.backdropMedia}
-              src={canvas.src}
-              poster={canvas.poster}
-              autoPlay
-              loop
-              muted
-              playsInline
-            />
-          ) : (
-            // The largest thing on the card, so it loads at once.
-            <Image
-              src={release.cover.src}
-              alt=""
-              fill
-              loading="eager"
-              sizes="540px"
-              className={styles.backdropBlur}
-            />
-          )}
+          {/* The largest thing on the card, so it loads at once. */}
+          <Image
+            src={release.cover.src}
+            alt=""
+            fill
+            loading="eager"
+            sizes="540px"
+            className={styles.backdropBlur}
+          />
           <span className={styles.shade} />
         </div>
 

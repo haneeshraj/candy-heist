@@ -107,36 +107,6 @@
   position: relative;
 }
 
-// Cover | Canvas, just above the cover.
-.faces {
-  position: absolute;
-  bottom: calc(100% + #{m.dp(12)});
-  left: 0;
-  display: flex;
-  gap: m.dp(24);
-}
-
-.face {
-  @include mono(10);
-
-  padding: 0 0 m.dp(4);
-  border: 0;
-  border-bottom: 1px solid transparent;
-  background: none;
-  color: var(--color-gold);
-  cursor: pointer;
-
-  &[aria-pressed='true'] {
-    border-bottom-color: var(--color-gilt);
-    color: var(--color-cream);
-  }
-
-  &:focus-visible {
-    outline: 1.5px solid rgb(227 194 134 / 90%);
-    outline-offset: 4px;
-  }
-}
-
 .artButton {
   position: relative;
   display: block;
@@ -155,14 +125,6 @@
 
 .cover {
   object-fit: cover;
-}
-
-// The canvas is 9:16: it sits in the square, the dark either side.
-.canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
 }
 
 .info {

@@ -1,8 +1,6 @@
 // The geometry of the viewer's flight: the artwork leaves its place on the
 // page, grows into the viewer, and on the way out goes back to it.
 
-export type ArtworkFace = 'cover' | 'canvas';
-
 export interface Box {
   left: number;
   top: number;
@@ -15,21 +13,6 @@ export interface Box {
  * viewer flies in with is the one the page has already loaded.
  */
 export const COVER_SIZES = '(min-width: 1024px) 560px, 92vw';
-
-/**
- * Where a face shows inside the page's square: the whole of it for the
- * cover; for the canvas (9:16, contained), the strip down its middle.
- */
-export function faceBox(square: Box, face: ArtworkFace): Box {
-  if (face === 'cover') return square;
-  const width = square.height * (9 / 16);
-  return {
-    left: square.left + (square.width - width) / 2,
-    top: square.top,
-    width,
-    height: square.height
-  };
-}
 
 /**
  * The transform that puts an element whose own box is `from` over `to`,

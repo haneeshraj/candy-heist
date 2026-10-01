@@ -8,9 +8,8 @@ import releasesData from './releases.json';
 // (from the Candy Haven discography notes), and they carry only what those
 // notes say: no dates, credits or track titles that aren't known ("Title to
 // come" holds the place). Every other title, date, credit and track is a
-// placeholder, the covers and tape renders are generated artwork (the two
-// canvas loops are drifts over those covers), and the streaming links are
-// searches. The real catalogue (Candy Haven's discography, by Server Action
+// placeholder, the covers and tape renders are generated artwork, and the
+// streaming links are searches. The real catalogue (Candy Haven's discography, by Server Action
 // or database) replaces this file with the same shape: the fields follow
 // Candy Haven's release model.
 
@@ -96,8 +95,6 @@ export const releaseSchema = z
     label: text.optional(),
     /** Square artwork. */
     cover: z.object({ src: text, alt: text }),
-    /** The 9:16 loop behind the track (Spotify's canvas), when there is one. */
-    canvas: z.object({ src: text, poster: text.optional() }).optional(),
     /** The cassette render shown on the shelf (see lib/shelf/tapeSprite). */
     tape: text,
     credits: z.array(credit).default([]),
