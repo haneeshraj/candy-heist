@@ -161,7 +161,7 @@ describe('SiteNavbar', () => {
     const { user, toggle, rerender } = renderNavbar();
     await user.click(toggle);
 
-    pathname.current = '/services/sessions';
+    pathname.current = '/services/producer';
     act(() => rerender(<SiteNavbar content={navbarContent} />));
 
     expect(toggle).toHaveAttribute('aria-expanded', 'false');

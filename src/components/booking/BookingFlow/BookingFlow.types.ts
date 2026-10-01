@@ -1,10 +1,9 @@
 import type { ServiceItem } from '@/content/services/catalogue';
-import type { FlowContent } from '@/content/services/flows';
-import type { FlowKind } from '@/lib/booking/bookingState';
+import type { ProducerFlowContent } from '@/content/services/flows';
 
 export interface BookingFlowProps {
-  kind: FlowKind;
-  content: FlowContent;
+  content: ProducerFlowContent;
+  /** Every item, commissions and 1-1 sessions together. */
   items: ServiceItem[];
   /** Candy's own email and Discord, for questions after booking. */
   contact: { email: string; discord: string };

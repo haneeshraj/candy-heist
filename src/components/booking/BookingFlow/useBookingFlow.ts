@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useMemo,
   useReducer,
   useRef,
   useState,
@@ -10,52 +11,70 @@ import {
 import type { ServiceItem } from '@/content/services/catalogue';
 import {
   bookingReducer,
+  draftKind,
   furthestStep,
   initialBookingState,
   isBookingStep,
   sanitizeDraft,
   type BookingDetails,
   type BookingStep,
-  type FlowKind
+  type ItemKinds
 } from '@/lib/booking/bookingState';
 import { completeBooking } from '@/lib/booking/completeBooking';
 import { todayIn, type DateKey } from '@/lib/booking/dates';
 import { clearDraft, loadDraft, saveDraft } from '@/lib/booking/persistence';
 
-// A flow's state, kept in step with the address bar: each step is its own
-// history entry (?step=date&session=dj-lessons, ?step=details&commission=
+// The flow's state, kept in step with the address bar: each step is its
+// own history entry (?step=date&service=dj-lessons, ?step=details&service=
 // mixing), so the browser's back and forward move through the flow, and a
-// link can open an item directly. The item step reads as the flow's kind
-// (?step=session). The draft is kept for the tab, so a reload resumes it.
+// link can open an item directly. The item step reads as ?step=service.
+// The draft is kept for the tab, so a reload resumes it.
 
 export const STEP_PARAM = 'step';
+export const ITEM_PARAM = 'service';
+/** The item step's name in the address. */
+const ITEM_STEP = 'service';
+// Links from before commissions and sessions shared a page.
+const LEGACY_ITEM_PARAMS = ['session', 'commission'];
 
 const noSubscribe = () => () => {};
 
-const stepToParam = (step: BookingStep, kind: FlowKind) =>
-  step === 'item' ? kind : step;
+const stepToParam = (step: BookingStep) => (step === 'item' ? ITEM_STEP : step);
 
-function stepFromParam(value: string | null, kind: FlowKind) {
-  if (value === kind) return 'item';
+function stepFromParam(value: string | null): BookingStep | null {
+  if (value === ITEM_STEP || (value && LEGACY_ITEM_PARAMS.includes(value)))
+    return 'item';
   return isBookingStep(value) && value !== 'item' ? value : null;
 }
 
-function urlFor(step: BookingStep, itemId: string | null, kind: FlowKind) {
+function linkedItem(params: URLSearchParams) {
+  for (const name of [ITEM_PARAM, ...LEGACY_ITEM_PARAMS]) {
+    const id = params.get(name);
+    if (id) return id;
+  }
+  return null;
+}
+
+function urlFor(step: BookingStep, itemId: string | null) {
   const params = new URLSearchParams();
-  if (step !== 'intro') params.set(STEP_PARAM, stepToParam(step, kind));
-  if (itemId) params.set(kind, itemId);
+  if (step !== 'intro') params.set(STEP_PARAM, stepToParam(step));
+  if (itemId && step !== 'intro') params.set(ITEM_PARAM, itemId);
   const query = params.toString();
   return `${window.location.pathname}${query ? `?${query}` : ''}`;
 }
 
-export function useBookingFlow(
-  kind: FlowKind,
-  items: ServiceItem[],
-  timeZone: string
-) {
+/** An item's own address, for its card. */
+export const itemHref = (itemId: string) =>
+  `?${STEP_PARAM}=${ITEM_STEP}&${ITEM_PARAM}=${itemId}`;
+
+export function useBookingFlow(items: ServiceItem[], timeZone: string) {
+  const kinds = useMemo<ItemKinds>(
+    () => Object.fromEntries(items.map((item) => [item.id, item.kind])),
+    [items]
+  );
   const [state, dispatch] = useReducer(
     bookingReducer,
-    kind,
+    kinds,
     initialBookingState
   );
   const [paying, setPaying] = useState(false);
@@ -72,27 +91,31 @@ export function useBookingFlow(
   // should be instant, not a fade out of the intro.
   const instantSwapRef = useRef(false);
 
-  const isItem = (id: string) => items.some((item) => item.id === id);
-
   // Restore once on the client: the draft kept for this tab, then the URL.
   useEffect(() => {
     if (!today || state.restored) return;
     const params = new URLSearchParams(window.location.search);
-    const draft = sanitizeDraft(loadDraft(kind), isItem, today, kind);
-    const linked = params.get(kind);
-    if (linked && isItem(linked)) draft.itemId = linked;
-    const asked = stepFromParam(params.get(STEP_PARAM), kind);
-    const step = asked ?? (linked ? 'item' : 'intro');
+    let draft = sanitizeDraft(loadDraft(), kinds, today);
+    const linked = linkedItem(params);
+    const known = linked !== null && Object.hasOwn(kinds, linked);
+    if (known && linked !== draft.itemId)
+      draft = {
+        ...draft,
+        itemId: linked,
+        // Done details belong to the kind of item they were done for.
+        detailsDone:
+          draft.detailsDone && kinds[linked] === draftKind(draft, kinds)
+      };
+    const asked = stepFromParam(params.get(STEP_PARAM));
+    const step = asked ?? (known ? 'item' : 'intro');
     instantSwapRef.current = step !== 'intro';
     dispatch({ type: 'restore', draft, step });
-    // isItem only reads the items prop.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [today, state.restored, kind]);
+  }, [today, state.restored, kinds]);
 
   // Mirror the step and the item into the address bar.
   useEffect(() => {
     if (!state.restored) return;
-    const url = urlFor(state.step, state.draft.itemId, kind);
+    const url = urlFor(state.step, state.draft.itemId);
     const current = `${window.location.pathname}${window.location.search}`;
     if (url !== current) {
       if (urlStep.current === null || urlStep.current === state.step)
@@ -100,35 +123,36 @@ export function useBookingFlow(
       else window.history.pushState(null, '', url);
     }
     urlStep.current = state.step;
-  }, [state.restored, state.step, state.draft.itemId, kind]);
+  }, [state.restored, state.step, state.draft.itemId]);
 
   // Back and forward.
   useEffect(() => {
     function onPopState() {
       const params = new URLSearchParams(window.location.search);
-      const linked = params.get(kind);
-      if (linked && items.some((item) => item.id === linked))
+      const linked = linkedItem(params);
+      if (linked && Object.hasOwn(kinds, linked))
         dispatch({ type: 'selectItem', itemId: linked });
       urlStep.current = null;
       dispatch({
         type: 'goTo',
-        step: stepFromParam(params.get(STEP_PARAM), kind) ?? 'intro'
+        step: stepFromParam(params.get(STEP_PARAM)) ?? 'intro'
       });
     }
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
-  }, [items, kind]);
+  }, [kinds]);
 
   // Keep the draft for the tab until the booking is made.
   useEffect(() => {
     if (!state.restored) return;
-    if (state.confirmation) clearDraft(kind);
-    else saveDraft(kind, state.draft);
-  }, [state.restored, state.draft, state.confirmation, kind]);
+    if (state.confirmation) clearDraft();
+    else saveDraft(state.draft);
+  }, [state.restored, state.draft, state.confirmation]);
 
   async function pay() {
     if (paying) return;
     setPaying(true);
+    const kind = draftKind(state.draft, kinds);
     try {
       const confirmation = await completeBooking(state.draft, kind);
       dispatch({ type: 'confirm', confirmation });

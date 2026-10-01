@@ -18,15 +18,16 @@ const MARK_VIEWBOX = '0 0 414.64 298.37';
 
 // Figma "Confirmed": done, on screen, beside the email that just went out.
 // The page says what happens next and how to reach Candy (his email and
-// his Discord copy on a click), with the way on; the email carries the
-// receipt and, for a session, the call link. Each fact is said once.
+// his Discord copy on a click), with the way on (a session into the
+// calendar, a commission back to the services); the email carries the
+// receipt (a commission's half now and half on delivery) and, for a
+// session, the call link. Each fact is said once.
 export default function ConfirmedStep({
-  kind,
   copy,
   item,
   confirmation,
   timeZone,
-  price,
+  amounts,
   contact
 }: ConfirmedStepProps) {
   const rootRef = useRef<HTMLElement | null>(null);
@@ -35,7 +36,7 @@ export default function ConfirmedStep({
   useEntrance(rootRef, { delay: 0.2, stagger: 0.09 });
 
   const { date, time, email, meetOn, reference } = confirmation;
-  const session = kind === 'session' && date && time;
+  const session = confirmation.kind === 'session' && date && time;
   const onDiscord = meetOn === 'discord';
 
   const body =
@@ -54,7 +55,14 @@ export default function ConfirmedStep({
   const receipt = [
     { label: copy.receipt.item, value: item.name },
     { label: copy.receipt.reference, value: reference },
-    { label: copy.receipt.paid, value: fill(copy.receipt.paidValue, { price }) }
+    {
+      label: copy.receipt.paid,
+      value: fill(copy.receipt.paidValue, {
+        price: amounts.price,
+        now: amounts.now,
+        later: amounts.later ?? ''
+      })
+    }
   ];
 
   function addToCalendar() {
@@ -132,7 +140,7 @@ export default function ConfirmedStep({
             {copied}
           </p>
           <div className={styles.actions} data-enter>
-            {session && copy.calendar ? (
+            {session ? (
               <SigilChip
                 variant="outline"
                 icon={<ArrowIcon />}
@@ -141,7 +149,7 @@ export default function ConfirmedStep({
                 {copy.calendar}
               </SigilChip>
             ) : null}
-            {copy.services ? (
+            {!session ? (
               <SigilChip
                 variant="outline"
                 icon={<ArrowIcon />}

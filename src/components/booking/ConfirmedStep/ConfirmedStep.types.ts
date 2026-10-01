@@ -1,15 +1,15 @@
 import type { ServiceItem } from '@/content/services/catalogue';
-import type { FlowContent } from '@/content/services/flows';
-import type { BookingConfirmation, FlowKind } from '@/lib/booking/bookingState';
+import type { FlowCopy } from '@/content/services/flows';
+import type { BookingConfirmation } from '@/lib/booking/bookingState';
+import type { Amounts } from '@/lib/booking/price';
 
 export interface ConfirmedStepProps {
-  kind: FlowKind;
-  copy: FlowContent['confirmation'];
+  copy: FlowCopy['confirmation'];
   item: ServiceItem;
   confirmation: BookingConfirmation;
   timeZone: string;
-  /** What was paid: the item's price, or the placeholder. */
-  price: string;
+  /** What it cost, what was paid and what's left, or the placeholder. */
+  amounts: Amounts;
   /** Candy's own email and Discord, for questions. */
   contact: { email: string; discord: string };
 }

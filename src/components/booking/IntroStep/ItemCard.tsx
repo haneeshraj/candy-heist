@@ -6,12 +6,13 @@ import styles from './IntroStep.module.scss';
 import type { ItemCardProps } from './IntroStep.types';
 
 // One item as a card that opens its details (Figma "Item card"): the photo,
-// the name and its line, then the price and the way in. It's a real link,
+// its kind over the name, its line, then the price and the way in. It's a real link,
 // so it opens in a new tab like one; a plain click stays in the flow. On
 // hover it lifts, the photo pushes in and the way in brightens.
 export default function ItemCard({
   item,
   href,
+  tag,
   price,
   view,
   onOpen
@@ -39,6 +40,8 @@ export default function ItemCard({
       <span className={styles.cardBody}>
         {/* The spaces keep the parts apart in the link's name. */}
         <span className={styles.cardName}>{item.name}</span>{' '}
+        {/* Read after the name; shown over it. */}
+        <span className={styles.cardTag}>{tag}</span>{' '}
         <span className={styles.cardLine}>{item.summary}</span>{' '}
         <span className={styles.cardFoot}>
           <span className={styles.cardPrice}>{price}</span>{' '}

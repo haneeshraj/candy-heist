@@ -1,91 +1,33 @@
 import { z } from 'zod';
-import commissionsData from './commissionsFlow.json';
-import sessionsData from './sessionsFlow.json';
+import producerData from './producerFlow.json';
 
-// Copy for the two flows under /services: sessions (pick one, a date and
-// time, your details, payment) and commissions (pick one, your details,
-// payment). They share one shape; the parts only a session has (the intro
-// video, the date step, the choice of where to meet, the calendar) are
-// optional, and present in the sessions copy only. Strings with {braces}
+// Copy for "Book me as a music producer" (/services/producer): the intro
+// and the list of services, then one service's details, a date and time
+// (1-1 sessions only), your details, payment and the confirmation. What a
+// commission and a session say differently (the payment terms, where to
+// meet, the confirmation) sits under `kinds`; `flowCopy()` lays it over
+// the shared copy for the kind of service picked. Strings with {braces}
 // are templates, filled with `fill()` from lib/booking/format. The price
 // and the intro video are placeholders.
 
 const text = z.string().trim().min(1);
 const field = z.object({ label: text, placeholder: text });
+const notes = z.array(z.object({ title: text, text })).min(1);
 
-export const flowContentSchema = z.object({
-  /** The page's h1, for assistive tech; each step shows its own heading. */
-  title: text,
-  /** Accessible name of the stepper. */
-  stepsLabel: text,
-  /** Shown wherever a price goes, until prices are set. */
-  price: text,
-  /** IANA zone sessions run in; every time on the page is in it. */
-  timeZone: text,
-  timeZoneLabel: text,
-  intro: z.object({
-    video: z
-      .object({
-        /** null until the intro is filmed: the player then shows its poster. */
-        src: text.nullable(),
-        poster: text,
-        posterAlt: text,
-        eyebrow: text,
-        title: text,
-        duration: text,
-        unavailable: text,
-        chapters: z.array(z.object({ at: z.number().min(0), label: text }))
-      })
-      .optional(),
-    lead: text,
-    statement: text,
-    body: text,
-    /** Under the intro, a cue down to the choice. */
-    cue: text.optional()
-  }),
-  choose: z.object({
-    label: text,
-    heading: text,
-    sub: text,
-    /** Each card's way in. */
-    view: text
-  }),
-  steps: z.object({
-    item: text,
-    date: text.optional(),
-    details: text,
-    payment: text
-  }),
+const kindSchema = z.object({
+  /** On its card and among its facts: "Commission", "1-1 session". */
+  tag: text,
+  /** Over its kind in the list beside the details: "Commissions". */
+  group: text,
   item: z.object({
-    /** Over the list of items beside the details. */
-    label: text,
-    /** The price's label among the facts: "Advance", "Price". */
-    price: text,
-    cta: text
+    cta: text,
+    /** The price among the facts: "{price}, half upfront". */
+    price: text
   }),
-  date: z
-    .object({
-      label: text,
-      heading: text,
-      sub: text,
-      openTimes: text,
-      zone: text,
-      pickDay: text,
-      previousMonth: text,
-      nextMonth: text,
-      back: text,
-      cta: text
-    })
-    .optional(),
   details: z.object({
-    label: text,
-    heading: text,
     sub: text,
     /** The sub once Discord is picked to meet on. */
     subDiscord: text.optional(),
-    required: text,
-    name: field,
-    email: field,
     /** Sessions only: where the call happens. */
     meetOn: z
       .object({
@@ -96,10 +38,120 @@ export const flowContentSchema = z.object({
         helpDiscord: text
       })
       .optional(),
+    note: field
+  }),
+  payment: z.object({ heading: text, sub: text, panel: text, notes }),
+  summary: z.object({ label: text, total: text }),
+  confirmation: z.object({
+    heading: text,
+    body: text,
+    bodyDiscord: text.optional(),
+    receipt: z.object({ item: text, paidValue: text }),
+    email: z.object({
+      subject: text,
+      body: text,
+      bodyDiscord: text.optional(),
+      /** The email's button, when it has one (a session's call link). */
+      cta: text.optional(),
+      ctaDiscord: text.optional()
+    })
+  })
+});
+
+export const producerFlowSchema = z.object({
+  /** The page's h1, for assistive tech; each step shows its own heading. */
+  title: text,
+  /** Accessible name of the stepper. */
+  stepsLabel: text,
+  /** Shown wherever a price goes, until prices are set. */
+  price: text,
+  /** IANA zone sessions run in; every time on the page is in it. */
+  timeZone: text,
+  timeZoneLabel: text,
+  intro: z.object({
+    video: z.object({
+      /** null until the intro is filmed: the player then shows its poster. */
+      src: text.nullable(),
+      poster: text,
+      posterAlt: text,
+      eyebrow: text,
+      title: text,
+      duration: text,
+      unavailable: text,
+      chapters: z.array(z.object({ at: z.number().min(0), label: text }))
+    }),
+    lead: text,
+    statement: text,
+    body: text,
+    /** Under the intro, a cue down to the choice. */
+    cue: text
+  }),
+  choose: z.object({
+    label: text,
+    heading: text,
+    sub: text,
+    /** Each card's way in. */
+    view: text
+  }),
+  /** Searching, filtering and sorting the list. */
+  browse: z.object({
+    search: z.object({
+      open: text,
+      label: text,
+      placeholder: text,
+      submit: text,
+      clear: text
+    }),
+    filters: z.object({
+      button: text,
+      region: text,
+      sort: text,
+      sorts: z.object({
+        featured: text,
+        name: text,
+        priceLow: text,
+        priceHigh: text
+      }),
+      kind: text,
+      count: text,
+      clear: text,
+      remove: text,
+      empty: text
+    })
+  }),
+  steps: z.object({
+    item: text,
+    date: text,
+    details: text,
+    payment: text
+  }),
+  item: z.object({
+    /** Names the list beside the details. */
+    label: text,
+    type: text,
+    price: text
+  }),
+  date: z.object({
+    label: text,
+    heading: text,
+    sub: text,
+    openTimes: text,
+    zone: text,
+    pickDay: text,
+    previousMonth: text,
+    nextMonth: text,
+    back: text,
+    cta: text
+  }),
+  details: z.object({
+    label: text,
+    heading: text,
+    required: text,
+    name: field,
+    email: field,
     instagram: field,
     discord: field,
     phone: field,
-    note: field,
     errors: z.object({
       name: text,
       email: text,
@@ -115,58 +167,77 @@ export const flowContentSchema = z.object({
   }),
   payment: z.object({
     label: text,
-    heading: text,
-    sub: text,
-    panel: text,
     card: z.object({ number: text, expiry: text, cvc: text, name: text }),
     secure: text,
-    notes: z.array(z.object({ title: text, text })),
     back: text,
     cta: text,
     paying: text
   }),
   summary: z.object({
-    label: text,
-    date: text.optional(),
-    time: text.optional(),
+    date: text,
+    time: text,
     /** Where a session meets, once it's picked. */
-    meetOn: text.optional(),
-    total: text,
+    meetOn: text,
+    price: text,
+    /** What a commission leaves for delivery. */
+    later: text,
     empty: text
   }),
   confirmation: z.object({
-    heading: text,
-    body: text,
-    bodyDiscord: text.optional(),
     questions: text,
     discord: text,
     /** Announced when a contact is copied. */
     copied: text,
-    calendar: text.optional(),
-    services: text.optional(),
+    /** Sessions: the call into the calendar. */
+    calendar: text,
+    /** Commissions: back to the services. */
+    services: text,
     home: text,
-    receipt: z.object({
-      item: text,
-      reference: text,
-      paid: text,
-      paidValue: text
-    }),
-    email: z.object({
-      sent: text,
-      subject: text,
-      body: text,
-      bodyDiscord: text.optional(),
-      /** The email's button, when it has one (a session's call link). */
-      cta: text.optional(),
-      ctaDiscord: text.optional(),
-      signature: text
-    })
-  })
+    receipt: z.object({ reference: text, paid: text }),
+    email: z.object({ sent: text, signature: text })
+  }),
+  kinds: z.object({ commission: kindSchema, session: kindSchema })
 });
 
-export type FlowContent = z.infer<typeof flowContentSchema>;
+export type ProducerFlowContent = z.infer<typeof producerFlowSchema>;
+export type KindCopy = z.infer<typeof kindSchema>;
+type Content = ProducerFlowContent;
 
-export const sessionsFlowContent: FlowContent =
-  flowContentSchema.parse(sessionsData);
-export const commissionsFlowContent: FlowContent =
-  flowContentSchema.parse(commissionsData);
+/** The copy of the steps that read differently for each kind. */
+export interface FlowCopy {
+  details: Content['details'] & KindCopy['details'];
+  payment: Content['payment'] & KindCopy['payment'];
+  summary: Content['summary'] & KindCopy['summary'];
+  confirmation: Omit<Content['confirmation'], 'receipt' | 'email'> &
+    Omit<KindCopy['confirmation'], 'receipt' | 'email'> & {
+      receipt: Content['confirmation']['receipt'] &
+        KindCopy['confirmation']['receipt'];
+      email: Content['confirmation']['email'] &
+        KindCopy['confirmation']['email'];
+    };
+}
+
+/** The shared copy with a kind's own laid over it. */
+export function flowCopy(
+  content: Content,
+  kind: keyof Content['kinds']
+): FlowCopy {
+  const own = content.kinds[kind];
+  return {
+    details: { ...content.details, ...own.details },
+    payment: { ...content.payment, ...own.payment },
+    summary: { ...content.summary, ...own.summary },
+    confirmation: {
+      ...content.confirmation,
+      ...own.confirmation,
+      receipt: {
+        ...content.confirmation.receipt,
+        ...own.confirmation.receipt
+      },
+      email: { ...content.confirmation.email, ...own.confirmation.email }
+    }
+  };
+}
+
+export const producerFlowContent: ProducerFlowContent =
+  producerFlowSchema.parse(producerData);

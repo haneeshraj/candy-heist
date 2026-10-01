@@ -29,7 +29,7 @@ const ORDER: TextField[] = [
   'note'
 ];
 
-// Figma "Your details": name and email; for a session, where to meet
+// Figma "Your details": name and email; for a 1-1 session, where to meet
 // (Google Meet or Discord); Instagram and Discord, so Candy can reach out;
 // a phone number and a note. Only what's starred is needed, and Discord
 // becomes needed once it's where to meet. Errors show after the first try
@@ -50,12 +50,19 @@ export default function DetailsStep({
   useEntrance(rootRef, { delay: 0.3 });
 
   const id = (key: TextField) => `${fieldId}-${key}`;
-  const onDiscord = details.meetOn === 'discord';
+  // Only a session asks where to meet; for a commission a Discord picked
+  // on a session earlier counts for nothing.
+  const onDiscord = Boolean(copy.meetOn) && details.meetOn === 'discord';
+  const check = (next: BookingDetails) =>
+    validateDetails(
+      copy.meetOn ? next : { ...next, meetOn: 'meet' },
+      copy.errors
+    );
   const sub = onDiscord && copy.subDiscord ? copy.subDiscord : copy.sub;
 
   function update(next: BookingDetails) {
     onChange(next);
-    if (attempted) setErrors(validateDetails(next, copy.errors));
+    if (attempted) setErrors(check(next));
   }
 
   const edit = (key: TextField, value: string) =>
@@ -65,7 +72,7 @@ export default function DetailsStep({
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setAttempted(true);
-    const found = validateDetails(details, copy.errors);
+    const found = check(details);
     setErrors(found);
     const first = ORDER.find((key) => found[key]);
     if (first) {

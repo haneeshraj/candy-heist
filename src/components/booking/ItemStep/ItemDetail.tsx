@@ -7,6 +7,8 @@ import { CornerTicks } from '@/components/common/CornerTicks';
 import { Frame } from '@/components/common/Frame';
 import { useEntrance } from '@/hooks/useEntrance';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
+import { fill } from '@/lib/booking/format';
+import { amountsFor } from '@/lib/booking/price';
 import ItemBody from './ItemBody';
 import styles from './ItemStep.module.scss';
 import type { ItemDetailProps } from './ItemStep.types';
@@ -14,16 +16,28 @@ import type { ItemDetailProps } from './ItemStep.types';
 // Everything about one item. It's mounted fresh for each one, so the top
 // (the photo, the title, the first paragraph) writes itself in straight
 // away, and the rest of the write-up rises in as it scrolls into view.
-// The facts (length or format, how it happens, the price) close it.
-export default function ItemDetail({ copy, item, price }: ItemDetailProps) {
+// The facts (its kind, length or format, how it happens, and the price
+// with what's paid when) close it.
+export default function ItemDetail({
+  copy,
+  kind,
+  item,
+  price
+}: ItemDetailProps) {
   const rootRef = useRef<HTMLElement | null>(null);
   const titleId = useId();
   useEntrance(rootRef, { stagger: 0.08 });
   useScrollReveal(rootRef);
 
   const facts = [
+    { label: copy.type, value: kind.tag },
     ...item.facts,
-    { label: copy.price, value: item.price ?? price }
+    {
+      label: copy.price,
+      value: fill(kind.item.price, {
+        price: amountsFor(item.kind, item.price, price).price
+      })
+    }
   ];
 
   return (

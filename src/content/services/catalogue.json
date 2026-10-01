@@ -1,13 +1,20 @@
 {
-  "commissions": [
+  "items": [
     {
       "id": "mixing",
+      "kind": "commission",
       "name": "Mixing",
       "icon": "mix",
       "summary": "Balanced and finished, ready to master.",
       "facts": [
-        { "label": "Format", "value": "Per track" },
-        { "label": "Via", "value": "Discord or Google Meet" }
+        {
+          "label": "Format",
+          "value": "Per track"
+        },
+        {
+          "label": "Via",
+          "value": "Discord or Google Meet"
+        }
       ],
       "photos": {
         "card": "/img/sessions/mix-portrait.jpeg",
@@ -18,12 +25,19 @@
     },
     {
       "id": "mastering",
+      "kind": "commission",
       "name": "Mastering",
       "icon": "production",
       "summary": "Loud, clear, ready for every platform.",
       "facts": [
-        { "label": "Format", "value": "Per track" },
-        { "label": "Via", "value": "Discord or Google Meet" }
+        {
+          "label": "Format",
+          "value": "Per track"
+        },
+        {
+          "label": "Via",
+          "value": "Discord or Google Meet"
+        }
       ],
       "photos": {
         "card": "/img/sessions/feedback-portrait.jpeg",
@@ -34,12 +48,19 @@
     },
     {
       "id": "mixing-and-mastering",
+      "kind": "commission",
       "name": "Mixing & Mastering",
       "icon": "mix",
       "summary": "Both, start to finish, for release.",
       "facts": [
-        { "label": "Format", "value": "Per track" },
-        { "label": "Via", "value": "Discord or Google Meet" }
+        {
+          "label": "Format",
+          "value": "Per track"
+        },
+        {
+          "label": "Via",
+          "value": "Discord or Google Meet"
+        }
       ],
       "photos": {
         "card": "/img/sessions/production-portrait.jpeg",
@@ -50,12 +71,19 @@
     },
     {
       "id": "beat-production",
+      "kind": "commission",
       "name": "Beat Production",
       "icon": "production",
       "summary": "An original beat, made to your brief.",
       "facts": [
-        { "label": "Format", "value": "Per beat" },
-        { "label": "Via", "value": "Discord or Google Meet" }
+        {
+          "label": "Format",
+          "value": "Per beat"
+        },
+        {
+          "label": "Via",
+          "value": "Discord or Google Meet"
+        }
       ],
       "photos": {
         "card": "/img/sessions/dj-portrait.jpeg",
@@ -63,18 +91,23 @@
         "alt": "Candy Heist mid-set, headphones on, hands on the mixer"
       },
       "body": "An original beat, built from scratch around what you’re making: the tempo, the mood and the references you send.\n\n## What’s included\n\n- An original beat, made to your brief\n- Two rounds of changes\n- The full beat and its stems\n\n## Have ready\n\n- Two or three reference tracks\n- The tempo and key, if you know them\n- What the beat is for"
-    }
-  ],
-  "sessions": [
+    },
     {
       "id": "production-session",
+      "kind": "session",
       "name": "Production Session",
       "icon": "production",
       "summary": "Fix the track you’re stuck on.",
       "durationMinutes": 90,
       "facts": [
-        { "label": "Length", "value": "90 min" },
-        { "label": "Via", "value": "Discord or Google Meet" }
+        {
+          "label": "Length",
+          "value": "90 min"
+        },
+        {
+          "label": "Via",
+          "value": "Discord or Google Meet"
+        }
       ],
       "photos": {
         "card": "/img/sessions/production-portrait.jpeg",
@@ -85,13 +118,20 @@
     },
     {
       "id": "dj-lessons",
+      "kind": "session",
       "name": "DJ Lessons",
       "icon": "dj",
       "summary": "From first blend to full set.",
       "durationMinutes": 60,
       "facts": [
-        { "label": "Length", "value": "60 min" },
-        { "label": "Via", "value": "Discord or Google Meet" }
+        {
+          "label": "Length",
+          "value": "60 min"
+        },
+        {
+          "label": "Via",
+          "value": "Discord or Google Meet"
+        }
       ],
       "photos": {
         "card": "/img/sessions/dj-portrait.jpeg",

@@ -1,0 +1,247 @@
+{
+  "title": "Book Candy Heist as a music producer",
+  "stepsLabel": "Booking steps",
+  "price": "$ –",
+  "timeZone": "America/Halifax",
+  "timeZoneLabel": "Halifax time",
+  "intro": {
+    "video": {
+      "src": null,
+      "poster": "/img/sessions/intro-poster.jpeg",
+      "posterAlt": "Candy Heist at the decks on a stage lit crimson and gold",
+      "eyebrow": "In the studio with Candy Heist",
+      "title": "Made for you, or with you",
+      "duration": "2:14",
+      "unavailable": "Intro video coming soon",
+      "chapters": [
+        { "at": 0, "label": "Intro" },
+        { "at": 21, "label": "Commissions and sessions" },
+        { "at": 68, "label": "How booking works" },
+        { "at": 104, "label": "Say hi" }
+      ]
+    },
+    "lead": "Book me as a music",
+    "statement": "Producer.",
+    "body": "Mixing, mastering and beats, made for your record, or one on one sessions, live. Watch the intro, then pick what you need below.",
+    "cue": "Choose a service"
+  },
+  "choose": {
+    "label": "Choose a service",
+    "heading": "What do you need?",
+    "sub": "Commissions are made for you and delivered online, with half paid upfront. 1-1 sessions are live on Google Meet or Discord, paid in full.",
+    "view": "View details"
+  },
+  "browse": {
+    "search": {
+      "open": "Search the services",
+      "label": "Search the services",
+      "placeholder": "Mixing, beats, lessons…",
+      "submit": "Search",
+      "clear": "Clear the search"
+    },
+    "filters": {
+      "button": "Filter & sort",
+      "region": "Filter and sort the services",
+      "sort": "Sort",
+      "sorts": {
+        "featured": "Featured",
+        "name": "Name, A to Z",
+        "priceLow": "Price, low to high",
+        "priceHigh": "Price, high to low"
+      },
+      "kind": "Type",
+      "count": "{shown} of {total}",
+      "clear": "Clear filters",
+      "remove": "Remove {filter}",
+      "empty": "Nothing matches that. Try another search, or clear the filters."
+    }
+  },
+  "steps": {
+    "item": "Service",
+    "date": "Date & time",
+    "details": "Your details",
+    "payment": "Payment"
+  },
+  "item": {
+    "label": "Services",
+    "type": "Type",
+    "price": "Price"
+  },
+  "date": {
+    "label": "Date & time",
+    "heading": "When works for you?",
+    "sub": "Only free days can be picked. A gilt dot means there’s time open; times are in Halifax time.",
+    "openTimes": "open times",
+    "zone": "Halifax (AT)",
+    "pickDay": "Pick a day to see its open times.",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month",
+    "back": "Back",
+    "cta": "Continue"
+  },
+  "details": {
+    "label": "Your details",
+    "heading": "Tell us a little about you",
+    "required": "Required",
+    "name": { "label": "Name", "placeholder": "Your name" },
+    "email": { "label": "Email", "placeholder": "you@example.com" },
+    "instagram": { "label": "Instagram", "placeholder": "@yourname" },
+    "discord": { "label": "Discord", "placeholder": "yourname" },
+    "phone": { "label": "Phone", "placeholder": "+1 (902) 555 0123" },
+    "errors": {
+      "name": "Add your name.",
+      "email": "Add an email address we can reach you at.",
+      "emailInvalid": "That email address doesn’t look right.",
+      "instagram": "That Instagram handle doesn’t look right.",
+      "discord": "That Discord username doesn’t look right.",
+      "discordRequired": "Add your Discord username, so Candy can add you.",
+      "phone": "That phone number doesn’t look right.",
+      "note": "Keep the note under 1000 characters."
+    },
+    "back": "Back",
+    "cta": "Continue to payment"
+  },
+  "payment": {
+    "label": "Payment",
+    "card": {
+      "number": "Card number",
+      "expiry": "Expiry",
+      "cvc": "CVC",
+      "name": "Name on card"
+    },
+    "secure": "Handled securely by Stripe. Your card details never touch this site.",
+    "back": "Back",
+    "cta": "Pay {price} now",
+    "paying": "Confirming"
+  },
+  "summary": {
+    "date": "Date",
+    "time": "Time",
+    "meetOn": "On",
+    "price": "Price",
+    "later": "On delivery",
+    "empty": "–"
+  },
+  "confirmation": {
+    "questions": "Questions?",
+    "discord": "Discord",
+    "copied": "Copied {value}",
+    "calendar": "Add to calendar",
+    "services": "See all services",
+    "home": "Back to home",
+    "receipt": {
+      "reference": "Reference",
+      "paid": "Paid"
+    },
+    "email": {
+      "sent": "Just sent",
+      "signature": "Candy Heist · Halifax, Nova Scotia"
+    }
+  },
+  "kinds": {
+    "commission": {
+      "tag": "Commission",
+      "group": "Commissions",
+      "item": {
+        "cta": "Start this commission",
+        "price": "{price}, half upfront"
+      },
+      "details": {
+        "sub": "Where Candy sends your receipt, and how he reaches you for your files.",
+        "note": {
+          "label": "A note for Candy Heist",
+          "placeholder": "Anything else about the track, or how you work."
+        }
+      },
+      "payment": {
+        "heading": "Start your commission",
+        "sub": "Half now, so work can start on your track. The other half is due when it’s ready.",
+        "panel": "Half upfront · 50%",
+        "notes": [
+          {
+            "title": "Secure checkout",
+            "text": "Card payments run through Stripe."
+          },
+          {
+            "title": "Confirmed by email",
+            "text": "Your receipt, right after payment."
+          }
+        ]
+      },
+      "summary": {
+        "label": "Your commission",
+        "total": "Due now · 50%"
+      },
+      "confirmation": {
+        "heading": "It’s in.",
+        "body": "Candy will contact you through email, Instagram or Discord. Stay tuned, and get everything ready.",
+        "receipt": {
+          "item": "Commission",
+          "paidValue": "{now} now, {later} on delivery"
+        },
+        "email": {
+          "subject": "Your commission is in",
+          "body": "Thanks for your commission. Candy will contact you through email, Instagram or Discord, so stay tuned and get your files ready."
+        }
+      }
+    },
+    "session": {
+      "tag": "1-1 session",
+      "group": "1-1 sessions",
+      "item": {
+        "cta": "Book this session",
+        "price": "{price}, paid in full"
+      },
+      "details": {
+        "sub": "Your name, your email and where you’d like to meet. The rest helps Candy prepare.",
+        "subDiscord": "Your name, your email and your Discord, so Candy can add you. The rest helps him prepare.",
+        "meetOn": {
+          "label": "Meet on",
+          "meet": "Google Meet",
+          "discord": "Discord",
+          "helpMeet": "The Google Meet link comes in your confirmation email.",
+          "helpDiscord": "Candy will add you on Discord. A Google Meet link comes in your email too, just in case."
+        },
+        "note": {
+          "label": "A note for Candy Heist",
+          "placeholder": "Your goals, your setup, a reference track…"
+        }
+      },
+      "payment": {
+        "heading": "Lock in your session",
+        "sub": "Paid in full now, which secures the time. The confirmation email follows straight after.",
+        "panel": "Paid in full",
+        "notes": [
+          {
+            "title": "Secure checkout",
+            "text": "Card payments run through Stripe."
+          },
+          {
+            "title": "Confirmed by email",
+            "text": "Details and the call link, right after paying."
+          }
+        ]
+      },
+      "summary": {
+        "label": "Your session",
+        "total": "Paid in full"
+      },
+      "confirmation": {
+        "heading": "You’re booked.",
+        "body": "We’ve sent the call link to {email}. Stay tuned, and get everything ready for the day.",
+        "bodyDiscord": "Candy will add you on Discord before the day. Your email has a Google Meet link too, just in case.",
+        "receipt": {
+          "item": "Session",
+          "paidValue": "{now} in full"
+        },
+        "email": {
+          "subject": "You’re booked.",
+          "body": "{date}, {time} Halifax time, on Google Meet. Send anything you want to go through before the day.",
+          "bodyDiscord": "{date}, {time} Halifax time. Candy will add you on Discord and message you before the day. If anything goes wrong there, join on Google Meet instead.",
+          "cta": "Join the call",
+          "ctaDiscord": "Join on Google Meet"
+        }
+      }
+    }
+  }
+}

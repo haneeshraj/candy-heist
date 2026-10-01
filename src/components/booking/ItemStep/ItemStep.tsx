@@ -3,6 +3,7 @@
 import { useLenis } from 'lenis/react';
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { SigilChip } from '@/components/common/SigilChip';
+import { SERVICE_KINDS } from '@/content/services/catalogue';
 import { ArrowIcon } from '@/components/icons';
 import { useEntrance } from '@/hooks/useEntrance';
 import { gsap } from '@/lib/animation/gsap';
@@ -11,13 +12,15 @@ import ItemOption from './ItemOption';
 import styles from './ItemStep.module.scss';
 import type { ItemStepProps } from './ItemStep.types';
 
-// Figma "Session details" / "Commission details": the items stay put in a
-// sticky rail on the left, with the one action under them, while the
-// chosen item's details scroll on the right. Picking another fades the
-// details out and writes the new ones in. On a phone the rail becomes a
-// swipeable row and the action sticks to the bottom of the screen.
+// Figma "Producer · 2 · Item": every service in a sticky rail on the
+// left, the commissions and the 1-1 sessions each under their own label,
+// with the one action under them, while the chosen item's details scroll
+// on the right. Picking another fades the details out and writes the new
+// ones in. On a phone the rail becomes a swipeable row and the action
+// sticks to the bottom of the screen.
 export default function ItemStep({
   copy,
+  kinds,
   items,
   selectedId,
   price,
@@ -67,27 +70,49 @@ export default function ItemStep({
   }, [shownId]);
 
   const shown = items.find((item) => item.id === shownId) ?? items[0];
+  const selectedKind =
+    items.find((item) => item.id === selectedId)?.kind ?? shown.kind;
+  const groups = SERVICE_KINDS.map((kind) => ({
+    kind,
+    items: items.filter((item) => item.kind === kind)
+  })).filter((group) => group.items.length > 0);
 
   return (
     <section ref={rootRef} className={styles.step}>
       <div className={styles.layout}>
-        <p className={styles.railLabel} data-enter>
-          {copy.label}
-        </p>
         <div className={styles.rail}>
+          {/* One name across the groups, so the arrow keys run through all
+              of them. A long list scrolls on its own, past Lenis. */}
           <div
             className={styles.options}
-            role="radiogroup"
             aria-label={copy.label}
+            role="group"
+            data-lenis-prevent
           >
-            {items.map((item) => (
-              <ItemOption
-                key={item.id}
-                item={item}
-                name={groupName}
-                selected={item.id === selectedId}
-                onSelect={onSelect}
-              />
+            {groups.map((group) => (
+              <div
+                key={group.kind}
+                className={styles.group}
+                role="radiogroup"
+                aria-labelledby={`${groupName}-${group.kind}`}
+              >
+                <p
+                  id={`${groupName}-${group.kind}`}
+                  className={styles.groupLabel}
+                  data-enter
+                >
+                  {kinds[group.kind].group}
+                </p>
+                {group.items.map((item) => (
+                  <ItemOption
+                    key={item.id}
+                    item={item}
+                    name={groupName}
+                    selected={item.id === selectedId}
+                    onSelect={onSelect}
+                  />
+                ))}
+              </div>
             ))}
           </div>
           <div className={styles.action} data-enter>
@@ -96,13 +121,19 @@ export default function ItemStep({
               icon={<ArrowIcon />}
               onClick={onContinue}
             >
-              {copy.cta}
+              {kinds[selectedKind].item.cta}
             </SigilChip>
           </div>
         </div>
 
         <div ref={detailRef} className={styles.detailSlot}>
-          <ItemDetail key={shown.id} copy={copy} item={shown} price={price} />
+          <ItemDetail
+            key={shown.id}
+            copy={copy}
+            kind={kinds[shown.kind]}
+            item={shown}
+            price={price}
+          />
         </div>
       </div>
     </section>

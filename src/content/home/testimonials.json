@@ -1,7 +1,7 @@
 {
   "label": "Testimonials",
   "headline": { "lead": "The work speaks,", "statement": "Ask the room." },
-  "cta": { "label": "Book a session", "href": "/services/sessions" },
+  "cta": { "label": "Book a session", "href": "/services/producer" },
   "photo": {
     "src": "/img/home/about-photo.jpeg",
     "alt": "Candy Heist at the decks beneath the vaulted, crimson-lit ceiling of a gothic hall"

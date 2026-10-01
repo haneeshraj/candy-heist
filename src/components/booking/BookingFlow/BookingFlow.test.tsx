@@ -2,14 +2,12 @@ import type { ReactNode } from 'react';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { commissions, sessions } from '@/content/services/catalogue';
-import {
-  commissionsFlowContent,
-  sessionsFlowContent
-} from '@/content/services/flows';
+import { catalogue } from '@/content/services/catalogue';
+import { producerFlowContent as content } from '@/content/services/flows';
 import { siteContact } from '@/content/site/contact';
 import { slotsFor } from '@/lib/booking/availability';
 import { addDays, todayIn, type DateKey } from '@/lib/booking/dates';
+import { DRAFT_KEY } from '@/lib/booking/persistence';
 import BookingFlow from './BookingFlow';
 
 vi.mock('next/image', () => ({
@@ -40,6 +38,7 @@ vi.mock('next/link', () => ({
 // queries skip that check, and the file gets a longer timeout.
 vi.setConfig({ testTimeout: 30000 });
 const ALL = { hidden: true } as const;
+const { commission, session } = content.kinds;
 
 // Reduced motion, so step changes swap at once.
 function mockMatchMedia() {
@@ -54,7 +53,7 @@ function mockMatchMedia() {
 // The first open time from tomorrow on, so a draft can resume past the
 // date step.
 function openSlot() {
-  const today = todayIn(sessionsFlowContent.timeZone);
+  const today = todayIn(content.timeZone);
   for (let day = 1; day < 60; day++) {
     const date: DateKey = addDays(today, day);
     const slot = slotsFor(date, today).find((s) => s.open);
@@ -63,55 +62,76 @@ function openSlot() {
   throw new Error('No open time in the next 60 days');
 }
 
-const renderSessions = () =>
+const renderFlow = () =>
   render(
-    <BookingFlow
-      kind="session"
-      content={sessionsFlowContent}
-      items={sessions}
-      contact={siteContact}
-    />
+    <BookingFlow content={content} items={catalogue} contact={siteContact} />
   );
 
-const renderCommissions = () =>
-  render(
-    <BookingFlow
-      kind="commission"
-      content={commissionsFlowContent}
-      items={commissions}
-      contact={siteContact}
-    />
-  );
+const cards = () =>
+  screen
+    .getAllByRole('link', ALL)
+    .filter((link) => link.getAttribute('href')?.startsWith('?step='));
 
 describe('BookingFlow', () => {
   beforeEach(() => {
     mockMatchMedia();
     window.sessionStorage.clear();
-    window.history.replaceState(null, '', '/services/sessions');
+    window.history.replaceState(null, '', '/services/producer');
   });
 
-  it('opens on the intro, every session a card that links to its details', () => {
-    renderSessions();
+  it('opens on the intro, every service a tagged card linking to its details', () => {
+    renderFlow();
     expect(
-      screen.getByRole('heading', {
-        ...ALL,
-        level: 1,
-        name: sessionsFlowContent.title
-      })
+      screen.getByRole('heading', { ...ALL, level: 1, name: content.title })
     ).toBeInTheDocument();
+    expect(cards()).toHaveLength(catalogue.length);
     const card = screen.getByRole('link', { ...ALL, name: /^DJ Lessons/ });
-    expect(card).toHaveAttribute('href', '?step=session&session=dj-lessons');
+    expect(card).toHaveAttribute('href', '?step=service&service=dj-lessons');
+    expect(card).toHaveTextContent(session.tag);
     expect(
-      screen.queryByRole('navigation', {
-        ...ALL,
-        name: sessionsFlowContent.stepsLabel
-      })
+      screen.queryByRole('navigation', { ...ALL, name: content.stepsLabel })
     ).not.toBeInTheDocument();
   });
 
-  it('opens a session’s details straight from its card', async () => {
+  it('searches only when asked, and filters by kind', async () => {
     const user = userEvent.setup();
-    renderSessions();
+    renderFlow();
+
+    await user.click(
+      screen.getByRole('button', { ...ALL, name: content.browse.search.open })
+    );
+    await user.type(screen.getByRole('searchbox', ALL), 'lessons');
+    expect(cards()).toHaveLength(catalogue.length);
+    await user.click(
+      screen.getByRole('button', {
+        ...ALL,
+        name: content.browse.search.submit
+      })
+    );
+    expect(cards().map((card) => card.getAttribute('href'))).toEqual([
+      '?step=service&service=dj-lessons'
+    ]);
+
+    await user.click(
+      screen.getByRole('button', { ...ALL, name: content.browse.search.clear })
+    );
+    await user.click(
+      screen.getByRole('button', {
+        ...ALL,
+        name: content.browse.filters.button
+      })
+    );
+    await user.click(
+      screen.getByRole('checkbox', { ...ALL, name: /^1-1 sessions/ })
+    );
+    expect(cards()).toHaveLength(
+      catalogue.filter((item) => item.kind === 'session').length
+    );
+  });
+
+  it('opens a 1-1 session’s details from its card, the list grouped by kind', async () => {
+    const user = userEvent.setup();
+    renderFlow();
 
     await user.click(screen.getByRole('link', { ...ALL, name: /^DJ Lessons/ }));
 
@@ -122,25 +142,36 @@ describe('BookingFlow', () => {
         name: 'DJ Lessons'
       })
     ).toBeInTheDocument();
-    expect(window.location.search).toBe('?step=session&session=dj-lessons');
+    expect(window.location.search).toBe('?step=service&service=dj-lessons');
     // Its write-up, from markdown: a heading and its list.
     expect(
       screen.getByRole('heading', { ...ALL, level: 3, name: 'What’s included' })
     ).toBeInTheDocument();
     const steps = screen.getByRole('navigation', {
       ...ALL,
-      name: sessionsFlowContent.stepsLabel
+      name: content.stepsLabel
     });
     expect(within(steps).getAllByRole('listitem', ALL)).toHaveLength(4);
+    expect(
+      within(
+        screen.getByRole('radiogroup', { ...ALL, name: session.group })
+      ).getAllByRole('radio', ALL)
+    ).toHaveLength(2);
+    expect(
+      screen.getByRole('radiogroup', { ...ALL, name: commission.group })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { ...ALL, name: session.item.cta })
+    ).toBeInTheDocument();
   });
 
-  it('opens straight onto a session linked in the URL', async () => {
+  it('opens straight onto an item linked in the URL, old links too', async () => {
     window.history.replaceState(
       null,
       '',
-      '/services/sessions?session=production-session'
+      '/services/producer?session=production-session'
     );
-    renderSessions();
+    renderFlow();
     expect(
       await screen.findByRole('heading', {
         ...ALL,
@@ -148,12 +179,15 @@ describe('BookingFlow', () => {
         name: 'Production Session'
       })
     ).toBeInTheDocument();
+    expect(window.location.search).toBe(
+      '?step=service&service=production-session'
+    );
   });
 
   it('needs the Discord username once Discord is where to meet', async () => {
     const user = userEvent.setup();
     window.sessionStorage.setItem(
-      'candy-heist:session-draft',
+      DRAFT_KEY,
       JSON.stringify({
         itemId: 'dj-lessons',
         ...openSlot(),
@@ -161,8 +195,8 @@ describe('BookingFlow', () => {
         detailsDone: false
       })
     );
-    window.history.replaceState(null, '', '/services/sessions?step=details');
-    renderSessions();
+    window.history.replaceState(null, '', '/services/producer?step=details');
+    renderFlow();
 
     const discord = await screen.findByRole('radio', {
       ...ALL,
@@ -172,47 +206,31 @@ describe('BookingFlow', () => {
     await user.type(screen.getByLabelText(/^Name/), 'Alex Martin');
     await user.type(screen.getByLabelText(/^Email/), 'alex@example.com');
     await user.click(
-      screen.getByRole('button', {
-        ...ALL,
-        name: sessionsFlowContent.details.cta
-      })
+      screen.getByRole('button', { ...ALL, name: content.details.cta })
     );
     expect(
-      await screen.findByText(
-        sessionsFlowContent.details.errors.discordRequired
-      )
+      await screen.findByText(content.details.errors.discordRequired)
     ).toBeInTheDocument();
     expect(window.location.search).toContain('step=details');
   });
-});
 
-describe('BookingFlow, commissions', () => {
-  beforeEach(() => {
-    mockMatchMedia();
-    window.sessionStorage.clear();
-    window.history.replaceState(null, '', '/services/commissions');
-  });
-
-  it('goes from a commission straight to your details, then pays in full', async () => {
+  it('takes a commission straight to your details, then half upfront', async () => {
     const user = userEvent.setup();
-    renderCommissions();
+    renderFlow();
 
     await user.click(
-      screen.getByRole('link', { ...ALL, name: /^Mixing Balanced/ })
+      screen.getByRole('link', { ...ALL, name: /^Mixing Commission/ })
     );
     const steps = await screen.findByRole('navigation', {
       ...ALL,
-      name: commissionsFlowContent.stepsLabel
+      name: content.stepsLabel
     });
     expect(within(steps).getAllByRole('listitem', ALL)).toHaveLength(3);
 
     await user.click(
-      screen.getByRole('button', {
-        ...ALL,
-        name: commissionsFlowContent.item.cta
-      })
+      screen.getByRole('button', { ...ALL, name: commission.item.cta })
     );
-    expect(window.location.search).toBe('?step=details&commission=mixing');
+    expect(window.location.search).toBe('?step=details&service=mixing');
     // No choice of where to meet for a commission.
     expect(
       screen.queryByRole('radiogroup', { ...ALL, name: /Meet on/ })
@@ -221,20 +239,19 @@ describe('BookingFlow, commissions', () => {
     await user.type(screen.getByLabelText(/^Name/), 'Alex Martin');
     await user.type(screen.getByLabelText(/^Email/), 'alex@example.com');
     await user.click(
-      screen.getByRole('button', {
-        ...ALL,
-        name: commissionsFlowContent.details.cta
-      })
+      screen.getByRole('button', { ...ALL, name: content.details.cta })
     );
-    await user.click(
-      await screen.findByRole('button', { ...ALL, name: /^Pay/ })
-    );
+    expect(
+      await screen.findByText(commission.payment.panel)
+    ).toBeInTheDocument();
+    expect(screen.getByText(commission.summary.total)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { ...ALL, name: /^Pay/ }));
 
     expect(
       await screen.findByRole('heading', {
         ...ALL,
         level: 2,
-        name: commissionsFlowContent.confirmation.heading
+        name: commission.confirmation.heading
       })
     ).toBeInTheDocument();
     // How to reach Candy, each a click to copy.
@@ -247,7 +264,7 @@ describe('BookingFlow, commissions', () => {
     expect(
       screen.getByRole('link', {
         ...ALL,
-        name: commissionsFlowContent.confirmation.services
+        name: content.confirmation.services
       })
     ).toHaveAttribute('href', '/services');
   });

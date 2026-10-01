@@ -202,3 +202,24 @@ export function parseMarkdownBlocks(
     throw error;
   }
 }
+
+const runsText = (runs: TextRun[]) => runs.map((run) => run.text).join('');
+
+/** The words of the blocks, one string a block, for searching. */
+export function blocksText(blocks: readonly TextBlock[]): string[] {
+  return blocks.map((block) => {
+    switch (block.kind) {
+      case 'heading':
+        return block.text;
+      case 'paragraph':
+      case 'quote':
+        return runsText(block.runs);
+      case 'list':
+        return block.items.map(runsText).join(' ');
+      case 'entries':
+        return block.items
+          .map((item) => `${item.term} ${runsText(item.runs)}`)
+          .join(' ');
+    }
+  });
+}

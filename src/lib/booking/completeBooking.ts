@@ -5,12 +5,12 @@ import type {
 } from './bookingState';
 
 // Where a booking gets finalised. For now it only checks the draft and
-// hands back a reference: taking the payment (Stripe), saving the booking,
-// making the session's Google Meet link (always, even when Discord is
-// picked, so there's a way in if the Discord details are wrong) and
-// sending the confirmation email arrive with the Server Actions and the
-// database. The flow already awaits it, so swapping it in changes nothing
-// else.
+// hands back a reference: taking the payment (Stripe: half of a
+// commission's price, all of a session's), saving the booking, making the
+// session's Google Meet link (always, even when Discord is picked, so
+// there's a way in if the Discord details are wrong) and sending the
+// confirmation email arrive with the Server Actions and the database. The
+// flow already awaits it, so swapping it in changes nothing else.
 
 export class IncompleteBookingError extends Error {
   constructor() {
@@ -26,18 +26,21 @@ const reference = () =>
 
 export async function completeBooking(
   draft: BookingDraft,
-  kind: FlowKind
+  kind: FlowKind | undefined
 ): Promise<BookingConfirmation> {
   const { itemId, date, time, details, detailsDone } = draft;
-  const timed = kind === 'commission' || (date && time);
-  if (!itemId || !detailsDone || !timed) throw new IncompleteBookingError();
+  const session = kind === 'session';
+  const timed = kind === 'commission' || (session && date && time);
+  if (!itemId || !kind || !detailsDone || !timed)
+    throw new IncompleteBookingError();
 
   return {
     reference: reference(),
     itemId,
-    date: kind === 'session' ? date : null,
-    time: kind === 'session' ? time : null,
-    meetOn: kind === 'session' ? details.meetOn : 'meet',
+    kind,
+    date: session ? date : null,
+    time: session ? time : null,
+    meetOn: session ? details.meetOn : 'meet',
     name: details.name.trim(),
     email: details.email.trim()
   };

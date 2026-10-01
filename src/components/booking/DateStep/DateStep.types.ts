@@ -1,9 +1,9 @@
-import type { FlowContent } from '@/content/services/flows';
+import type { ProducerFlowContent } from '@/content/services/flows';
 import type { DateKey } from '@/lib/booking/dates';
 import type { SummaryProps } from '../types';
 
 export interface DateStepProps {
-  copy: NonNullable<FlowContent['date']>;
+  copy: ProducerFlowContent['date'];
   summary: SummaryProps;
   date: DateKey | null;
   time: string | null;

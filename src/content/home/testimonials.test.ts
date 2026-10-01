@@ -8,7 +8,7 @@ describe('home testimonials content', () => {
       expect(service.name).toBeTruthy();
       expect(service.icon).toBeTruthy();
     }
-    expect(testimonialsContent.cta.href).toBe('/services/sessions');
+    expect(testimonialsContent.cta.href).toBe('/services/producer');
   });
 
   it('rejects a quote about a service the catalogue does not have', () => {

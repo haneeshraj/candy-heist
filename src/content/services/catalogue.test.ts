@@ -1,27 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import catalogueData from './catalogue.json';
-import {
-  catalogueSchema,
-  commissions,
-  findItem,
-  itemsOf,
-  sessions
-} from './catalogue';
+import { catalogue, catalogueSchema, findItem } from './catalogue';
 
 describe('services catalogue', () => {
-  it('splits commissions from sessions, each with its kind', () => {
-    expect(commissions.map((item) => item.id)).toEqual([
-      'mixing',
-      'mastering',
-      'mixing-and-mastering',
-      'beat-production'
+  it('keeps one list, each item a commission or a 1-1 session', () => {
+    expect(catalogue.map((item) => `${item.id}:${item.kind}`)).toEqual([
+      'mixing:commission',
+      'mastering:commission',
+      'mixing-and-mastering:commission',
+      'beat-production:commission',
+      'production-session:session',
+      'dj-lessons:session'
     ]);
-    expect(sessions.map((item) => item.id)).toEqual([
-      'production-session',
-      'dj-lessons'
-    ]);
-    expect(commissions.every((item) => item.kind === 'commission')).toBe(true);
-    expect(itemsOf('session')).toBe(sessions);
   });
 
   it('reads each write-up from markdown into blocks', () => {
@@ -35,16 +25,19 @@ describe('services catalogue', () => {
   });
 
   it('gives every session a length for its calendar invite', () => {
+    const sessions = catalogue.filter((item) => item.kind === 'session');
     expect(sessions.every((item) => item.durationMinutes! > 0)).toBe(true);
   });
 
+  it('refuses a session without a length', () => {
+    const [first] = catalogueData.items;
+    const broken = { items: [{ ...first, kind: 'session' }] };
+    expect(catalogueSchema.safeParse(broken).success).toBe(false);
+  });
+
   it('refuses two services with the same id', () => {
-    const broken = {
-      ...catalogueData,
-      sessions: [
-        { ...catalogueData.sessions[0], id: catalogueData.commissions[0].id }
-      ]
-    };
+    const [first, second] = catalogueData.items;
+    const broken = { items: [first, { ...second, id: first.id }] };
     expect(catalogueSchema.safeParse(broken).success).toBe(false);
   });
 

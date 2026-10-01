@@ -4,11 +4,6 @@
 
 .intro {
   padding-bottom: 12rem;
-
-  // No video (commissions): the headline opens the page.
-  &[data-bare='true'] {
-    padding-top: clamp(3.2rem, 6vw, 6.4rem);
-  }
 }
 
 .srOnly {
@@ -128,19 +123,46 @@
   scroll-margin-top: 4.8rem;
 }
 
+// ---- Filter & sort and the search, over the cards
+
+.browse {
+  margin-top: 4.8rem;
+}
+
+.browseRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem 1.6rem;
+  align-items: center;
+}
+
+.empty {
+  margin-top: 4.8rem;
+  padding: 6.4rem 0;
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: clamp(2.4rem, 1.8rem + 1vw, 3.2rem);
+  font-style: italic;
+  color: var(--color-gold);
+}
+
 .cards {
   display: grid;
   gap: 1.6rem;
-  margin-top: 5.6rem;
+  margin-top: 4rem;
 
   @media #{t.$query-tablet} {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 2.4rem;
   }
 
-  // As many across as fit, four at 1440; a short list fills the row.
+  // Three across at 1440, as in the Figma; one or two found keep a half
+  // each.
   @media #{t.$query-desktop} {
-    grid-template-columns: repeat(auto-fit, minmax(26rem, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    &[data-few='true'] {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 }
 
@@ -176,11 +198,7 @@
   position: relative;
   display: block;
   overflow: hidden;
-  height: 20rem;
-
-  .cards[data-few='true'] & {
-    height: 24rem;
-  }
+  height: 24rem;
 
   &::after {
     content: '';
@@ -213,6 +231,15 @@
   flex: 1;
   flex-direction: column;
   padding: 2.4rem 2.4rem 0;
+}
+
+// Over the name, though read after it.
+.cardTag {
+  @include b.mono(1rem, 0.4em);
+
+  order: -1;
+  margin-bottom: 1rem;
+  color: var(--color-gilt);
 }
 
 .cardName {
