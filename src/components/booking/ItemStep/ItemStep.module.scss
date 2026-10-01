@@ -1,4 +1,3 @@
-@use '../../../styles/tokens' as t;
 @use '../../../styles/mixins' as m;
 @use '../booking' as b;
 
@@ -13,215 +12,10 @@
   @include m.visually-hidden;
 }
 
-// Mobile: a swipeable row of services, the details, then the action stuck
-// to the bottom of the screen. Desktop: a sticky rail on the left.
-.layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 2.4rem;
-
-  @media #{t.$query-desktop} {
-    grid-template-columns: 38.8rem minmax(0, 1fr);
-    grid-template-rows: auto 1fr;
-    gap: 2.4rem 7.2rem;
-  }
-}
-
-.rail {
-  display: contents;
-
-  @media #{t.$query-desktop} {
-    position: sticky;
-    top: 3.2rem;
-    display: flex;
-    flex-direction: column;
-    grid-row: 1 / span 2;
-    grid-column: 1;
-    gap: 3.2rem;
-    align-self: start;
-
-    // However many services there are, the action stays in view: the list
-    // scrolls inside the rail instead.
-    max-height: calc(100svh - 3.2rem - var(--navbar-clearance, 0rem));
-  }
-}
-
-.options {
+// Over the details, the way back to the services.
+.back {
   display: flex;
-  gap: 1.2rem;
-  overflow-x: auto;
-  margin-inline: calc(-1 * clamp(2.4rem, 6.67vw, 9.6rem));
-  padding-inline: clamp(2.4rem, 6.67vw, 9.6rem);
-  scroll-padding-inline: clamp(2.4rem, 6.67vw, 9.6rem);
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
-  // Room round the edge for the focus outline.
-  @media #{t.$query-desktop} {
-    flex-direction: column;
-    flex: 0 1 auto;
-    min-height: 0;
-    overflow: hidden auto;
-    overscroll-behavior: contain;
-    margin: -0.6rem;
-    padding: 0.6rem;
-  }
-}
-
-// Each kind of service under its own label. On a phone the groups sit
-// side by side in the swipeable row, each label set upright at its start.
-.group {
-  display: flex;
-  flex: none;
-  gap: 1.2rem;
-
-  @media #{t.$query-desktop} {
-    flex-direction: column;
-
-    & + & {
-      margin-top: 2rem;
-    }
-  }
-}
-
-.groupLabel {
-  @include b.mono(1rem, 0.4em);
-
-  align-self: center;
-  color: var(--color-concrete-light);
-  writing-mode: vertical-rl;
-  rotate: 180deg;
-
-  @media #{t.$query-desktop} {
-    align-self: auto;
-    margin-bottom: 0.4rem;
-    writing-mode: horizontal-tb;
-    rotate: none;
-  }
-}
-
-.option {
-  position: relative;
-  display: flex;
-  flex: 0 0 min(28rem, 78vw);
-  flex-direction: column;
-  gap: 1rem;
-  padding: 2.6rem 2.8rem 2.8rem;
-  border: 1px solid rgb(182 158 124 / 14%);
-  background-color: var(--color-obsidian-raised);
-  cursor: pointer;
-  scroll-snap-align: start;
-  transition:
-    border-color 0.5s t.$ease-signature,
-    background-color 0.5s t.$ease-signature;
-
-  &:has(:focus-visible) {
-    outline: 1px solid var(--color-gilt);
-    outline-offset: 4px;
-  }
-
-  &[data-selected='true'] {
-    border-color: rgb(210 169 97 / 85%);
-    background-color: rgb(210 169 97 / 5%);
-  }
-
-  @media #{t.$query-hover} {
-    &:not([data-selected='true']):hover {
-      border-color: rgb(182 158 124 / 32%);
-    }
-  }
-
-  @media #{t.$query-desktop} {
-    flex-basis: auto;
-  }
-}
-
-.optionTop {
-  display: flex;
-  gap: 1.6rem;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.optionName {
-  @include b.caps(1.9rem);
-
-  line-height: 1.15;
-}
-
-.radio {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 2.2rem;
-  height: 2.2rem;
-  border: 1px solid rgb(182 158 124 / 30%);
-  border-radius: 50%;
-  transition: border-color 0.4s t.$ease-signature;
-
-  .option[data-selected='true'] & {
-    border-color: var(--color-gilt);
-  }
-}
-
-.radioDot {
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-  background-color: var(--color-gilt);
-  scale: 0;
-  transition: scale 0.5s t.$ease-signature;
-
-  .option[data-selected='true'] & {
-    scale: 1;
-  }
-}
-
-.optionSummary {
-  @include b.body(1.4rem, rgb(182 158 124 / 85%));
-
-  line-height: 1.5;
-}
-
-.action {
-  position: sticky;
-  bottom: var(--navbar-clearance, 0);
-  z-index: 2;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  align-items: center;
-  order: 10;
-  margin-inline: calc(-1 * clamp(2.4rem, 6.67vw, 9.6rem));
-  padding: 2rem clamp(2.4rem, 6.67vw, 9.6rem);
-  border-top: 1px solid rgb(182 158 124 / 12%);
-  background-color: rgb(12 12 12 / 92%);
-  backdrop-filter: blur(12px);
-
-  @media #{t.$query-desktop} {
-    position: static;
-    order: 0;
-    margin-inline: 0;
-    padding: 0;
-    border: 0;
-    background: none;
-    backdrop-filter: none;
-  }
-}
-
-// ---- The details column
-
-.detailSlot {
-  min-width: 0;
-
-  @media #{t.$query-desktop} {
-    grid-row: 1 / span 2;
-    grid-column: 2;
-  }
+  margin-bottom: 3.2rem;
 }
 
 .detail {
@@ -241,11 +35,27 @@
   object-fit: cover;
 }
 
+// The name, and its one action at the far end of the line. On a phone
+// the action wraps under the name.
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem 3.2rem;
+  align-items: center;
+  justify-content: space-between;
+  align-self: stretch;
+  margin-top: 0.8rem;
+}
+
 .title {
   @include b.caps(clamp(2.8rem, 1.6rem + 2vw, 4rem));
 
-  margin-top: 0.8rem;
   line-height: 1.05;
+}
+
+.action {
+  display: flex;
+  flex: none;
 }
 
 .lede {

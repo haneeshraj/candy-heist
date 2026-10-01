@@ -126,8 +126,8 @@ export const producerFlowSchema = z.object({
     payment: text
   }),
   item: z.object({
-    /** Names the list beside the details. */
-    label: text,
+    /** Over the details: back to the list of services. */
+    back: text,
     type: text,
     price: text
   }),

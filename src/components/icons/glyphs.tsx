@@ -30,6 +30,16 @@ export function ArrowIcon(props: IconProps) {
   );
 }
 
+// The arrow turned round, for going back.
+export function ArrowBackIcon(props: IconProps) {
+  return (
+    <Icon
+      path="M10.95 5.4H3.35L5.95 2.8L5.1 1.95L1.05 6L5.1 10.05L5.95 9.2L3.35 6.6H10.95Z"
+      {...props}
+    />
+  );
+}
+
 export function ExternalIcon(props: IconProps) {
   return (
     <Icon path="M3 2H10V9H8.8V4.05L2.85 10L2 9.15L7.95 3.2H3Z" {...props} />

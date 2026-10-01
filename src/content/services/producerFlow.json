@@ -63,7 +63,7 @@
     "payment": "Payment"
   },
   "item": {
-    "label": "Services",
+    "back": "Back to services",
     "type": "Type",
     "price": "Price"
   },

@@ -117,10 +117,9 @@ export default function BookingFlow({
           <ItemStep
             copy={content.item}
             kinds={content.kinds}
-            items={items}
-            selectedId={item.id}
+            item={item}
             price={content.price}
-            onSelect={flow.selectItem}
+            onBack={() => flow.goTo('intro')}
             onContinue={() => flow.goTo(session ? 'date' : 'details')}
           />
         ) : null}

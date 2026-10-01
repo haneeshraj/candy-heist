@@ -129,7 +129,7 @@ describe('BookingFlow', () => {
     );
   });
 
-  it('opens a 1-1 session’s details from its card, the list grouped by kind', async () => {
+  it('opens a 1-1 session’s details from its card, and goes back to the list', async () => {
     const user = userEvent.setup();
     renderFlow();
 
@@ -152,16 +152,18 @@ describe('BookingFlow', () => {
       name: content.stepsLabel
     });
     expect(within(steps).getAllByRole('listitem', ALL)).toHaveLength(4);
-    expect(
-      within(
-        screen.getByRole('radiogroup', { ...ALL, name: session.group })
-      ).getAllByRole('radio', ALL)
-    ).toHaveLength(2);
-    expect(
-      screen.getByRole('radiogroup', { ...ALL, name: commission.group })
-    ).toBeInTheDocument();
+    // Just the one service: no list of the others beside it.
+    expect(screen.queryByRole('radiogroup', ALL)).not.toBeInTheDocument();
     expect(
       screen.getByRole('button', { ...ALL, name: session.item.cta })
+    ).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole('button', { ...ALL, name: content.item.back })
+    );
+    expect(window.location.search).toBe('');
+    expect(
+      await screen.findByRole('link', { ...ALL, name: /^DJ Lessons/ })
     ).toBeInTheDocument();
   });
 

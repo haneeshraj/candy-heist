@@ -4,6 +4,7 @@ export {
   PlayIcon,
   PauseIcon,
   ArrowIcon,
+  ArrowBackIcon,
   ExternalIcon,
   MailIcon,
   PhoneIcon,

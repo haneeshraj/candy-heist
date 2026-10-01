@@ -177,7 +177,6 @@ export function useBookingFlow(items: ServiceItem[], timeZone: string) {
       dispatch({ type: 'selectItem', itemId });
       dispatch({ type: 'goTo', step: 'item' });
     },
-    selectItem: (itemId: string) => dispatch({ type: 'selectItem', itemId }),
     goTo: (step: BookingStep) => dispatch({ type: 'goTo', step }),
     selectDate: (date: DateKey) => dispatch({ type: 'selectDate', date }),
     selectTime: (time: string) => dispatch({ type: 'selectTime', time }),

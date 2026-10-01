@@ -123,7 +123,7 @@ export default function IntroStep({
           <span className={styles.dividerLine} />
         </div>
 
-        <div id={chooseId} className={styles.choose}>
+        <div id={chooseId} className={styles.choose} data-step-return>
           <StepHeading
             label={choose.label}
             heading={choose.heading}
