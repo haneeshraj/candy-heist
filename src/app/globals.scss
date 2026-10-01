@@ -28,13 +28,10 @@
   --color-crimson-light: #db7a6f;
 
   // What the fixed navbar covers at the bottom of the screen: the full-width
-  // bar on phones, the floating pill and its gap from the tablet breakpoint
-  // (768px) up. Sticky bottom bars and full-screen controls sit above it.
+  // bar on phones, and from the tablet breakpoint (768px) up the floating
+  // pill and its gap (2 + 4.4 × 1.25), the same height. Sticky bottom bars
+  // and full-screen controls sit above it.
   --navbar-clearance: 7.5rem;
-
-  @media (width >= 768px) {
-    --navbar-clearance: 6.4rem;
-  }
 }
 
 *,

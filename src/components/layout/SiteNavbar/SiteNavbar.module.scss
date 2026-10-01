@@ -58,12 +58,16 @@ $focus-ring: 1.5px solid rgb(227 194 134 / 90%);
     --block-ink: var(--color-gilt);
   }
 
+  // From tablet up, the floating pill is drawn 1.25 times its size, grown
+  // from its foot so it keeps its place; the phone's bar keeps its own.
   @media #{t.$query-tablet} {
     bottom: 2rem;
     left: 50%;
     width: auto;
     height: 4.4rem;
+    transform-origin: 50% 100%;
     translate: -50% 0;
+    scale: 1.25;
 
     &:focus-visible {
       outline-offset: 4px;
@@ -244,7 +248,8 @@ $focus-ring: 1.5px solid rgb(227 194 134 / 90%);
   text-align: center;
 
   @media #{t.$query-tablet} {
-    inset: auto auto 7.4rem 50%;
+    // Above the pill (2 + 4.4 × 1.25), with its 1rem gap.
+    inset: auto auto 8.5rem 50%;
     width: 68rem;
     height: 48rem;
     grid-template:
