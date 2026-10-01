@@ -1,0 +1,18 @@
+{
+  "site": {
+    "lead": "The sets of",
+    "statement": "Candy Heist",
+    "line": "are acts of remembrance",
+    "foot": "DJ · Producer · Sound engineer · Halifax, Nova Scotia",
+    "alt": "Candy Heist: DJ, producer and sound engineer, at the decks in Halifax"
+  },
+  "release": {
+    "out": "Out {date}",
+    "forthcoming": "Forthcoming",
+    "track": "Track {n}",
+    "from": "From {title}",
+    "listen": "Listen now",
+    "presave": "Pre-save",
+    "alt": "The release's cover, its title and where to listen"
+  }
+}
