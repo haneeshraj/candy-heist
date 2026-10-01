@@ -1,0 +1,47 @@
+@use '../../../styles/tokens' as t;
+
+// Centred over the navbar, under its panels. It comes in after a beat, so
+// scrolling back up past the page's end doesn't flash it, and goes at
+// once.
+.hint {
+  position: fixed;
+  bottom: calc(var(--navbar-clearance, 0rem) + 1.6rem);
+  left: 50%;
+  z-index: 89;
+  display: grid;
+  place-items: center;
+  color: var(--color-gilt);
+  opacity: 0;
+  pointer-events: none;
+  translate: -50% 0;
+  transition: opacity 0.25s t.$ease-signature;
+
+  &[data-shown] {
+    opacity: 1;
+    transition: opacity 0.6s t.$ease-signature 0.3s;
+  }
+}
+
+.chevron {
+  width: 1.6rem;
+  height: 1.6rem;
+
+  .hint[data-shown] & {
+    animation: nudge 1.8s ease-in-out infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
+  }
+}
+
+@keyframes nudge {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: 0 0.5rem;
+  }
+}

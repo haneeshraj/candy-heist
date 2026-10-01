@@ -30,6 +30,16 @@ export function ArrowIcon(props: IconProps) {
   );
 }
 
+// A chevron pointing down: there's more below.
+export function ChevronDownIcon(props: IconProps) {
+  return (
+    <Icon
+      path="M1.4 4.15L2.3 3.25L6 6.95L9.7 3.25L10.6 4.15L6 8.75Z"
+      {...props}
+    />
+  );
+}
+
 // The arrow turned round, for going back.
 export function ArrowBackIcon(props: IconProps) {
   return (

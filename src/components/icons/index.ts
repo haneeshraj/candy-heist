@@ -5,6 +5,7 @@ export {
   PauseIcon,
   ArrowIcon,
   ArrowBackIcon,
+  ChevronDownIcon,
   ExternalIcon,
   MailIcon,
   PhoneIcon,
