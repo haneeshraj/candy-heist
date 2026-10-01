@@ -12,9 +12,9 @@ import { curtainLift, curtainStart } from './useFooterCurtain';
 // at the last scrollable pixel when they can't reach the usual 85% mark.
 // Under the curtain the footer doesn't scroll in, it's uncovered from the
 // bottom up, so each group plays once the curtain has cleared half of it.
-// The vortex reaches down to the footer's foot, the strip that peeks out
-// first, so it plays as soon as the page's end starts to lift: the peek
-// shows the footer at once, not an empty strip. Reduced motion doesn't
+// The vortex reaches down to the footer's foot, the first strip
+// uncovered, so it plays as soon as the page's end starts to lift: the
+// footer shows at once, not an empty strip. Reduced motion doesn't
 // match, so the settled layout just shows.
 
 const BACK = 'back.out(1.7)';
@@ -95,7 +95,7 @@ export function useFooterMotion(rootRef: RefObject<HTMLElement | null>) {
           })
         );
 
-        // Keyed to the copyright's line, the last: it's what the peek shows.
+        // Keyed to the copyright's line, the last: it's uncovered first.
         reveal(first('copyright'), (tl) =>
           tl
             .fromTo(

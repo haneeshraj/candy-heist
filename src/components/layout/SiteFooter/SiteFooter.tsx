@@ -6,18 +6,22 @@ import FooterVortex from './FooterVortex';
 import styles from './SiteFooter.module.scss';
 import type { SiteFooterProps } from './SiteFooter.types';
 import { useFooterCurtain } from './useFooterCurtain';
+import { useFooterLanding } from './useFooterLanding';
 import { useFooterMotion } from './useFooterMotion';
 
 // "Footer R — Vortex Mask" from the Figma file: the sign-off, the photo
 // poured into the vortex mark, the bookings address and two link columns.
 // When it fits on screen it waits pinned under the page, which lifts away
-// to uncover it (useFooterCurtain). Every group reveals once as it comes
-// into view (useFooterMotion).
+// to uncover it (useFooterCurtain). Scrolling comes to rest at the page's
+// end, and the footer is uncovered once the reader scrolls on
+// (useFooterLanding). Every group reveals once as it comes into view
+// (useFooterMotion).
 export default function SiteFooter({ content }: SiteFooterProps) {
   const rootRef = useRef<HTMLElement | null>(null);
   const followId = useId();
   const navigateId = useId();
   useFooterCurtain(rootRef);
+  useFooterLanding(rootRef);
   useFooterMotion(rootRef);
 
   const { headline, follow, navigate } = content;

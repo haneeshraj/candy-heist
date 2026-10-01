@@ -4,6 +4,7 @@ import { ReactLenis } from 'lenis/react';
 import type { LenisRef } from 'lenis/react';
 import { useCallback, useEffect, useState } from 'react';
 import { gsap, ScrollTrigger } from '@/lib/animation/gsap';
+import { passWheel } from '@/lib/scroll/wheel';
 
 export default function SmoothScroll({
   children
@@ -39,7 +40,12 @@ export default function SmoothScroll({
   }, [lenis]);
 
   return (
-    <ReactLenis root options={{ autoRaf: false }} ref={lenisRefCallback}>
+    <ReactLenis
+      root
+      // The wheel can be steered before Lenis scrolls (lib/scroll/wheel).
+      options={{ autoRaf: false, virtualScroll: passWheel }}
+      ref={lenisRefCallback}
+    >
       {children}
     </ReactLenis>
   );

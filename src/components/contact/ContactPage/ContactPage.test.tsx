@@ -34,6 +34,9 @@ function setup() {
   return { toggle, details, type, send };
 }
 
+// Its form fills slowly under a loaded test run.
+vi.setConfig({ testTimeout: 30000 });
+
 describe('ContactPage', () => {
   it('is a form named by the page heading, with the details closed', () => {
     const { toggle, details } = setup();

@@ -47,9 +47,9 @@ function pageEnd(root: HTMLElement) {
 
 /**
  * The scroll position at which the page's end reaches the foot of the
- * screen and starts to lift off the footer. On a page shorter than the
- * screen that's above the top: the footer peeks out from the start (the
- * site layout leaves it a strip).
+ * screen and starts to lift off the footer: where scrolling comes to rest
+ * (useFooterLanding). A page shorter than the screen is made to fill it,
+ * so there it's the top.
  */
 export function curtainLift(root: HTMLElement) {
   const end = pageEnd(root);
