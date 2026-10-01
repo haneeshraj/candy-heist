@@ -4,7 +4,7 @@ import { useEffect, type RefObject } from 'react';
 import { gsap } from '@/lib/animation/gsap';
 import { revealOnce, revealStart } from '@/lib/animation/reveal';
 import { MOTION_OK_QUERY } from '@/lib/constants/breakpoints';
-import { curtainStart } from './useFooterCurtain';
+import { curtainLift, curtainStart } from './useFooterCurtain';
 
 // Choreography from the Figma "On-view Spec — Footer R · Mobile", used on
 // every breakpoint: each group plays once as it comes into view, never
@@ -12,7 +12,10 @@ import { curtainStart } from './useFooterCurtain';
 // at the last scrollable pixel when they can't reach the usual 85% mark.
 // Under the curtain the footer doesn't scroll in, it's uncovered from the
 // bottom up, so each group plays once the curtain has cleared half of it.
-// Reduced motion doesn't match, so the settled layout just shows.
+// The vortex reaches down to the footer's foot, the strip that peeks out
+// first, so it plays as soon as the page's end starts to lift: the peek
+// shows the footer at once, not an empty strip. Reduced motion doesn't
+// match, so the settled layout just shows.
 
 const BACK = 'back.out(1.7)';
 
@@ -34,10 +37,15 @@ export function useFooterMotion(rootRef: RefObject<HTMLElement | null>) {
           root.dataset.curtain === 'true'
             ? curtainStart(root, trigger)
             : revealStart(trigger)();
+        const lift = (trigger: Element) => () =>
+          root.dataset.curtain === 'true'
+            ? curtainLift(root)
+            : revealStart(trigger)();
         const reveal = (
           trigger: Element | undefined,
-          build: (tl: gsap.core.Timeline) => void
-        ) => revealOnce(trigger, build, start);
+          build: (tl: gsap.core.Timeline) => void,
+          at = start
+        ) => revealOnce(trigger, build, at);
 
         reveal(first('lead'), (tl) =>
           tl
@@ -51,20 +59,27 @@ export function useFooterMotion(rootRef: RefObject<HTMLElement | null>) {
 
         // The mark turns into place around its own eye while the photo
         // inside settles; the crimson eye lands last.
-        reveal(first('vortex'), (tl) =>
-          tl
-            .from(
-              q(hook('vortex')),
-              { autoAlpha: 0, rotation: 8, scale: 1.06, duration: 1 },
-              0
-            )
-            .fromTo(
-              q(hook('vortex-photo')),
-              { scale: 1.1 },
-              { scale: 1, duration: 1.2 },
-              0
-            )
-            .from(q(hook('eye')), { scale: 0, duration: 0.5, ease: BACK }, 0.7)
+        reveal(
+          first('vortex'),
+          (tl) =>
+            tl
+              .from(
+                q(hook('vortex')),
+                { autoAlpha: 0, rotation: 8, scale: 1.06, duration: 1 },
+                0
+              )
+              .fromTo(
+                q(hook('vortex-photo')),
+                { scale: 1.1 },
+                { scale: 1, duration: 1.2 },
+                0
+              )
+              .from(
+                q(hook('eye')),
+                { scale: 0, duration: 0.5, ease: BACK },
+                0.7
+              ),
+          lift
         );
 
         reveal(first('email'), (tl) =>
@@ -80,7 +95,8 @@ export function useFooterMotion(rootRef: RefObject<HTMLElement | null>) {
           })
         );
 
-        reveal(first('rule'), (tl) =>
+        // Keyed to the copyright's line, the last: it's what the peek shows.
+        reveal(first('copyright'), (tl) =>
           tl
             .fromTo(
               q(hook('rule')),

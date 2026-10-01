@@ -239,6 +239,15 @@
   justify-content: space-between;
 }
 
+// On desktop the navbar floats over the foot of the screen, mid-width, so
+// the terms sit by the copyright, clear of it, rather than at the far end.
+.legalRow {
+  @media #{t.$query-desktop} {
+    justify-content: flex-start;
+    gap: m.dp(32);
+  }
+}
+
 .legalLink {
   transition: color 0.3s t.$ease-signature;
 

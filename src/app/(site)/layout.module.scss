@@ -1,3 +1,9 @@
+// How much of the footer peeks out under a page shorter than the screen:
+// its last line and the foot of the vortex. In the footer's own design
+// pixels (its m.screen-scale(800) on desktop, the only place it's pinned),
+// so the strip always ends just above the same line.
+$footer-peek: calc(72 * max(0.62px, min(100vw / 1440, 100svh / 800, 1px)));
+
 // On phones the navbar's bar spans the foot of the screen, so the site
 // ends above it. (Pages outside the site, like a share link, have no bar.)
 .site {
@@ -8,13 +14,19 @@
 
 // The page's content, drawn over the footer. When the footer is pinned
 // behind it (SiteFooter's curtain), the content's bottom edge lifts away to
-// uncover the footer, casting a soft shadow onto it as it goes.
+// uncover it, casting a soft shadow onto it as it goes.
 .content {
   position: relative;
   z-index: 1;
   background-color: var(--color-obsidian);
 
+  // A page shorter than the screen still fills it, all but the strip
+  // where the footer peeks out, so there's clearly more below and a little
+  // scroll uncovers the rest. The hairline is the page's edge, so it reads
+  // as lifting away rather than the page going on.
   &:has(+ [data-curtain='true']) {
+    min-height: calc(100svh - #{$footer-peek});
+    border-bottom: 1px solid rgb(182 158 124 / 14%);
     box-shadow: 0 0.8rem 3.2rem 0 rgb(0 0 0 / 22%);
   }
 }

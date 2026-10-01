@@ -36,20 +36,43 @@ export function useFooterCurtain(rootRef: RefObject<HTMLElement | null>) {
   }, [rootRef]);
 }
 
+// Where the page's end (the content drawn over the footer) sits in the
+// document, or null without one.
+function pageEnd(root: HTMLElement) {
+  const content = root.previousElementSibling;
+  return content
+    ? content.getBoundingClientRect().bottom + window.scrollY
+    : null;
+}
+
+/**
+ * The scroll position at which the page's end reaches the foot of the
+ * screen and starts to lift off the footer. On a page shorter than the
+ * screen that's above the top: the footer peeks out from the start (the
+ * site layout leaves it a strip).
+ */
+export function curtainLift(root: HTMLElement) {
+  const end = pageEnd(root);
+  if (end === null) return 0;
+  return Math.min(
+    end - window.innerHeight,
+    ScrollTrigger.maxScroll(window) - 1
+  );
+}
+
 /**
  * The scroll position at which the curtain has uncovered half of `el`.
  * The footer is pinned with its bottom on the screen's, so the curtain's
  * edge (the page's end) passes the footer from the bottom up.
  */
 export function curtainStart(root: HTMLElement, el: Element) {
-  const content = root.previousElementSibling;
-  if (!content) return 0;
-  const pageEnd = content.getBoundingClientRect().bottom + window.scrollY;
+  const end = pageEnd(root);
+  if (end === null) return 0;
   const offset =
     el.getBoundingClientRect().top - root.getBoundingClientRect().top;
   const height = el.getBoundingClientRect().height;
   const screen = window.innerHeight;
   // Where el's middle sits on screen while the footer is pinned.
   const pinnedMiddle = screen - root.offsetHeight + offset + height / 2;
-  return Math.min(pageEnd - pinnedMiddle, ScrollTrigger.maxScroll(window) - 1);
+  return Math.min(end - pinnedMiddle, ScrollTrigger.maxScroll(window) - 1);
 }
