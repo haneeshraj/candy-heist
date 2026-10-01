@@ -1,0 +1,22 @@
+{
+  "notFound": {
+    "title": "Not found · Candy Heist",
+    "label": "404",
+    "lead": "Lost in the signal,",
+    "statement": "Not found.",
+    "body": "This page was never here, or the room forgot it. The way back is below.",
+    "home": "Back to home",
+    "discography": "The discography",
+    "alt": "The Candy Heist vortex in gold, turning in a swirl of gold dust"
+  },
+  "error": {
+    "title": "Something went wrong · Candy Heist",
+    "label": "Error",
+    "lead": "Something broke,",
+    "statement": "Signal lost.",
+    "body": "Something went wrong on our side. Try again, or head back home.",
+    "retry": "Try again",
+    "home": "Back to home",
+    "reference": "Reference {digest}"
+  }
+}

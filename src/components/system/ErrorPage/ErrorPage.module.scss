@@ -1,0 +1,178 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+@use '../../booking/booking' as b;
+
+// One screen, centred: the red point, flickering out, with the
+// broadcast's rings spreading from it behind everything, and the words
+// under it.
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+.page {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  overflow: hidden;
+  place-items: center;
+  min-height: 100svh;
+  padding: 9.6rem clamp(2.4rem, 6.67vw, 9.6rem)
+    calc(var(--navbar-clearance, 0rem) + 4.8rem);
+  background-color: var(--color-obsidian);
+}
+
+.field {
+  position: relative;
+  z-index: -1;
+  display: grid;
+  place-items: center;
+  width: 5.6rem;
+  height: 5.6rem;
+  margin-bottom: 4rem;
+  pointer-events: none;
+}
+
+.rings {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(110rem, 120vmax);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+}
+
+.halo {
+  position: absolute;
+  width: 5.6rem;
+  height: 5.6rem;
+  border: 1px solid rgb(196 69 58 / 45%);
+  border-radius: 50%;
+}
+
+// The page's one crimson point, dropping out and catching again.
+.point {
+  position: absolute;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background-color: var(--color-crimson);
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: signal 4.2s steps(1, end) infinite;
+  }
+}
+
+@keyframes signal {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  12% {
+    opacity: 0.15;
+  }
+
+  14% {
+    opacity: 1;
+  }
+
+  41% {
+    opacity: 0.4;
+  }
+
+  43% {
+    opacity: 0.05;
+  }
+
+  47% {
+    opacity: 1;
+  }
+
+  78% {
+    opacity: 0.3;
+  }
+
+  80% {
+    opacity: 1;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 64rem;
+  text-align: center;
+}
+
+.label {
+  @include b.mono(1.1rem, 0.44em);
+
+  display: flex;
+  gap: 1.2rem;
+  align-items: center;
+  color: var(--color-gold);
+}
+
+.labelGlyph {
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--color-gilt);
+}
+
+.headline {
+  margin-top: 2rem;
+  font-weight: 400;
+}
+
+.headlineVisual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lead {
+  display: block;
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: clamp(3rem, 2rem + 1.8vw, 4.6rem);
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--color-gold);
+}
+
+.statement {
+  display: block;
+  margin-top: 0.4rem;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: clamp(4.4rem, 2rem + 4.6vw, 8.8rem);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-cream);
+}
+
+.body {
+  @include b.body(1.7rem, rgb(221 207 178 / 85%));
+
+  max-width: 48rem;
+  margin-top: 2.4rem;
+  text-wrap: balance;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.6rem;
+  justify-content: center;
+  margin-top: 3.6rem;
+}
+
+.reference {
+  @include b.mono(0.9rem, 0.4em);
+
+  margin-top: 3.2rem;
+  color: var(--color-concrete-light);
+}

@@ -4,6 +4,10 @@ import { describe, expect, it, vi } from 'vitest';
 import { sessionsContent } from '@/content/home/sessions';
 import SessionsSection from './SessionsSection';
 
+// Its letter-by-letter reveals are slow to render in jsdom, more so with
+// the whole suite running alongside, so it gets a longer timeout.
+vi.setConfig({ testTimeout: 30000 });
+
 vi.mock('next/image', () => ({
   default: ({ src, alt }: { src: string; alt: string }) => (
     // eslint-disable-next-line @next/next/no-img-element

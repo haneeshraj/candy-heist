@@ -1,49 +1,8 @@
 import type { Metadata } from 'next';
-import {
-  Archivo,
-  Archivo_Black,
-  Archivo_Narrow,
-  Cormorant_Garamond,
-  IBM_Plex_Mono
-} from 'next/font/google';
 import './globals.scss';
 import SmoothScroll from '@/components/common/SmoothScroll';
 import { SiteScrollbar } from '@/components/layout/SiteScrollbar';
-
-const archivo = Archivo({
-  subsets: ['latin'],
-  variable: '--font-archivo',
-  display: 'swap'
-});
-
-const archivoBlack = Archivo_Black({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-archivo-black',
-  display: 'swap'
-});
-
-const archivoNarrow = Archivo_Narrow({
-  subsets: ['latin'],
-  variable: '--font-archivo-narrow',
-  display: 'swap'
-});
-
-const ibmPlexMono = IBM_Plex_Mono({
-  weight: ['500'],
-  subsets: ['latin'],
-  variable: '--font-ibm-plex-mono',
-  display: 'swap'
-});
-
-// Only the italic is used: it's the accent voice in headlines and copy.
-const cormorantGaramond = Cormorant_Garamond({
-  weight: '400',
-  style: 'italic',
-  subsets: ['latin'],
-  variable: '--font-cormorant-garamond',
-  display: 'swap'
-});
+import { fontVariables } from './fonts';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -55,10 +14,7 @@ export const metadata: Metadata = {
 // the footer; the share link pages in (share) go without.
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html
-      lang="en"
-      className={`${archivo.variable} ${archivoBlack.variable} ${archivoNarrow.variable} ${ibmPlexMono.variable} ${cormorantGaramond.variable}`}
-    >
+    <html lang="en" className={fontVariables}>
       <body>
         <SmoothScroll>
           {children}

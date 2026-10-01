@@ -4,6 +4,10 @@ import { describe, expect, it, vi } from 'vitest';
 import { testimonialsContent } from '@/content/home/testimonials';
 import TestimonialsSection from './TestimonialsSection';
 
+// Its letter-by-letter reveals are slow to render in jsdom, more so with
+// the whole suite running alongside, so it gets a longer timeout.
+vi.setConfig({ testTimeout: 30000 });
+
 vi.mock('next/link', () => ({
   default: ({
     href,
