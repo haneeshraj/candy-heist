@@ -25,6 +25,8 @@ export interface FooterContent {
   follow: FooterLinkGroup;
   navigate: FooterLinkGroup;
   copyright: string;
+  /** Beside the copyright. */
+  terms: FooterLink;
 }
 
 export const footerContent: FooterContent = {
@@ -50,5 +52,6 @@ export const footerContent: FooterContent = {
     ]
   },
   // Evaluated on the server, so the year updates with every build.
-  copyright: `© ${new Date().getFullYear()} Candy Heist`
+  copyright: `© ${new Date().getFullYear()} Candy Heist`,
+  terms: { label: 'Terms', href: '/terms' }
 };

@@ -231,6 +231,29 @@
 }
 
 .columnLabel,
+// The copyright, and the terms at the far end of its line.
+.legalRow {
+  display: flex;
+  gap: m.dp(24);
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.legalLink {
+  transition: color 0.3s t.$ease-signature;
+
+  &:focus-visible {
+    outline: 1px solid var(--color-gilt);
+    outline-offset: m.dp(4);
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      color: var(--color-gilt);
+    }
+  }
+}
+
 .copyright {
   font-family: var(--font-ibm-plex-mono), monospace;
   font-size: max(#{m.dp(9)}, 0.9rem);

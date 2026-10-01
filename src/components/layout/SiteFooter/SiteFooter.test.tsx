@@ -76,8 +76,11 @@ describe('SiteFooter', () => {
     expect(hrefs).toEqual(footerContent.navigate.links.map((l) => l.href));
   });
 
-  it('closes with the copyright line', () => {
+  it('closes with the copyright line and the terms', () => {
     render(<SiteFooter content={footerContent} />);
     expect(screen.getByText(footerContent.copyright)).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: footerContent.terms.label })
+    ).toHaveAttribute('href', '/terms');
   });
 });

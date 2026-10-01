@@ -1,0 +1,53 @@
+{
+  "meta": {
+    "title": "Terms · Candy Heist",
+    "description": "The terms for booking Candy Heist: commissions and 1-1 sessions, how they're paid, and what happens if a session is missed."
+  },
+  "label": "Terms",
+  "lead": "Before you book,",
+  "statement": "The terms.",
+  "intro": "These cover everything booked and paid for on this site: commissions and 1-1 sessions with Candy Heist.",
+  "updated": "Last updated 1 October 2026",
+  "sections": [
+    {
+      "heading": "Payments",
+      "paragraphs": [
+        "A commission takes half its price when you book it. The other half is due when the work is ready: Candy emails you an invoice, and you pay it on this site with its ID.",
+        "A 1-1 session is paid in full when you book it.",
+        "Card payments are handled by Stripe. Your card details never touch this site."
+      ]
+    },
+    {
+      "heading": "No refunds",
+      "paragraphs": [
+        "All payments are final. Nothing is refunded: not a commission’s first half, not its second, and not a 1-1 session."
+      ]
+    },
+    {
+      "heading": "Moving a session, and staying in touch",
+      "paragraphs": [
+        "If you need to move a 1-1 session, earlier or later, let Candy know in advance, by email, Discord or Instagram.",
+        "The same goes for a commission: if something changes on your side, tell Candy before it holds the work up."
+      ]
+    },
+    {
+      "heading": "If you miss it, or go quiet",
+      "paragraphs": [
+        "If you don’t join a 1-1 session, or stop replying during a commission, without letting Candy know in advance, the booking ends there. What you’ve paid isn’t refunded, and the session or the commission doesn’t go ahead."
+      ]
+    },
+    {
+      "heading": "Booking a DJ set",
+      "paragraphs": [
+        "An enquiry to book Candy Heist as a DJ isn’t a booking or a payment. The terms for a set are agreed with Candy directly."
+      ]
+    },
+    {
+      "heading": "Questions",
+      "paragraphs": [
+        "If anything here is unclear, write to {email} before you book."
+      ]
+    }
+  ],
+  "cta": { "label": "Browse and book", "href": "/services/producer" }
+}

@@ -88,9 +88,15 @@ export default function SiteFooter({ content }: SiteFooterProps) {
 
         <div className={styles.legal}>
           <span className={styles.rule} data-motion="rule" aria-hidden="true" />
-          <p className={styles.copyright} data-motion="copyright">
-            {content.copyright}
-          </p>
+          <div className={styles.legalRow} data-motion="copyright">
+            <p className={styles.copyright}>{content.copyright}</p>
+            <Link
+              className={`${styles.copyright} ${styles.legalLink}`}
+              href={content.terms.href}
+            >
+              {content.terms.label}
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
