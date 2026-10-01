@@ -25,7 +25,6 @@ export interface NavbarContent {
 export const navbarContent: NavbarContent = {
   menuLabel: 'Menu',
   toggle: { open: 'Open menu', close: 'Close menu' },
-  // About and Lore are planned routes; the rest exist.
   links: [
     { label: 'Home', href: '/' },
     { label: 'About', href: '/about' },

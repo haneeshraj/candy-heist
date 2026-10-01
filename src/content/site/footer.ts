@@ -40,10 +40,10 @@ export const footerContent: FooterContent = {
   },
   navigate: {
     label: 'Navigate',
-    // About and Lore are planned routes; the rest exist.
     links: [
       { label: 'Home', href: '/' },
       { label: 'About', href: '/about' },
+      { label: 'Services', href: '/services' },
       { label: 'Discography', href: '/discography' },
       { label: 'Lore', href: '/lore' },
       { label: 'Contact', href: '/contact' }
