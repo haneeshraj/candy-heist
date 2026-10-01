@@ -1,4 +1,5 @@
 @use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
 @use '../booking' as b;
 
 .step {
@@ -49,4 +50,87 @@
   gap: 2.4rem;
   align-items: center;
   margin-top: 1.2rem;
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+// Under the heading; it changes once Discord is where to meet.
+.sub {
+  @include b.body(1.6rem);
+
+  max-width: 62rem;
+  margin-top: 1.8rem;
+}
+
+// ---- Meet on: Google Meet or Discord
+
+.meetOn {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.meetOnLabel {
+  @include b.mono(1rem, 0.4em);
+
+  color: var(--color-concrete-light);
+}
+
+.star {
+  color: var(--color-gilt);
+}
+
+// Two equal segments in one border; the gilt block slides under the one
+// that's picked.
+.switch {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border: 1px solid rgb(182 158 124 / 35%);
+}
+
+.switchBlock {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 50%;
+  background-color: var(--color-gilt);
+  transition: translate 0.55s t.$ease-signature;
+
+  .switch[data-value='discord'] & {
+    translate: 100% 0;
+  }
+}
+
+.segment {
+  @include b.mono(1.1rem, 0.4em);
+
+  position: relative;
+  padding: 1.7rem 2.6rem;
+  color: var(--color-concrete-light);
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.45s t.$ease-signature;
+
+  &:has(:checked) {
+    color: var(--color-obsidian);
+  }
+
+  &:has(:focus-visible) {
+    outline: 1px solid var(--color-gilt);
+    outline-offset: 3px;
+  }
+
+  @media #{t.$query-hover} {
+    &:not(:has(:checked)):hover {
+      color: var(--color-cream);
+    }
+  }
+}
+
+.help {
+  @include b.body(1.4rem);
 }

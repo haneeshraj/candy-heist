@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { findService, type ServiceIcon } from '@/content/sessions/services';
+import { findItem, type ServiceIcon } from '@/content/services/catalogue';
 import testimonialsData from './testimonials.json';
 
 // The home page Testimonials section: its copy, and what people said, each
@@ -19,8 +19,8 @@ export const testimonialSchema = z.object({
   /** What they do: "Artist", "DJ", "Producer". */
   role: text,
   /** The booking catalogue's id for the service the quote is about. */
-  service: text.refine((id) => Boolean(findService(id)), {
-    message: 'Not a service in content/sessions/services.json'
+  service: text.refine((id) => Boolean(findItem(id)), {
+    message: 'Not a service in content/services/catalogue.json'
   })
 });
 
@@ -63,7 +63,7 @@ const copy = testimonialsCopySchema.parse(testimonialsData);
 export const testimonialsContent: TestimonialsContent = {
   ...copy,
   testimonials: copy.testimonials.map((t) => {
-    const service = findService(t.service)!;
+    const service = findItem(t.service)!;
     return {
       ...t,
       service: {

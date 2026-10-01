@@ -1,14 +1,14 @@
-import styles from './SessionStep.module.scss';
-import type { SessionOptionProps } from './SessionStep.types';
+import styles from './ItemStep.module.scss';
+import type { ItemOptionProps } from './ItemStep.types';
 
-// A session in the sticky list (Figma "Booking / Option"): a radio input
+// An item in the sticky list (Figma "Booking / Option"): a radio input
 // under a bordered card, so the list arrow-keys like a group.
-export default function SessionOption({
-  service,
+export default function ItemOption({
+  item,
   name,
   selected,
   onSelect
-}: SessionOptionProps) {
+}: ItemOptionProps) {
   return (
     <label
       className={styles.option}
@@ -18,19 +18,18 @@ export default function SessionOption({
       <input
         type="radio"
         name={name}
-        value={service.id}
+        value={item.id}
         checked={selected}
-        onChange={() => onSelect(service.id)}
+        onChange={() => onSelect(item.id)}
         className={styles.srOnly}
       />
       <span className={styles.optionTop}>
-        <span className={styles.optionName}>{service.name}</span>
+        <span className={styles.optionName}>{item.name}</span>
         <span className={styles.radio} aria-hidden="true">
           <span className={styles.radioDot} />
         </span>
       </span>
-      <span className={styles.optionMeta}>{service.meta}</span>
-      <span className={styles.optionTagline}>{service.tagline}</span>
+      <span className={styles.optionSummary}>{item.summary}</span>
     </label>
   );
 }

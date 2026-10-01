@@ -1,14 +1,10 @@
-import type { BookingContent } from '@/content/booking/booking';
-import type { Service } from '@/content/sessions/services';
-import type { DateKey } from '@/lib/booking/dates';
+import type { FlowContent } from '@/content/services/flows';
+import type { SummaryProps } from '../types';
 
 export interface PaymentStepProps {
-  copy: BookingContent['payment'];
-  summaryCopy: BookingContent['summary'];
-  service: Service;
-  date: DateKey | null;
-  time: string | null;
-  timeZoneLabel: string;
+  copy: FlowContent['payment'];
+  summary: SummaryProps;
+  /** What's paid now: the item's price, or the placeholder. */
   price: string;
   /** True while the booking is being finalised. */
   paying: boolean;

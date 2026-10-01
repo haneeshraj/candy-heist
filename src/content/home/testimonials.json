@@ -1,7 +1,7 @@
 {
   "label": "Testimonials",
   "headline": { "lead": "The work speaks,", "statement": "Ask the room." },
-  "cta": { "label": "Book a session", "href": "/sessions" },
+  "cta": { "label": "Book a session", "href": "/services/sessions" },
   "photo": {
     "src": "/img/home/about-photo.jpeg",
     "alt": "Candy Heist at the decks beneath the vaulted, crimson-lit ceiling of a gothic hall"
@@ -17,7 +17,7 @@
       "quote": "He heard what the track was missing before I could name it. Now it sounds like the record in my head.",
       "name": "J.M.",
       "role": "Artist",
-      "service": "mix-and-master"
+      "service": "mixing-and-mastering"
     },
     {
       "quote": "Three sessions in, I stopped playing songs and started reading the room.",
@@ -35,7 +35,7 @@
       "quote": "Honest notes, no fluff, and a walkthrough I still go back to.",
       "name": "D.L.",
       "role": "Artist",
-      "service": "project-feedback"
+      "service": "mixing"
     }
   ]
 }

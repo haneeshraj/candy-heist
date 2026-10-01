@@ -2,8 +2,14 @@
   "label": "Sessions",
   "status": "Now booking",
   "headline": { "lead": "One on one,", "statement": "In the studio." },
-  "intro": "Lessons, production sessions and feedback, straight from the booth.",
-  "cta": { "label": "Book a session", "href": "/sessions" },
+  "intro": "One on one sessions, mixing, mastering and beats, straight from the booth.",
+  "cta": { "label": "Book a session", "href": "/services/sessions" },
+  "featured": [
+    "production-session",
+    "dj-lessons",
+    "mixing-and-mastering",
+    "beat-production"
+  ],
   "photo": {
     "src": "/img/home/sessions-photo.jpeg",
     "alt": "Candy Heist at the decks on a stage washed in crimson and gold light"

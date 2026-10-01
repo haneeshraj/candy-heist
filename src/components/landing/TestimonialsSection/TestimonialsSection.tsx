@@ -15,7 +15,7 @@ import {
   SigilIcon,
   type IconProps
 } from '@/components/icons';
-import type { ServiceIcon } from '@/content/sessions/services';
+import type { ServiceIcon } from '@/content/services/catalogue';
 import { fill } from '@/lib/text/fill';
 import QuoteDots from './QuoteDots';
 import styles from './TestimonialsSection.module.scss';

@@ -1,19 +1,23 @@
-import type { BookingContent } from '@/content/booking/booking';
-import type { Service } from '@/content/sessions/services';
+import type { ServiceItem } from '@/content/services/catalogue';
+import type { FlowContent } from '@/content/services/flows';
+import type { FlowKind } from '@/lib/booking/bookingState';
 
 export interface IntroStepProps {
-  content: BookingContent;
-  services: Service[];
-  selectedId: string | null;
-  onSelect: (serviceId: string) => void;
-  /** Continues to the chosen session's details. */
-  onNext: () => void;
+  kind: FlowKind;
+  content: FlowContent;
+  items: ServiceItem[];
+  /** The flow's placeholder, for items without a price yet. */
+  price: string;
+  /** Opens an item's details. */
+  onOpen: (itemId: string) => void;
 }
 
-export interface SessionCardProps {
-  service: Service;
-  /** Radio group name, shared by the cards. */
-  name: string;
-  selected: boolean;
-  onSelect: (serviceId: string) => void;
+export interface ItemCardProps {
+  item: ServiceItem;
+  /** The item's own address, so the card opens like any link. */
+  href: string;
+  price: string;
+  /** "View details". */
+  view: string;
+  onOpen: (itemId: string) => void;
 }

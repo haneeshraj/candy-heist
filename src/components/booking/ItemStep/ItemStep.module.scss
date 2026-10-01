@@ -151,14 +151,7 @@
   }
 }
 
-.optionMeta {
-  @include b.mono(1rem, 0.4em);
-
-  line-height: 1.4;
-  color: var(--color-gilt);
-}
-
-.optionTagline {
+.optionSummary {
   @include b.body(1.4rem, rgb(182 158 124 / 85%));
 
   line-height: 1.5;
@@ -190,12 +183,6 @@
   }
 }
 
-.hint {
-  @include b.mono(1rem, 0.4em);
-
-  color: var(--color-concrete-light);
-}
-
 // ---- The details column
 
 .detailSlot {
@@ -224,16 +211,10 @@
   object-fit: cover;
 }
 
-.meta {
-  @include b.mono(1rem, 0.4em);
-
-  color: var(--color-gilt);
-}
-
 .title {
   @include b.caps(clamp(2.8rem, 1.6rem + 2vw, 4rem));
 
-  margin-top: 2rem;
+  margin-top: 0.8rem;
   line-height: 1.05;
 }
 
@@ -251,12 +232,37 @@
   margin-top: 1.6rem;
 }
 
+// The write-up's two voices, from the markdown's *emphasis* and **strong**.
+.emphasis {
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: 1.15em;
+  font-style: italic;
+  color: var(--color-gilt-bright);
+}
+
+.strong {
+  font-weight: 600;
+  color: var(--color-cream);
+}
+
+.quote {
+  max-width: 64rem;
+  margin-top: 3.2rem;
+  padding-left: 2rem;
+  border-left: 1px solid rgb(210 169 97 / 45%);
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: clamp(2.4rem, 1.8rem + 1vw, 3.2rem);
+  font-style: italic;
+  line-height: 1.25;
+  color: var(--color-cream);
+}
+
 .facts {
   display: flex;
   flex-wrap: wrap;
   gap: 2.4rem 4.8rem;
   align-self: stretch;
-  margin-top: 4rem;
+  margin-top: 4.8rem;
   padding-block: 2.4rem;
   border-block: 1px solid rgb(182 158 124 / 12%);
 }
@@ -267,6 +273,12 @@
   gap: 1rem;
 }
 
+.factLabel {
+  @include b.mono(1rem, 0.4em);
+
+  color: var(--color-concrete-light);
+}
+
 .factValue {
   font-family: var(--font-archivo), sans-serif;
   font-size: 2rem;
@@ -275,18 +287,17 @@
   color: var(--color-cream);
 }
 
-.block {
-  align-self: stretch;
-  margin-top: 4.8rem;
-}
-
+// A heading in the write-up, over the list or text it introduces.
 .blockLabel {
   @include b.mono(1rem, 0.4em);
 
+  align-self: stretch;
+  margin-top: 4.8rem;
   color: var(--color-concrete-light);
 }
 
 .bullets {
+  align-self: stretch;
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
@@ -311,6 +322,7 @@
 }
 
 .timeline {
+  align-self: stretch;
   display: flex;
   flex-direction: column;
   margin-top: 1.8rem;
@@ -336,30 +348,6 @@
   color: var(--color-gilt);
 }
 
-.timelineBody {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.timelineTitle {
-  font-family: var(--font-archivo), sans-serif;
-  font-size: 1.7rem;
-  font-weight: 500;
-  line-height: 1.3;
-  color: var(--color-cream);
-}
-
 .timelineText {
   @include b.body(1.45rem);
-}
-
-.pair {
-  display: grid;
-  gap: 0 4.8rem;
-  align-self: stretch;
-
-  @media #{t.$query-tablet} {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }

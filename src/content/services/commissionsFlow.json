@@ -1,0 +1,107 @@
+{
+  "title": "Start a commission with Candy Heist",
+  "stepsLabel": "Commission steps",
+  "price": "$ –",
+  "timeZone": "America/Halifax",
+  "timeZoneLabel": "Halifax time",
+  "intro": {
+    "lead": "Made for you,",
+    "statement": "Commissions.",
+    "body": "Mixing, mastering and beats, finished to release standard. Pick a commission, add your details and pay upfront."
+  },
+  "choose": {
+    "label": "Choose a commission",
+    "heading": "What does the track need?",
+    "sub": "All delivered online. Pick one to see everything it includes.",
+    "view": "View details"
+  },
+  "steps": {
+    "item": "Commission",
+    "details": "Your details",
+    "payment": "Payment"
+  },
+  "item": {
+    "label": "Commissions",
+    "price": "Price",
+    "cta": "Start this commission"
+  },
+  "details": {
+    "label": "Your details",
+    "heading": "Tell us a little about you",
+    "sub": "Where Candy sends your receipt, and how he reaches you for your files.",
+    "required": "Required",
+    "name": { "label": "Name", "placeholder": "Your name" },
+    "email": { "label": "Email", "placeholder": "you@example.com" },
+    "instagram": { "label": "Instagram", "placeholder": "@yourname" },
+    "discord": { "label": "Discord", "placeholder": "yourname" },
+    "phone": { "label": "Phone", "placeholder": "+1 (902) 555 0123" },
+    "note": {
+      "label": "A note for Candy Heist",
+      "placeholder": "Anything else about the track, or how you work."
+    },
+    "errors": {
+      "name": "Add your name.",
+      "email": "Add an email address we can reach you at.",
+      "emailInvalid": "That email address doesn’t look right.",
+      "instagram": "That Instagram handle doesn’t look right.",
+      "discord": "That Discord username doesn’t look right.",
+      "discordRequired": "Add your Discord username, so Candy can add you.",
+      "phone": "That phone number doesn’t look right.",
+      "note": "Keep the note under 1000 characters."
+    },
+    "back": "Back",
+    "cta": "Continue to payment"
+  },
+  "payment": {
+    "label": "Payment",
+    "heading": "Start your commission",
+    "sub": "Paid in full now, so work can start on your track.",
+    "panel": "Paid in full",
+    "card": {
+      "number": "Card number",
+      "expiry": "Expiry",
+      "cvc": "CVC",
+      "name": "Name on card"
+    },
+    "secure": "Handled securely by Stripe. Your card details never touch this site.",
+    "notes": [
+      {
+        "title": "Secure checkout",
+        "text": "Card payments run through Stripe."
+      },
+      {
+        "title": "Confirmed by email",
+        "text": "Your receipt, right after payment."
+      }
+    ],
+    "back": "Back",
+    "cta": "Pay {price} now",
+    "paying": "Confirming"
+  },
+  "summary": {
+    "label": "Your commission",
+    "total": "Paid in full",
+    "empty": "–"
+  },
+  "confirmation": {
+    "heading": "It’s in.",
+    "body": "Candy will contact you through email, Instagram or Discord. Stay tuned, and get everything ready.",
+    "questions": "Questions?",
+    "discord": "Discord",
+    "copied": "Copied {value}",
+    "services": "See all services",
+    "home": "Back to home",
+    "receipt": {
+      "item": "Commission",
+      "reference": "Reference",
+      "paid": "Paid",
+      "paidValue": "{price} in full"
+    },
+    "email": {
+      "sent": "Just sent",
+      "subject": "Your commission is in",
+      "body": "Thanks for your commission. Candy will contact you through email, Instagram or Discord, so stay tuned and get your files ready.",
+      "signature": "Candy Heist · Halifax, Nova Scotia"
+    }
+  }
+}

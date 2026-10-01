@@ -11,17 +11,14 @@ import StepHeading from '../StepHeading/StepHeading';
 import styles from './PaymentStep.module.scss';
 import type { PaymentStepProps } from './PaymentStep.types';
 
-// Figma "D1 · 5 Payment", card only. The fields below mark where Stripe's
-// own card form mounts: card details are typed into Stripe's frame, never
+// Figma "Payment", card only: an advance for a session, the full price for
+// a commission. The fields below mark where Stripe's own card form mounts:
+// card details are typed into Stripe's frame, never
 // into this page, so these are placeholders rather than inputs until the
 // Stripe keys and the Server Action are in.
 export default function PaymentStep({
   copy,
-  summaryCopy,
-  service,
-  date,
-  time,
-  timeZoneLabel,
+  summary,
   price,
   paying,
   onPay,
@@ -94,14 +91,7 @@ export default function PaymentStep({
         </div>
 
         <div className={styles.aside}>
-          <BookingSummary
-            copy={summaryCopy}
-            service={service}
-            date={date}
-            time={time}
-            timeZoneLabel={timeZoneLabel}
-            price={price}
-          />
+          <BookingSummary {...summary} />
           <ul className={styles.notes}>
             {copy.notes.map((note) => (
               <li key={note.title} className={styles.note} data-enter>

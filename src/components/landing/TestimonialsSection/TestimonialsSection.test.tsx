@@ -58,7 +58,7 @@ describe('TestimonialsSection', () => {
     render(<TestimonialsSection content={testimonialsContent} />);
     expect(
       screen.getByRole('link', { name: testimonialsContent.cta.label })
-    ).toHaveAttribute('href', '/sessions');
+    ).toHaveAttribute('href', '/services/sessions');
   });
 
   it('jumps to a quote from its dot', () => {

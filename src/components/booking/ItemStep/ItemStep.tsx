@@ -6,23 +6,24 @@ import { SigilChip } from '@/components/common/SigilChip';
 import { ArrowIcon } from '@/components/icons';
 import { useEntrance } from '@/hooks/useEntrance';
 import { gsap } from '@/lib/animation/gsap';
-import SessionDetail from './SessionDetail';
-import SessionOption from './SessionOption';
-import styles from './SessionStep.module.scss';
-import type { SessionStepProps } from './SessionStep.types';
+import ItemDetail from './ItemDetail';
+import ItemOption from './ItemOption';
+import styles from './ItemStep.module.scss';
+import type { ItemStepProps } from './ItemStep.types';
 
-// Figma "D1 · 2 Session details": the sessions stay put in a sticky rail on
-// the left, with the one action under them, while the chosen session's
-// details scroll on the right. Picking another fades the details out and
-// writes the new ones in. On a phone the rail becomes a swipeable row and
-// the action sticks to the bottom of the screen.
-export default function SessionStep({
+// Figma "Session details" / "Commission details": the items stay put in a
+// sticky rail on the left, with the one action under them, while the
+// chosen item's details scroll on the right. Picking another fades the
+// details out and writes the new ones in. On a phone the rail becomes a
+// swipeable row and the action sticks to the bottom of the screen.
+export default function ItemStep({
   copy,
-  services,
+  items,
   selectedId,
+  price,
   onSelect,
-  onBook
-}: SessionStepProps) {
+  onContinue
+}: ItemStepProps) {
   const rootRef = useRef<HTMLElement | null>(null);
   const detailRef = useRef<HTMLDivElement | null>(null);
   const groupName = useId();
@@ -51,7 +52,7 @@ export default function SessionStep({
   }, [selectedId, shownId]);
 
   // Once swapped, show the column again and bring its top into view if the
-  // reader had scrolled down the previous session.
+  // reader had scrolled down the previous item.
   useLayoutEffect(() => {
     const detail = detailRef.current;
     if (!detail) return;
@@ -65,8 +66,7 @@ export default function SessionStep({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shownId]);
 
-  const shown =
-    services.find((service) => service.id === shownId) ?? services[0];
+  const shown = items.find((item) => item.id === shownId) ?? items[0];
 
   return (
     <section ref={rootRef} className={styles.step}>
@@ -80,26 +80,29 @@ export default function SessionStep({
             role="radiogroup"
             aria-label={copy.label}
           >
-            {services.map((service) => (
-              <SessionOption
-                key={service.id}
-                service={service}
+            {items.map((item) => (
+              <ItemOption
+                key={item.id}
+                item={item}
                 name={groupName}
-                selected={service.id === selectedId}
+                selected={item.id === selectedId}
                 onSelect={onSelect}
               />
             ))}
           </div>
           <div className={styles.action} data-enter>
-            <SigilChip variant="solid" icon={<ArrowIcon />} onClick={onBook}>
+            <SigilChip
+              variant="solid"
+              icon={<ArrowIcon />}
+              onClick={onContinue}
+            >
               {copy.cta}
             </SigilChip>
-            <p className={styles.hint}>{copy.hint}</p>
           </div>
         </div>
 
         <div ref={detailRef} className={styles.detailSlot}>
-          <SessionDetail key={shown.id} copy={copy} service={shown} />
+          <ItemDetail key={shown.id} copy={copy} item={shown} price={price} />
         </div>
       </div>
     </section>

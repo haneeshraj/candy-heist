@@ -1,19 +1,23 @@
 import { describe, expect, it } from 'vitest';
-import { services } from '@/content/sessions/services';
 import sessionsData from './sessions.json';
 import { sessionsContent, sessionsCopySchema } from './sessions';
 
 describe('home sessions content', () => {
-  it('lists every service from the shared catalogue, in order', () => {
+  it('lists the featured services from the shared catalogue, in order', () => {
     expect(sessionsContent.services.map((service) => service.id)).toEqual(
-      services.map((service) => service.id)
+      sessionsData.featured
     );
     expect(sessionsContent.services[0]).toEqual({
       id: 'production-session',
       name: 'Production Session',
-      summary: 'Bring the track you’re stuck on and fix it together.',
+      summary: 'Fix the track you’re stuck on.',
       icon: 'production'
     });
+  });
+
+  it('rejects a featured service the catalogue does not have', () => {
+    const broken = { ...sessionsData, featured: ['trumpet-lessons'] };
+    expect(sessionsCopySchema.safeParse(broken).success).toBe(false);
   });
 
   it('rejects section copy with a missing action', () => {

@@ -1,20 +1,20 @@
-import type { BookingContent } from '@/content/booking/booking';
-import type { Service } from '@/content/sessions/services';
-import type { BookingDetails } from '@/lib/booking/bookingState';
-import type { DateKey } from '@/lib/booking/dates';
+import type { FlowContent } from '@/content/services/flows';
+import type { BookingDetails, MeetOn } from '@/lib/booking/bookingState';
+import type { SummaryProps } from '../types';
 
 export interface DetailsStepProps {
-  copy: BookingContent['details'];
-  summaryCopy: BookingContent['summary'];
-  service: Service;
-  date: DateKey | null;
-  time: string | null;
+  copy: FlowContent['details'];
+  summary: SummaryProps;
   details: BookingDetails;
-  timeZoneLabel: string;
-  price: string;
   /** Every edit, so the draft survives going back and forth. */
   onChange: (details: BookingDetails) => void;
   /** Called with valid details only. */
   onSubmit: (details: BookingDetails) => void;
   onBack: () => void;
+}
+
+export interface MeetOnSwitchProps {
+  copy: NonNullable<FlowContent['details']['meetOn']>;
+  value: MeetOn;
+  onChange: (value: MeetOn) => void;
 }

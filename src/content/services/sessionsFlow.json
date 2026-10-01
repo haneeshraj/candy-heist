@@ -1,7 +1,7 @@
 {
   "title": "Book a session with Candy Heist",
   "stepsLabel": "Booking steps",
-  "price": "$ —",
+  "price": "$ –",
   "timeZone": "America/Halifax",
   "timeZoneLabel": "Halifax time",
   "intro": {
@@ -22,30 +22,25 @@
     },
     "lead": "In the studio with",
     "statement": "Candy Heist.",
-    "body": "Lessons, production sessions and honest feedback, built around the music you want to make. Watch the intro, then choose a session below."
+    "body": "Lessons and production sessions, one on one, built around the music you want to make. Watch the intro, then choose a session below.",
+    "cue": "Choose a session"
   },
   "choose": {
     "label": "Choose a session",
     "heading": "What do you want to work on?",
-    "sub": "Four ways to work together. Pick one to see everything it includes.",
-    "selected": "Selected",
-    "next": "Next",
-    "prompt": "Pick a session to continue"
+    "sub": "One on one, live, at your pace. Pick one to see everything it includes.",
+    "view": "View details"
   },
   "steps": {
-    "session": "Session",
+    "item": "Session",
     "date": "Date & time",
     "details": "Your details",
     "payment": "Payment"
   },
-  "session": {
+  "item": {
     "label": "Sessions",
-    "included": "What’s included",
-    "howItRuns": "How it runs",
-    "goodFor": "Good for",
-    "bring": "Have ready",
-    "cta": "Book this session",
-    "hint": "Next: pick a date"
+    "price": "Advance",
+    "cta": "Book this session"
   },
   "date": {
     "label": "Date & time",
@@ -62,11 +57,20 @@
   "details": {
     "label": "Your details",
     "heading": "Tell us a little about you",
-    "sub": "Name and email are all that’s needed. Add a phone number if a text before the session helps.",
+    "sub": "Your name, your email and where you’d like to meet. The rest helps Candy prepare.",
+    "subDiscord": "Your name, your email and your Discord, so Candy can add you. The rest helps him prepare.",
     "required": "Required",
-    "optional": "optional",
     "name": { "label": "Name", "placeholder": "Your name" },
     "email": { "label": "Email", "placeholder": "you@example.com" },
+    "meetOn": {
+      "label": "Meet on",
+      "meet": "Google Meet",
+      "discord": "Discord",
+      "helpMeet": "The Google Meet link comes in your confirmation email.",
+      "helpDiscord": "Candy will add you on Discord. A Google Meet link comes in your email too, just in case."
+    },
+    "instagram": { "label": "Instagram", "placeholder": "@yourname" },
+    "discord": { "label": "Discord", "placeholder": "yourname" },
     "phone": { "label": "Phone", "placeholder": "+1 (902) 555 0123" },
     "note": {
       "label": "A note for Candy Heist",
@@ -76,6 +80,9 @@
       "name": "Add your name.",
       "email": "Add an email address we can reach you at.",
       "emailInvalid": "That email address doesn’t look right.",
+      "instagram": "That Instagram handle doesn’t look right.",
+      "discord": "That Discord username doesn’t look right.",
+      "discordRequired": "Add your Discord username, so Candy can add you.",
       "phone": "That phone number doesn’t look right.",
       "note": "Keep the note under 1000 characters."
     },
@@ -112,24 +119,32 @@
     "label": "Your session",
     "date": "Date",
     "time": "Time",
-    "length": "Length",
-    "advance": "Advance payment",
-    "empty": "—"
+    "meetOn": "On",
+    "total": "Advance payment",
+    "empty": "–"
   },
   "confirmation": {
     "heading": "You’re booked.",
-    "body": "We’ve sent everything to {email}: the date, the call link and how to prepare.",
-    "session": "Session",
-    "when": "When",
-    "paid": "Paid",
-    "paidValue": "{price} advance",
+    "body": "We’ve sent the call link to {email}. Stay tuned, and get everything ready for the day.",
+    "bodyDiscord": "Candy will add you on Discord before the day. Your email has a Google Meet link too, just in case.",
+    "questions": "Questions?",
+    "discord": "Discord",
+    "copied": "Copied {value}",
     "calendar": "Add to calendar",
     "home": "Back to home",
+    "receipt": {
+      "item": "Session",
+      "reference": "Reference",
+      "paid": "Paid",
+      "paidValue": "{price} advance"
+    },
     "email": {
       "sent": "Just sent",
-      "subject": "You’re booked: {service}",
-      "body": "{date}, {time} Halifax time. Your call link is below; send anything you want to go through before the day.",
+      "subject": "You’re booked.",
+      "body": "{date}, {time} Halifax time, on Google Meet. Send anything you want to go through before the day.",
+      "bodyDiscord": "{date}, {time} Halifax time. Candy will add you on Discord and message you before the day. If anything goes wrong there, join on Google Meet instead.",
       "cta": "Join the call",
+      "ctaDiscord": "Join on Google Meet",
       "signature": "Candy Heist · Halifax, Nova Scotia"
     }
   }

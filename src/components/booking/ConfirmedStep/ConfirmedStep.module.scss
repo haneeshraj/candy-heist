@@ -71,30 +71,38 @@
   margin-top: 2.4rem;
 }
 
-.facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2.4rem 4.8rem;
-  margin-top: 3.2rem;
+// How to reach Candy: one line under the message, his email and his
+// Discord set apart and underlined, each copied on a click.
+.reach {
+  @include b.body(1.6rem);
+
+  margin-top: 2rem;
 }
 
-.fact {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.factLabel {
-  @include b.mono(1rem, 0.4em);
-
-  color: var(--color-concrete-light);
-}
-
-.factValue {
-  font-family: var(--font-archivo), sans-serif;
-  font-size: 1.6rem;
-  font-weight: 500;
+.copy {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
   color: var(--color-cream);
+  text-decoration: underline dotted rgb(221 207 178 / 55%);
+  text-underline-offset: 0.35em;
+  cursor: copy;
+  transition:
+    color 0.3s t.$ease-signature,
+    text-decoration-color 0.3s t.$ease-signature;
+
+  &:focus-visible {
+    outline: 1px solid var(--color-gilt);
+    outline-offset: 3px;
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      color: var(--color-gilt-bright);
+      text-decoration-color: currentcolor;
+    }
+  }
 }
 
 .actions {
@@ -176,6 +184,37 @@
   @include b.body(1.5rem);
 
   margin-top: 1.6rem;
+}
+
+// The email's receipt: what it's for, its reference, what was paid.
+.receipt {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  align-self: stretch;
+  margin-top: 2.4rem;
+  padding-block: 1.8rem;
+  border-block: 1px solid rgb(182 158 124 / 14%);
+}
+
+.receiptRow {
+  display: flex;
+  gap: 1.6rem;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.receiptLabel {
+  @include b.mono(0.9rem, 0.4em);
+
+  color: var(--color-concrete-light);
+}
+
+.receiptValue {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: 1.5rem;
+  text-align: right;
+  color: var(--color-cream);
 }
 
 .emailButton {

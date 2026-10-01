@@ -28,13 +28,10 @@ const monthIndex = ({ year, month }: { year: number; month: number }) =>
 // day's times, with the running summary on the right.
 export default function DateStep({
   copy,
-  summaryCopy,
-  service,
+  summary,
   date,
   time,
   today,
-  timeZoneLabel,
-  price,
   onDate,
   onTime,
   onBack,
@@ -154,14 +151,7 @@ export default function DateStep({
           </div>
         </div>
 
-        <BookingSummary
-          copy={summaryCopy}
-          service={service}
-          date={date}
-          time={time}
-          timeZoneLabel={timeZoneLabel}
-          price={price}
-        />
+        <BookingSummary {...summary} />
       </div>
     </section>
   );

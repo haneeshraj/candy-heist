@@ -1,0 +1,104 @@
+{
+  "commissions": [
+    {
+      "id": "mixing",
+      "name": "Mixing",
+      "icon": "mix",
+      "summary": "Balanced and finished, ready to master.",
+      "facts": [
+        { "label": "Format", "value": "Per track" },
+        { "label": "Via", "value": "Discord or Google Meet" }
+      ],
+      "photos": {
+        "card": "/img/sessions/mix-portrait.jpeg",
+        "wide": "/img/sessions/mix-wide.jpeg",
+        "alt": "The stage beside Candy Heist’s booth, a microphone stand in gold light"
+      },
+      "body": "Send your stems and a rough mix. Candy balances, shapes and finishes it, so it’s ready for mastering and release.\n\nYou hear a first mix, send your notes, and get the final one back, with every stem kept the way you meant it.\n\n## What’s included\n\n- Your stems, mixed for release\n- Two rounds of changes\n- WAV files, delivered online\n\n## Have ready\n\n- Stems, exported from the start of the track\n- A rough mix and a reference track or two\n- Your release date, if there is one"
+    },
+    {
+      "id": "mastering",
+      "name": "Mastering",
+      "icon": "production",
+      "summary": "Loud, clear, ready for every platform.",
+      "facts": [
+        { "label": "Format", "value": "Per track" },
+        { "label": "Via", "value": "Discord or Google Meet" }
+      ],
+      "photos": {
+        "card": "/img/sessions/feedback-portrait.jpeg",
+        "wide": "/img/sessions/feedback-wide.jpeg",
+        "alt": "The laptop on Candy Heist’s booth, covered in stickers"
+      },
+      "body": "Your finished mix, mastered for release: loud where it should be, clear everywhere, and consistent from streaming to the club.\n\n## What’s included\n\n- A master for streaming\n- A master for club play\n- One round of changes\n\n## Have ready\n\n- Your final mix, with headroom left in it\n- A reference track"
+    },
+    {
+      "id": "mixing-and-mastering",
+      "name": "Mixing & Mastering",
+      "icon": "mix",
+      "summary": "Both, start to finish, for release.",
+      "facts": [
+        { "label": "Format", "value": "Per track" },
+        { "label": "Via", "value": "Discord or Google Meet" }
+      ],
+      "photos": {
+        "card": "/img/sessions/production-portrait.jpeg",
+        "wide": "/img/sessions/production-wide.jpeg",
+        "alt": "Candy Heist working the decks under crimson stage light"
+      },
+      "body": "Your track, mixed and mastered by a working sound engineer, from the stems to the files you release.\n\nThe mix comes back for your notes before the master is made, so the final version is the one you wanted.\n\n## What’s included\n\n- Mix and master of one track\n- Two rounds of changes on the mix\n- Masters for streaming and club play\n\n## Have ready\n\n- Stems, exported from the start of the track\n- A reference track\n- Your release date, if there is one"
+    },
+    {
+      "id": "beat-production",
+      "name": "Beat Production",
+      "icon": "production",
+      "summary": "An original beat, made to your brief.",
+      "facts": [
+        { "label": "Format", "value": "Per beat" },
+        { "label": "Via", "value": "Discord or Google Meet" }
+      ],
+      "photos": {
+        "card": "/img/sessions/dj-portrait.jpeg",
+        "wide": "/img/sessions/dj-wide.jpeg",
+        "alt": "Candy Heist mid-set, headphones on, hands on the mixer"
+      },
+      "body": "An original beat, built from scratch around what you’re making: the tempo, the mood and the references you send.\n\n## What’s included\n\n- An original beat, made to your brief\n- Two rounds of changes\n- The full beat and its stems\n\n## Have ready\n\n- Two or three reference tracks\n- The tempo and key, if you know them\n- What the beat is for"
+    }
+  ],
+  "sessions": [
+    {
+      "id": "production-session",
+      "name": "Production Session",
+      "icon": "production",
+      "summary": "Fix the track you’re stuck on.",
+      "durationMinutes": 90,
+      "facts": [
+        { "label": "Length", "value": "90 min" },
+        { "label": "Via", "value": "Discord or Google Meet" }
+      ],
+      "photos": {
+        "card": "/img/sessions/production-portrait.jpeg",
+        "wide": "/img/sessions/production-wide.jpeg",
+        "alt": "Candy Heist working the decks under crimson stage light"
+      },
+      "body": "Bring a project you’re stuck on. We open it up together, fix what’s holding it back, and you learn every move along the way.\n\nYou drive in your own DAW while Candy Heist works through it with you over a shared screen: the arrangement, the sound design, the mixdown, whatever the track needs most.\n\n## What’s included\n\n- 90 minutes, one on one\n- Live on Discord or Google Meet, screen shared\n- Notes and the recording afterwards\n\n## How it runs\n\n- **0′**: Listen through. The track top to bottom, and where you want it to go.\n- **10′**: Work on it together. Arrangement, sound design, the mixdown. You drive, he guides.\n- **70′**: Walk through the changes. What changed and why, so you can do it alone next time.\n- **85′**: Next steps. What to try before the next session.\n\n## Good for\n\n- A track that’s most of the way there and won’t finish\n- Learning a technique on your own music, not a tutorial’s\n- A trained second pair of ears on a mix\n\n## Have ready\n\n- Your project, open and ready to share\n- A reference track or two\n- The part you most want to fix"
+    },
+    {
+      "id": "dj-lessons",
+      "name": "DJ Lessons",
+      "icon": "dj",
+      "summary": "From first blend to full set.",
+      "durationMinutes": 60,
+      "facts": [
+        { "label": "Length", "value": "60 min" },
+        { "label": "Via", "value": "Discord or Google Meet" }
+      ],
+      "photos": {
+        "card": "/img/sessions/dj-portrait.jpeg",
+        "wide": "/img/sessions/dj-wide.jpeg",
+        "alt": "Candy Heist mid-set, headphones on, hands on the mixer"
+      },
+      "body": "Learn to DJ on your own gear, from the first beatmatch to building a set that reads the room.\n\nLessons are paced to you. Beginners start with the fundamentals; working DJs bring the parts of their sets they want to push further.\n\n## What’s included\n\n- 60 minutes, one on one\n- Live on Discord or Google Meet\n- A practice plan for the week after\n\n## How it runs\n\n- **0′**: Warm up. Where you are, and what you want to be able to do.\n- **10′**: Technique. Beatmatching, phrasing and transitions, one at a time.\n- **40′**: Play it out. A short set of your own, with notes as you go.\n- **55′**: Practice plan. Exactly what to drill before the next lesson.\n\n## Good for\n\n- Complete beginners who want the fundamentals right\n- DJs moving from bedroom sets to real rooms\n- Anyone preparing for a first gig\n\n## Have ready\n\n- Your controller, set up and on camera\n- Headphones\n- A handful of tracks you love"
+    }
+  ]
+}

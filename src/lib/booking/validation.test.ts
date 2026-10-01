@@ -1,19 +1,22 @@
 import { describe, expect, it } from 'vitest';
+import { EMPTY_DETAILS } from './bookingState';
 import { validateDetails } from './validation';
 
 const messages = {
   name: 'name',
   email: 'email',
   emailInvalid: 'emailInvalid',
+  instagram: 'instagram',
+  discord: 'discord',
+  discordRequired: 'discordRequired',
   phone: 'phone',
   note: 'note'
 };
 
 const details = {
+  ...EMPTY_DETAILS,
   name: 'Alex Martin',
-  email: 'alex@example.com',
-  phone: '',
-  note: ''
+  email: 'alex@example.com'
 };
 
 describe('validateDetails', () => {
@@ -37,6 +40,33 @@ describe('validateDetails', () => {
     expect(validateDetails({ ...details, phone: 'call me' }, messages)).toEqual(
       { phone: 'phone' }
     );
+  });
+
+  it('checks handles only when they are there, forgiving a leading @', () => {
+    expect(
+      validateDetails(
+        { ...details, instagram: '@alex.martin', discord: 'alex_m' },
+        messages
+      )
+    ).toEqual({});
+    expect(
+      validateDetails(
+        { ...details, instagram: 'alex martin', discord: 'a' },
+        messages
+      )
+    ).toEqual({ instagram: 'instagram', discord: 'discord' });
+  });
+
+  it('needs the Discord username when Discord is where to meet', () => {
+    expect(
+      validateDetails({ ...details, meetOn: 'discord' }, messages)
+    ).toEqual({ discord: 'discordRequired' });
+    expect(
+      validateDetails(
+        { ...details, meetOn: 'discord', discord: 'alexmartin' },
+        messages
+      )
+    ).toEqual({});
   });
 
   it('caps the note', () => {

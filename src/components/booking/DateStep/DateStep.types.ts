@@ -1,17 +1,14 @@
-import type { BookingContent } from '@/content/booking/booking';
-import type { Service } from '@/content/sessions/services';
+import type { FlowContent } from '@/content/services/flows';
 import type { DateKey } from '@/lib/booking/dates';
+import type { SummaryProps } from '../types';
 
 export interface DateStepProps {
-  copy: BookingContent['date'];
-  summaryCopy: BookingContent['summary'];
-  service: Service;
+  copy: NonNullable<FlowContent['date']>;
+  summary: SummaryProps;
   date: DateKey | null;
   time: string | null;
   /** Today in the sessions' time zone. */
   today: DateKey;
-  timeZoneLabel: string;
-  price: string;
   onDate: (date: DateKey) => void;
   onTime: (time: string) => void;
   onBack: () => void;

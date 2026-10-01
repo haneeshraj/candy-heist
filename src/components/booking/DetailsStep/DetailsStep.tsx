@@ -3,9 +3,10 @@
 import { useId, useRef, useState, type FormEvent } from 'react';
 import { Field } from '@/components/common/Field';
 import { SigilChip } from '@/components/common/SigilChip';
+import { WordReveal } from '@/components/common/WordReveal';
 import { ArrowIcon } from '@/components/icons';
 import { useEntrance } from '@/hooks/useEntrance';
-import type { BookingDetails } from '@/lib/booking/bookingState';
+import type { BookingDetails, MeetOn } from '@/lib/booking/bookingState';
 import {
   NOTE_MAX_LENGTH,
   validateDetails,
@@ -15,21 +16,28 @@ import BookingSummary from '../BookingSummary/BookingSummary';
 import StepHeading from '../StepHeading/StepHeading';
 import styles from './DetailsStep.module.scss';
 import type { DetailsStepProps } from './DetailsStep.types';
+import MeetOnSwitch from './MeetOnSwitch';
 
-const ORDER: Array<keyof BookingDetails> = ['name', 'email', 'phone', 'note'];
+type TextField = keyof DetailsErrors;
 
-// Figma "D1 · 4 Your details", trimmed to what a booking needs: name and
-// email, an optional phone number and a note for Candy Heist. Errors show
-// after the first try to continue, then update as the fields are fixed.
+const ORDER: TextField[] = [
+  'name',
+  'email',
+  'instagram',
+  'discord',
+  'phone',
+  'note'
+];
+
+// Figma "Your details": name and email; for a session, where to meet
+// (Google Meet or Discord); Instagram and Discord, so Candy can reach out;
+// a phone number and a note. Only what's starred is needed, and Discord
+// becomes needed once it's where to meet. Errors show after the first try
+// to continue, then update as the fields are fixed.
 export default function DetailsStep({
   copy,
-  summaryCopy,
-  service,
-  date,
-  time,
+  summary,
   details,
-  timeZoneLabel,
-  price,
   onChange,
   onSubmit,
   onBack
@@ -41,13 +49,18 @@ export default function DetailsStep({
   const [attempted, setAttempted] = useState(false);
   useEntrance(rootRef, { delay: 0.3 });
 
-  const id = (key: keyof BookingDetails) => `${fieldId}-${key}`;
+  const id = (key: TextField) => `${fieldId}-${key}`;
+  const onDiscord = details.meetOn === 'discord';
+  const sub = onDiscord && copy.subDiscord ? copy.subDiscord : copy.sub;
 
-  function update(key: keyof BookingDetails, value: string) {
-    const next = { ...details, [key]: value };
+  function update(next: BookingDetails) {
     onChange(next);
     if (attempted) setErrors(validateDetails(next, copy.errors));
   }
+
+  const edit = (key: TextField, value: string) =>
+    update({ ...details, [key]: value });
+  const meetOn = (value: MeetOn) => update({ ...details, meetOn: value });
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -70,7 +83,16 @@ export default function DetailsStep({
             id={headingId}
             label={copy.label}
             heading={copy.heading}
-            sub={copy.sub}
+          />
+          {/* Keyed by its text, so it writes itself in again on a change. */}
+          <WordReveal
+            key={sub}
+            as="p"
+            className={styles.sub}
+            text={sub}
+            trigger="mount"
+            startDelay={attempted ? 0 : 0.45}
+            staggerDelay={0.02}
           />
 
           <form className={styles.form} onSubmit={submit} noValidate>
@@ -87,7 +109,7 @@ export default function DetailsStep({
                   required
                   autoComplete="name"
                   value={details.name}
-                  onChange={(event) => update('name', event.target.value)}
+                  onChange={(event) => edit('name', event.target.value)}
                   error={errors.name}
                 />
               </div>
@@ -102,8 +124,46 @@ export default function DetailsStep({
                   autoComplete="email"
                   spellCheck={false}
                   value={details.email}
-                  onChange={(event) => update('email', event.target.value)}
+                  onChange={(event) => edit('email', event.target.value)}
                   error={errors.email}
+                />
+              </div>
+            </div>
+
+            {copy.meetOn ? (
+              <div data-enter>
+                <MeetOnSwitch
+                  copy={copy.meetOn}
+                  value={details.meetOn}
+                  onChange={meetOn}
+                />
+              </div>
+            ) : null}
+
+            <div className={styles.pair}>
+              <div data-enter>
+                <Field
+                  id={id('instagram')}
+                  label={copy.instagram.label}
+                  placeholder={copy.instagram.placeholder}
+                  autoComplete="off"
+                  spellCheck={false}
+                  value={details.instagram}
+                  onChange={(event) => edit('instagram', event.target.value)}
+                  error={errors.instagram}
+                />
+              </div>
+              <div data-enter>
+                <Field
+                  id={id('discord')}
+                  label={copy.discord.label}
+                  placeholder={copy.discord.placeholder}
+                  required={onDiscord}
+                  autoComplete="off"
+                  spellCheck={false}
+                  value={details.discord}
+                  onChange={(event) => edit('discord', event.target.value)}
+                  error={errors.discord}
                 />
               </div>
             </div>
@@ -111,13 +171,12 @@ export default function DetailsStep({
               <Field
                 id={id('phone')}
                 label={copy.phone.label}
-                optionalLabel={copy.optional}
                 placeholder={copy.phone.placeholder}
                 type="tel"
                 inputMode="tel"
                 autoComplete="tel"
                 value={details.phone}
-                onChange={(event) => update('phone', event.target.value)}
+                onChange={(event) => edit('phone', event.target.value)}
                 error={errors.phone}
               />
             </div>
@@ -125,13 +184,12 @@ export default function DetailsStep({
               <Field
                 id={id('note')}
                 label={copy.note.label}
-                optionalLabel={copy.optional}
                 placeholder={copy.note.placeholder}
                 multiline
                 rows={6}
                 maxLength={NOTE_MAX_LENGTH}
                 value={details.note}
-                onChange={(event) => update('note', event.target.value)}
+                onChange={(event) => edit('note', event.target.value)}
                 error={errors.note}
               />
             </div>
@@ -147,14 +205,7 @@ export default function DetailsStep({
           </form>
         </div>
 
-        <BookingSummary
-          copy={summaryCopy}
-          service={service}
-          date={date}
-          time={time}
-          timeZoneLabel={timeZoneLabel}
-          price={price}
-        />
+        <BookingSummary {...summary} />
       </div>
     </section>
   );

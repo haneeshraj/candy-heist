@@ -1,13 +1,18 @@
+import type { ServiceKind } from '@/content/services/catalogue';
 import { isOpenSlot } from './availability';
 import { isDateKey, type DateKey } from './dates';
 
-// The booking flow as a reducer: the step on screen plus the draft built up
-// along the way. A step is only reachable once everything before it is
-// filled in, so a stale URL or a restored draft can't skip ahead.
+// A booking flow as a reducer: the step on screen plus the draft built up
+// along the way. Two kinds share it: a session goes intro, item, date,
+// details, payment; a commission has no date to pick. A step is only
+// reachable once everything before it is filled in, so a stale URL or a
+// restored draft can't skip ahead.
+
+export type FlowKind = ServiceKind;
 
 export const BOOKING_STEPS = [
   'intro',
-  'session',
+  'item',
   'date',
   'details',
   'payment',
@@ -16,25 +21,44 @@ export const BOOKING_STEPS = [
 
 export type BookingStep = (typeof BOOKING_STEPS)[number];
 
+/** Every step a kind of flow goes through, in order. */
+export const FLOW_STEPS: Record<FlowKind, readonly BookingStep[]> = {
+  session: ['intro', 'item', 'date', 'details', 'payment', 'confirmed'],
+  commission: ['intro', 'item', 'details', 'payment', 'confirmed']
+};
+
 /** The steps shown on the stepper, in order. */
-export const STEPPER_STEPS = ['session', 'date', 'details', 'payment'] as const;
-export type StepperStep = (typeof STEPPER_STEPS)[number];
+export const STEPPER_STEPS = {
+  session: ['item', 'date', 'details', 'payment'],
+  commission: ['item', 'details', 'payment']
+} as const;
+
+export type StepperStep = 'item' | 'date' | 'details' | 'payment';
 
 export function isBookingStep(value: unknown): value is BookingStep {
   return BOOKING_STEPS.includes(value as BookingStep);
 }
 
-export const stepIndex = (step: BookingStep) => BOOKING_STEPS.indexOf(step);
+export const stepIndex = (step: BookingStep, kind: FlowKind) =>
+  FLOW_STEPS[kind].indexOf(step);
+
+/** Where a session's call happens. A Meet link is made either way. */
+export type MeetOn = 'meet' | 'discord';
 
 export interface BookingDetails {
   name: string;
   email: string;
+  /** Sessions only; a commission keeps the default. */
+  meetOn: MeetOn;
+  instagram: string;
+  discord: string;
   phone: string;
   note: string;
 }
 
 export interface BookingDraft {
-  serviceId: string | null;
+  itemId: string | null;
+  /** Sessions only. */
   date: DateKey | null;
   time: string | null;
   details: BookingDetails;
@@ -44,14 +68,17 @@ export interface BookingDraft {
 
 export interface BookingConfirmation {
   reference: string;
-  serviceId: string;
-  date: DateKey;
-  time: string;
+  itemId: string;
+  /** A session's; null for a commission. */
+  date: DateKey | null;
+  time: string | null;
+  meetOn: MeetOn;
   name: string;
   email: string;
 }
 
 export interface BookingState {
+  kind: FlowKind;
   step: BookingStep;
   draft: BookingDraft;
   confirmation: BookingConfirmation | null;
@@ -62,25 +89,40 @@ export interface BookingState {
 export const EMPTY_DETAILS: BookingDetails = {
   name: '',
   email: '',
+  meetOn: 'meet',
+  instagram: '',
+  discord: '',
   phone: '',
   note: ''
 };
 
-export const initialBookingState: BookingState = {
-  step: 'intro',
-  draft: {
-    serviceId: null,
-    date: null,
-    time: null,
-    details: EMPTY_DETAILS,
-    detailsDone: false
-  },
-  confirmation: null,
-  restored: false
+const TEXT_FIELDS = [
+  'name',
+  'email',
+  'instagram',
+  'discord',
+  'phone',
+  'note'
+] as const;
+
+export const EMPTY_DRAFT: BookingDraft = {
+  itemId: null,
+  date: null,
+  time: null,
+  details: EMPTY_DETAILS,
+  detailsDone: false
 };
 
+export const initialBookingState = (kind: FlowKind): BookingState => ({
+  kind,
+  step: 'intro',
+  draft: EMPTY_DRAFT,
+  confirmation: null,
+  restored: false
+});
+
 export type BookingAction =
-  | { type: 'selectService'; serviceId: string }
+  | { type: 'selectItem'; itemId: string }
   | { type: 'selectDate'; date: DateKey }
   | { type: 'selectTime'; time: string }
   | { type: 'setDetails'; details: BookingDetails; done: boolean }
@@ -91,11 +133,12 @@ export type BookingAction =
 /** The furthest step the draft allows. */
 export function furthestStep(
   draft: BookingDraft,
+  kind: FlowKind,
   confirmed: boolean
 ): BookingStep {
   if (confirmed) return 'confirmed';
-  if (!draft.serviceId) return 'intro';
-  if (!draft.date || !draft.time) return 'date';
+  if (!draft.itemId) return 'intro';
+  if (kind === 'session' && (!draft.date || !draft.time)) return 'date';
   if (!draft.detailsDone) return 'details';
   return 'payment';
 }
@@ -104,13 +147,14 @@ export function furthestStep(
 export function clampStep(
   step: BookingStep,
   draft: BookingDraft,
+  kind: FlowKind,
   confirmed = false
 ): BookingStep {
-  const furthest = furthestStep(draft, confirmed);
   // Once booked there's no going back into the flow for that booking.
   if (confirmed) return 'confirmed';
-  if (step === 'confirmed') return furthest;
-  return stepIndex(step) > stepIndex(furthest) ? furthest : step;
+  const furthest = furthestStep(draft, kind, false);
+  if (step === 'confirmed' || stepIndex(step, kind) < 0) return furthest;
+  return stepIndex(step, kind) > stepIndex(furthest, kind) ? furthest : step;
 }
 
 export function bookingReducer(
@@ -118,14 +162,10 @@ export function bookingReducer(
   action: BookingAction
 ): BookingState {
   switch (action.type) {
-    case 'selectService':
-      return {
-        ...state,
-        draft: { ...state.draft, serviceId: action.serviceId }
-      };
+    case 'selectItem':
+      return { ...state, draft: { ...state.draft, itemId: action.itemId } };
     case 'selectDate':
-      // A new day keeps the time only if it's open there too (checked by
-      // the caller); the flow simply clears it on any change of day.
+      // A new day clears the time; the same day keeps it.
       return {
         ...state,
         draft: {
@@ -148,13 +188,18 @@ export function bookingReducer(
     case 'goTo':
       return {
         ...state,
-        step: clampStep(action.step, state.draft, state.confirmation !== null)
+        step: clampStep(
+          action.step,
+          state.draft,
+          state.kind,
+          state.confirmation !== null
+        )
       };
     case 'restore':
       return {
         ...state,
         draft: action.draft,
-        step: clampStep(action.step, action.draft),
+        step: clampStep(action.step, action.draft, state.kind),
         restored: true
       };
     case 'confirm':
@@ -165,19 +210,19 @@ export function bookingReducer(
 // Checks a draft read back from storage or a URL before trusting it.
 export function sanitizeDraft(
   value: unknown,
-  isService: (id: string) => boolean,
-  today: DateKey
+  isItem: (id: string) => boolean,
+  today: DateKey,
+  kind: FlowKind
 ): BookingDraft {
-  const empty = initialBookingState.draft;
-  if (!value || typeof value !== 'object') return empty;
+  if (!value || typeof value !== 'object') return EMPTY_DRAFT;
   const raw = value as Partial<Record<keyof BookingDraft, unknown>>;
 
-  const serviceId =
-    typeof raw.serviceId === 'string' && isService(raw.serviceId)
-      ? raw.serviceId
-      : null;
+  const itemId =
+    typeof raw.itemId === 'string' && isItem(raw.itemId) ? raw.itemId : null;
   const date =
-    isDateKey(raw.date) && raw.date > today ? (raw.date as DateKey) : null;
+    kind === 'session' && isDateKey(raw.date) && raw.date > today
+      ? (raw.date as DateKey)
+      : null;
   const time =
     date && typeof raw.time === 'string' && isOpenSlot(date, raw.time, today)
       ? raw.time
@@ -185,19 +230,21 @@ export function sanitizeDraft(
 
   const details = { ...EMPTY_DETAILS };
   if (raw.details && typeof raw.details === 'object') {
-    for (const key of Object.keys(EMPTY_DETAILS) as Array<
-      keyof BookingDetails
-    >) {
-      const field = (raw.details as Record<string, unknown>)[key];
-      if (typeof field === 'string') details[key] = field.slice(0, 2000);
+    const fields = raw.details as Record<string, unknown>;
+    for (const key of TEXT_FIELDS) {
+      if (typeof fields[key] === 'string')
+        details[key] = fields[key].slice(0, 2000);
     }
+    if (fields.meetOn === 'discord' && kind === 'session')
+      details.meetOn = 'discord';
   }
 
+  const ready = Boolean(itemId && (kind === 'commission' || (date && time)));
   return {
-    serviceId,
+    itemId,
     date,
     time,
     details,
-    detailsDone: raw.detailsDone === true && Boolean(serviceId && date && time)
+    detailsDone: raw.detailsDone === true && ready
   };
 }

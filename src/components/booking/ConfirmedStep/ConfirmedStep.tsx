@@ -1,17 +1,13 @@
 'use client';
 
-import { useId, useRef } from 'react';
+import { useId, useRef, useState } from 'react';
 import { ClipRevealText } from '@/components/common/ClipRevealText';
 import { Rings } from '@/components/common/Rings';
 import { SigilChip } from '@/components/common/SigilChip';
 import { WordReveal } from '@/components/common/WordReveal';
 import { ArrowIcon, ExternalIcon, SigilIcon } from '@/components/icons';
 import { useEntrance } from '@/hooks/useEntrance';
-import {
-  formatDayLong,
-  formatDayShort,
-  zonedTimeToUtc
-} from '@/lib/booking/dates';
+import { formatDayLong, zonedTimeToUtc } from '@/lib/booking/dates';
 import { fill } from '@/lib/booking/format';
 import { buildIcs, downloadIcs } from '@/lib/booking/ics';
 import styles from './ConfirmedStep.module.scss';
@@ -20,43 +16,75 @@ import type { ConfirmedStepProps } from './ConfirmedStep.types';
 const MARK = '/img/brand/vortex.svg';
 const MARK_VIEWBOX = '0 0 414.64 298.37';
 
-// Figma "D1 · 6 Confirmed": the booking, confirmed on screen, beside the
-// email that just went out. "Add to calendar" hands over a real invite.
+// Figma "Confirmed": done, on screen, beside the email that just went out.
+// The page says what happens next and how to reach Candy (his email and
+// his Discord copy on a click), with the way on; the email carries the
+// receipt and, for a session, the call link. Each fact is said once.
 export default function ConfirmedStep({
+  kind,
   copy,
-  service,
+  item,
   confirmation,
   timeZone,
-  timeZoneLabel,
-  price
+  price,
+  contact
 }: ConfirmedStepProps) {
   const rootRef = useRef<HTMLElement | null>(null);
   const headingId = useId();
+  const [copied, setCopied] = useState('');
   useEntrance(rootRef, { delay: 0.2, stagger: 0.09 });
 
-  const { date, time, email } = confirmation;
-  const when = `${formatDayShort(date)}, ${time} AT`;
+  const { date, time, email, meetOn, reference } = confirmation;
+  const session = kind === 'session' && date && time;
+  const onDiscord = meetOn === 'discord';
+
+  const body =
+    onDiscord && copy.bodyDiscord
+      ? copy.bodyDiscord
+      : fill(copy.body, { email });
+  const emailBody = fill(
+    onDiscord && copy.email.bodyDiscord
+      ? copy.email.bodyDiscord
+      : copy.email.body,
+    session ? { date: formatDayLong(date), time } : {}
+  );
+  const emailCta =
+    onDiscord && copy.email.ctaDiscord ? copy.email.ctaDiscord : copy.email.cta;
+
+  const receipt = [
+    { label: copy.receipt.item, value: item.name },
+    { label: copy.receipt.reference, value: reference },
+    { label: copy.receipt.paid, value: fill(copy.receipt.paidValue, { price }) }
+  ];
 
   function addToCalendar() {
+    if (!session) return;
     const start = zonedTimeToUtc(date, time, timeZone);
-    const end = new Date(start.getTime() + service.durationMinutes * 60000);
+    const end = new Date(
+      start.getTime() + (item.durationMinutes ?? 60) * 60000
+    );
     downloadIcs(
-      `candy-heist-${service.id}.ics`,
+      `candy-heist-${item.id}.ics`,
       buildIcs({
-        uid: `${confirmation.reference}@candyheist.com`,
+        uid: `${reference}@candyheist.com`,
         start,
         end,
-        title: `${service.name} with Candy Heist`,
-        description: `${service.meta}. Booking ${confirmation.reference}.`
+        title: `${item.name} with Candy Heist`,
+        description: `${item.name}. Booking ${reference}.`
       })
     );
   }
 
-  const facts = [
-    { label: copy.session, value: service.name },
-    { label: copy.when, value: when },
-    { label: copy.paid, value: fill(copy.paidValue, { price }) }
-  ];
+  // The toast to come will say it; until then, assistive tech hears it.
+  async function copyValue(value: string) {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(fill(copy.copied, { value }));
+    } catch {
+      // No clipboard (an old browser, a blocked permission): the value is
+      // on screen to select.
+    }
+  }
 
   return (
     <section
@@ -76,27 +104,52 @@ export default function ConfirmedStep({
           <WordReveal
             as="p"
             className={styles.body}
-            text={fill(copy.body, { email })}
+            text={body}
             trigger="mount"
             startDelay={0.6}
             staggerDelay={0.02}
           />
-          <dl className={styles.facts}>
-            {facts.map((fact) => (
-              <div key={fact.label} className={styles.fact} data-enter>
-                <dt className={styles.factLabel}>{fact.label}</dt>
-                <dd className={styles.factValue}>{fact.value}</dd>
-              </div>
-            ))}
-          </dl>
-          <div className={styles.actions} data-enter>
-            <SigilChip
-              variant="outline"
-              icon={<ArrowIcon />}
-              onClick={addToCalendar}
+          <p className={styles.reach} data-enter>
+            {copy.questions}{' '}
+            <button
+              type="button"
+              className={styles.copy}
+              onClick={() => void copyValue(contact.email)}
             >
-              {copy.calendar}
-            </SigilChip>
+              {contact.email}
+            </button>
+            <span aria-hidden="true"> · </span>
+            {copy.discord}:{' '}
+            <button
+              type="button"
+              className={styles.copy}
+              onClick={() => void copyValue(contact.discord)}
+            >
+              {contact.discord}
+            </button>
+          </p>
+          <p className={styles.srOnly} aria-live="polite">
+            {copied}
+          </p>
+          <div className={styles.actions} data-enter>
+            {session && copy.calendar ? (
+              <SigilChip
+                variant="outline"
+                icon={<ArrowIcon />}
+                onClick={addToCalendar}
+              >
+                {copy.calendar}
+              </SigilChip>
+            ) : null}
+            {copy.services ? (
+              <SigilChip
+                variant="outline"
+                icon={<ArrowIcon />}
+                href="/services"
+              >
+                {copy.services}
+              </SigilChip>
+            ) : null}
             <SigilChip variant="ghost" icon={null} href="/">
               {copy.home}
             </SigilChip>
@@ -129,23 +182,25 @@ export default function ConfirmedStep({
             >
               <use href={`${MARK}#mark`} />
             </svg>
-            <p className={styles.subject}>
-              {fill(copy.email.subject, { service: service.name })}
-            </p>
-            <p className={styles.emailText}>
-              {fill(copy.email.body, {
-                date: formatDayLong(date),
-                time: `${time}`,
-                zone: timeZoneLabel
-              })}
-            </p>
-            {/* A preview of the email's button, not a live link. */}
-            <span className={styles.emailButton} aria-hidden="true">
-              <span className={styles.emailButtonRing}>
-                <ExternalIcon />
+            <p className={styles.subject}>{copy.email.subject}</p>
+            <p className={styles.emailText}>{emailBody}</p>
+            <dl className={styles.receipt}>
+              {receipt.map((row) => (
+                <div key={row.label} className={styles.receiptRow}>
+                  <dt className={styles.receiptLabel}>{row.label}</dt>
+                  <dd className={styles.receiptValue}>{row.value}</dd>
+                </div>
+              ))}
+            </dl>
+            {session && emailCta ? (
+              // A preview of the email's button, not a live link.
+              <span className={styles.emailButton} aria-hidden="true">
+                <span className={styles.emailButtonRing}>
+                  <ExternalIcon />
+                </span>
+                {emailCta}
               </span>
-              {copy.email.cta}
-            </span>
+            ) : null}
             <p className={styles.signature}>{copy.email.signature}</p>
           </div>
         </aside>

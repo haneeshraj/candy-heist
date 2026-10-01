@@ -1,31 +1,31 @@
-import type { BookingDraft } from './bookingState';
+import type { BookingDraft, FlowKind } from './bookingState';
 
-// Keeps the draft for the length of the tab, so a reload mid-booking picks
-// up where it left off. Storage can be missing or blocked (private modes,
-// strict settings), so every access is allowed to fail quietly.
+// Keeps each flow's draft for the length of the tab, so a reload mid-way
+// picks up where it left off. Storage can be missing or blocked (private
+// modes, strict settings), so every access is allowed to fail quietly.
 
-const KEY = 'candy-heist:booking-draft';
+const key = (kind: FlowKind) => `candy-heist:${kind}-draft`;
 
-export function saveDraft(draft: BookingDraft) {
+export function saveDraft(kind: FlowKind, draft: BookingDraft) {
   try {
-    window.sessionStorage.setItem(KEY, JSON.stringify(draft));
+    window.sessionStorage.setItem(key(kind), JSON.stringify(draft));
   } catch {
     // Not critical: the flow works without it.
   }
 }
 
-export function loadDraft(): unknown {
+export function loadDraft(kind: FlowKind): unknown {
   try {
-    const raw = window.sessionStorage.getItem(KEY);
+    const raw = window.sessionStorage.getItem(key(kind));
     return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
   }
 }
 
-export function clearDraft() {
+export function clearDraft(kind: FlowKind) {
   try {
-    window.sessionStorage.removeItem(KEY);
+    window.sessionStorage.removeItem(key(kind));
   } catch {
     // Nothing to clear.
   }
