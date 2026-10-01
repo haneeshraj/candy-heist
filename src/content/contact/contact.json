@@ -35,6 +35,10 @@
     "privacy": "Your details are only used to reply to you.",
     "send": "Send message",
     "sending": "Sending",
+    "failed": {
+      "title": "Your message didn’t send",
+      "text": "Nothing was lost. Try again in a moment."
+    },
     "errors": {
       "name": "Add your name.",
       "email": "Add an email address we can reach you at.",

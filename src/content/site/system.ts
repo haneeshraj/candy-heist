@@ -21,6 +21,8 @@ export const systemCopySchema = z.object({
     /** Names the turning logo for assistive tech. */
     alt: text
   }),
+  /** The toasts' region and their ×, for assistive tech. */
+  toast: z.object({ region: text, close: text }),
   error: z.object({
     title: text,
     label: text,

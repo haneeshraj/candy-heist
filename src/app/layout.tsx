@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.scss';
 import SmoothScroll from '@/components/common/SmoothScroll';
+import { SiteToaster } from '@/components/common/SiteToaster';
 import { SiteScrollbar } from '@/components/layout/SiteScrollbar';
+import { systemCopy } from '@/content/site/system';
 import { SITE_URL } from '@/lib/site/url';
 import { fontVariables } from './fonts';
 
@@ -15,9 +17,9 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image' }
 };
 
-// The document, its fonts and its scrolling (Lenis, and the site's own
-// scrollbar). The site's pages sit in (site), which adds the navbar and
-// the footer; the share link pages in (share) go without.
+// The document, its fonts, its scrolling (Lenis, and the site's own
+// scrollbar) and its toasts. The site's pages sit in (site), which adds
+// the navbar and the footer; the share link pages in (share) go without.
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html lang="en" className={fontVariables}>
@@ -25,6 +27,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
         <SmoothScroll>
           {children}
           <SiteScrollbar />
+          <SiteToaster copy={systemCopy.toast} />
         </SmoothScroll>
       </body>
     </html>

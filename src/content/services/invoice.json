@@ -46,6 +46,10 @@
     },
     "cta": "Pay {price} now",
     "paying": "Confirming",
+    "failed": {
+      "title": "The payment didn’t go through",
+      "text": "Nothing was charged. Check the card and try again."
+    },
     "back": "A different invoice"
   },
   "paid": {

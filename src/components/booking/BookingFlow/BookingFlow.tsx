@@ -6,6 +6,7 @@ import { STEPPER_STEPS, type StepperStep } from '@/lib/booking/bookingState';
 import { formatDayMedium } from '@/lib/booking/dates';
 import { amountsFor } from '@/lib/booking/price';
 import { DEFAULT_BROWSE, type ServiceBrowse } from '@/lib/services/browse';
+import { notifyError } from '@/lib/toast/notify';
 import BookingStepper from '../BookingStepper/BookingStepper';
 import ConfirmedStep from '../ConfirmedStep/ConfirmedStep';
 import DateStep from '../DateStep/DateStep';
@@ -155,7 +156,15 @@ export default function BookingFlow({
             summary={summary}
             price={amounts.now}
             paying={flow.paying}
-            onPay={() => void flow.pay()}
+            onPay={() =>
+              void flow.pay().then((paid) => {
+                if (!paid)
+                  notifyError(
+                    copy.payment.failed.title,
+                    copy.payment.failed.text
+                  );
+              })
+            }
             onBack={() => flow.goTo('details')}
           />
         ) : null}

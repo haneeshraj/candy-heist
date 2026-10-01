@@ -46,7 +46,11 @@
       "tooLong": "Keep it under {max} characters."
     },
     "send": "Send enquiry",
-    "sending": "Sending"
+    "sending": "Sending",
+    "failed": {
+      "title": "Your enquiry didn’t send",
+      "text": "Nothing was lost. Try again in a moment."
+    }
   },
   "aside": {
     "photo": {

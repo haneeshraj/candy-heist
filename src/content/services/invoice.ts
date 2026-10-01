@@ -39,6 +39,8 @@ export const invoiceCopySchema = z.object({
     terms: z.object({ text, link: text }),
     cta: text,
     paying: text,
+    /** A toast, when the payment fails. */
+    failed: z.object({ title: text, text }),
     back: text
   }),
   paid: z.object({

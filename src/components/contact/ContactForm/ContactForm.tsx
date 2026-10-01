@@ -22,6 +22,7 @@ import {
 } from '@/lib/contact/message';
 import { sendMessage } from '@/lib/contact/sendMessage';
 import { validateMessage, type MessageErrors } from '@/lib/contact/validation';
+import { notifyError } from '@/lib/toast/notify';
 import styles from './ContactForm.module.scss';
 import type { ContactFormProps } from './ContactForm.types';
 
@@ -93,6 +94,9 @@ export default function ContactForm({
     setSending(true);
     try {
       onSent(await sendMessage(values));
+    } catch {
+      // What was typed stays in the form.
+      notifyError(copy.failed.title, copy.failed.text);
     } finally {
       setSending(false);
     }

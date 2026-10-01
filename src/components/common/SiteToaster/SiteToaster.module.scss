@@ -1,0 +1,180 @@
+@use '../../../styles/tokens' as t;
+
+// Figma "Toast": a raised panel with a hairline, the kind's mark, the
+// words (and, under them, an action), and × at the end. sonner positions,
+// stacks and animates; everything seen is here.
+
+.toast {
+  display: grid;
+  grid-template-areas: 'icon content close';
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  column-gap: 1.4rem;
+  align-items: center;
+  width: var(--width);
+  padding: 1.4rem 1rem 1.4rem 1.6rem;
+  border: 1px solid rgb(210 169 97 / 22%);
+  background-color: var(--color-obsidian-raised);
+  box-shadow: 0 0.8rem 3.2rem rgb(0 0 0 / 22%);
+  font-family: var(--font-archivo), sans-serif;
+  color: var(--color-cream);
+
+  @media (width <= 600px) {
+    width: 100%;
+  }
+
+  // With an action, it goes under the words; the mark and × stay centred
+  // on both.
+  &:has([data-button]) {
+    grid-template-areas:
+      'icon content close'
+      'icon action close';
+  }
+
+  // Tucked behind the newest, only the edge shows (sonner does this for
+  // its own look only).
+  &[data-expanded='false'][data-front='false'] > * {
+    opacity: 0;
+  }
+}
+
+.error {
+  border-color: rgb(196 69 58 / 45%);
+}
+
+.icon {
+  display: flex;
+  grid-area: icon;
+}
+
+.content {
+  display: flex;
+  grid-area: content;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--color-cream);
+  overflow-wrap: anywhere;
+}
+
+.description {
+  font-size: 1.3rem;
+  line-height: 1.45;
+  color: rgb(182 158 124 / 90%);
+}
+
+.action {
+  grid-area: action;
+  justify-self: start;
+  margin-top: 0.6rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--color-gilt);
+  cursor: pointer;
+  transition: color 0.3s t.$ease-signature;
+
+  &:focus-visible {
+    outline: 1px solid var(--color-gilt);
+    outline-offset: 3px;
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      color: var(--color-gilt-bright);
+    }
+  }
+}
+
+.close {
+  display: grid;
+  grid-area: close;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-gold);
+  cursor: pointer;
+  transition: color 0.3s t.$ease-signature;
+
+  &:focus-visible {
+    outline: 1px solid var(--color-gilt);
+    outline-offset: 2px;
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      color: var(--color-cream);
+    }
+  }
+}
+
+.closeGlyph {
+  width: 1rem;
+  height: 1rem;
+}
+
+// ---- The marks
+
+.mark {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 50%;
+
+  > svg {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  &[data-kind='success'] {
+    background-color: var(--color-gilt);
+    color: var(--color-obsidian);
+  }
+
+  &[data-kind='error'] {
+    border: 1px solid rgb(196 69 58 / 55%);
+  }
+
+  &[data-kind='info'] {
+    border: 1px solid rgb(210 169 97 / 45%);
+    color: var(--color-gilt);
+  }
+
+  &[data-kind='loading'] {
+    border: 1.5px solid rgb(210 169 97 / 18%);
+    border-top-color: var(--color-gilt);
+    animation: turn 0.9s linear infinite;
+
+    @media (prefers-reduced-motion: reduce) {
+      animation-duration: 2.4s;
+    }
+  }
+}
+
+.point {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background-color: var(--color-crimson);
+}
+
+@keyframes turn {
+  to {
+    rotate: 360deg;
+  }
+}

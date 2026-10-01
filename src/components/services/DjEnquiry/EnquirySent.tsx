@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useRef, useState } from 'react';
+import { useId, useRef } from 'react';
 import { ClipRevealText } from '@/components/common/ClipRevealText';
 import { Rings } from '@/components/common/Rings';
 import { SigilChip } from '@/components/common/SigilChip';
@@ -8,6 +8,8 @@ import { WordReveal } from '@/components/common/WordReveal';
 import { ArrowIcon, SigilIcon } from '@/components/icons';
 import { useEntrance } from '@/hooks/useEntrance';
 import { fill } from '@/lib/text/fill';
+import { copyText } from '@/lib/clipboard/copyText';
+import { notifySuccess } from '@/lib/toast/notify';
 import styles from './DjEnquiry.module.scss';
 import type { EnquirySentProps } from './DjEnquiry.types';
 
@@ -21,7 +23,6 @@ const MARK_VIEWBOX = '0 0 414.64 298.37';
 export default function EnquirySent({ copy, sent, contact }: EnquirySentProps) {
   const rootRef = useRef<HTMLElement | null>(null);
   const headingId = useId();
-  const [copied, setCopied] = useState('');
   useEntrance(rootRef, { delay: 0.2, stagger: 0.09 });
 
   const rows = [
@@ -33,14 +34,10 @@ export default function EnquirySent({ copy, sent, contact }: EnquirySentProps) {
     .filter(Boolean)
     .join(' · ');
 
-  // The toast to come will say it; until then, assistive tech hears it.
+  // A toast says it's copied (and assistive tech hears it); where nothing
+  // could be copied, the value is still on screen to select.
   async function copyValue(value: string) {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(fill(copy.copied, { value }));
-    } catch {
-      // No clipboard: the value is on screen to select.
-    }
+    if (await copyText(value)) notifySuccess(fill(copy.copied, { value }));
   }
 
   return (
@@ -80,9 +77,6 @@ export default function EnquirySent({ copy, sent, contact }: EnquirySentProps) {
             >
               {contact.discord}
             </button>
-          </p>
-          <p className={styles.srOnly} aria-live="polite">
-            {copied}
           </p>
           <div className={styles.actions} data-enter>
             <SigilChip variant="outline" icon={<ArrowIcon />} href="/services">

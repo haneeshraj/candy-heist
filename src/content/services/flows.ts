@@ -173,7 +173,9 @@ export const producerFlowSchema = z.object({
     terms: z.object({ text, link: text }),
     back: text,
     cta: text,
-    paying: text
+    paying: text,
+    /** A toast, when the payment fails. */
+    failed: z.object({ title: text, text })
   }),
   summary: z.object({
     date: text,

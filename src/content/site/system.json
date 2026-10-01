@@ -9,6 +9,10 @@
     "discography": "The discography",
     "alt": "The Candy Heist vortex in gold, turning in a swirl of gold dust"
   },
+  "toast": {
+    "region": "Notifications",
+    "close": "Close the message"
+  },
   "error": {
     "title": "Something went wrong · Candy Heist",
     "label": "Error",

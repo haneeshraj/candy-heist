@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useRef, useState } from 'react';
+import { useId, useRef } from 'react';
 import { ClipRevealText } from '@/components/common/ClipRevealText';
 import { Rings } from '@/components/common/Rings';
 import { SigilChip } from '@/components/common/SigilChip';
@@ -9,6 +9,8 @@ import { ArrowIcon, ExternalIcon, SigilIcon } from '@/components/icons';
 import { useEntrance } from '@/hooks/useEntrance';
 import { formatDayLong, zonedTimeToUtc } from '@/lib/booking/dates';
 import { fill } from '@/lib/booking/format';
+import { copyText } from '@/lib/clipboard/copyText';
+import { notifySuccess } from '@/lib/toast/notify';
 import { buildIcs, downloadIcs } from '@/lib/booking/ics';
 import styles from './ConfirmedStep.module.scss';
 import type { ConfirmedStepProps } from './ConfirmedStep.types';
@@ -32,7 +34,6 @@ export default function ConfirmedStep({
 }: ConfirmedStepProps) {
   const rootRef = useRef<HTMLElement | null>(null);
   const headingId = useId();
-  const [copied, setCopied] = useState('');
   useEntrance(rootRef, { delay: 0.2, stagger: 0.09 });
 
   const { date, time, email, meetOn, reference } = confirmation;
@@ -83,15 +84,10 @@ export default function ConfirmedStep({
     );
   }
 
-  // The toast to come will say it; until then, assistive tech hears it.
+  // A toast says it's copied (and assistive tech hears it); where nothing
+  // could be copied, the value is still on screen to select.
   async function copyValue(value: string) {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(fill(copy.copied, { value }));
-    } catch {
-      // No clipboard (an old browser, a blocked permission): the value is
-      // on screen to select.
-    }
+    if (await copyText(value)) notifySuccess(fill(copy.copied, { value }));
   }
 
   return (
@@ -135,9 +131,6 @@ export default function ConfirmedStep({
             >
               {contact.discord}
             </button>
-          </p>
-          <p className={styles.srOnly} aria-live="polite">
-            {copied}
           </p>
           <div className={styles.actions} data-enter>
             {session ? (

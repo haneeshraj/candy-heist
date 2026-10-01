@@ -149,16 +149,19 @@ export function useBookingFlow(items: ServiceItem[], timeZone: string) {
     else saveDraft(state.draft);
   }, [state.restored, state.draft, state.confirmation]);
 
+  /** Pays; false when it didn't go through (and the flow went back). */
   async function pay() {
-    if (paying) return;
+    if (paying) return true;
     setPaying(true);
     const kind = draftKind(state.draft, kinds);
     try {
       const confirmation = await completeBooking(state.draft, kind);
       dispatch({ type: 'confirm', confirmation });
+      return true;
     } catch {
       // Something was missing after all: go back to where it is.
       dispatch({ type: 'goTo', step: furthestStep(state.draft, kind, false) });
+      return false;
     } finally {
       setPaying(false);
     }

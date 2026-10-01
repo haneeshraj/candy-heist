@@ -35,6 +35,8 @@ export const contactPageSchema = z.object({
     privacy: text,
     send: text,
     sending: text,
+    /** A toast, when the message fails to send. */
+    failed: z.object({ title: text, text }),
     errors: z.object({
       name: text,
       email: text,

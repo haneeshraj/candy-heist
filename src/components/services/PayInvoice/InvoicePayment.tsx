@@ -8,6 +8,7 @@ import { useEntrance } from '@/hooks/useEntrance';
 import { invoiceAmounts } from '@/lib/invoices/invoice';
 import { payInvoice } from '@/lib/invoices/payInvoice';
 import { fill } from '@/lib/text/fill';
+import { notifyError } from '@/lib/toast/notify';
 import styles from './PayInvoice.module.scss';
 import type { InvoicePaymentProps } from './PayInvoice.types';
 
@@ -31,6 +32,8 @@ export default function InvoicePayment({
     setPaying(true);
     try {
       onPaid(await payInvoice(invoice));
+    } catch {
+      notifyError(copy.failed.title, copy.failed.text);
     } finally {
       setPaying(false);
     }

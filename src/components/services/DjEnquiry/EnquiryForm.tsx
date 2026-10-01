@@ -21,6 +21,7 @@ import {
 } from '@/lib/enquiry/enquiry';
 import { sendEnquiry } from '@/lib/enquiry/sendEnquiry';
 import { validateEnquiry, type EnquiryErrors } from '@/lib/enquiry/validation';
+import { notifyError } from '@/lib/toast/notify';
 import styles from './DjEnquiry.module.scss';
 import type { EnquiryFormProps } from './DjEnquiry.types';
 
@@ -88,6 +89,9 @@ export default function EnquiryForm({
     setSending(true);
     try {
       onSent(await sendEnquiry(values));
+    } catch {
+      // What was typed stays in the form.
+      notifyError(copy.failed.title, copy.failed.text);
     } finally {
       setSending(false);
     }

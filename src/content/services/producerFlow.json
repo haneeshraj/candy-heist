@@ -116,7 +116,11 @@
     },
     "back": "Back",
     "cta": "Pay {price} now",
-    "paying": "Confirming"
+    "paying": "Confirming",
+    "failed": {
+      "title": "The payment didn’t go through",
+      "text": "Nothing was charged. Check your details and try again."
+    }
   },
   "summary": {
     "date": "Date",

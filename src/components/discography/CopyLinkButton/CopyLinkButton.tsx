@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { CheckIcon, LinkIcon } from '@/components/icons';
+import { copyText } from '@/lib/clipboard/copyText';
+import { notifySuccess } from '@/lib/toast/notify';
 import { IconSquare } from '../IconSquare';
 import styles from './CopyLinkButton.module.scss';
 
@@ -12,11 +14,11 @@ interface CopyLinkButtonProps {
   copiedLabel: string;
 }
 
-// How long "Link copied" stays up.
+// How long the square shows its tick.
 const SHOWN_MS = 2000;
 
-// Copies the release's share link. The square turns to a tick and "Link
-// copied" shows above it for a moment; the same words are announced.
+// Copies the release's share link: the square turns to a tick for a
+// moment, and a toast says "Link copied" (assistive tech hears it too).
 export default function CopyLinkButton({
   path,
   label,
@@ -28,21 +30,8 @@ export default function CopyLinkButton({
 
   async function copy() {
     const url = new URL(path, window.location.origin).toString();
-    try {
-      await navigator.clipboard.writeText(url);
-    } catch {
-      // No clipboard (an insecure origin, an old browser): fall back to
-      // selecting it in a throwaway field.
-      const field = document.createElement('textarea');
-      field.value = url;
-      field.setAttribute('readonly', '');
-      field.style.position = 'fixed';
-      field.style.opacity = '0';
-      document.body.appendChild(field);
-      field.select();
-      document.execCommand('copy');
-      field.remove();
-    }
+    if (!(await copyText(url))) return;
+    notifySuccess(copiedLabel);
     setCopied(true);
     window.clearTimeout(timer.current);
     timer.current = window.setTimeout(() => setCopied(false), SHOWN_MS);
@@ -53,9 +42,6 @@ export default function CopyLinkButton({
       <IconSquare label={label} onClick={copy}>
         {copied ? <CheckIcon /> : <LinkIcon />}
       </IconSquare>
-      <span className={styles.tip} data-shown={copied} role="status">
-        {copied ? copiedLabel : ''}
-      </span>
     </span>
   );
 }
