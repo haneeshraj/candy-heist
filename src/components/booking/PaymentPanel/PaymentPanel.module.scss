@@ -1,4 +1,5 @@
 @use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
 @use '../booking' as b;
 
 .panel {
@@ -71,11 +72,84 @@
   background-color: var(--color-obsidian);
 }
 
-// Payments are final: said where the paying happens, with the terms.
-.terms {
-  @include b.body(1.4rem, rgb(221 207 178 / 85%));
+// The terms: a box to tick before paying, its words linking to them, and
+// under them a word to read them first. Missed, it turns crimson like a
+// field's error.
+.accept {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.6rem 1.4rem;
+  align-self: stretch;
+  margin-bottom: 2.8rem;
+}
 
-  margin-top: 2.4rem;
+.box {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+
+  // Level with the first line of the words beside it.
+  margin-top: 0.15rem;
+}
+
+.boxInput {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  border: 1px solid rgb(182 158 124 / 45%);
+  border-radius: 0;
+  background-color: var(--color-obsidian);
+  cursor: pointer;
+  transition:
+    border-color 0.3s t.$ease-signature,
+    background-color 0.3s t.$ease-signature;
+  appearance: none;
+
+  &:checked {
+    border-color: var(--color-gilt);
+    background-color: var(--color-gilt);
+  }
+
+  &:focus-visible {
+    outline: 1px solid var(--color-gilt);
+    outline-offset: 3px;
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+
+  @media #{t.$query-hover} {
+    &:not(:checked, :disabled):hover {
+      border-color: rgb(210 169 97 / 80%);
+    }
+  }
+
+  .accept[data-invalid='true'] & {
+    border-color: rgb(196 69 58 / 90%);
+  }
+}
+
+.tick {
+  position: relative;
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--color-obsidian);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s t.$ease-signature;
+
+  .boxInput:checked + & {
+    opacity: 1;
+  }
+}
+
+.acceptLabel {
+  @include b.body(1.5rem, var(--color-cream));
+
+  cursor: pointer;
 }
 
 .termsLink {
@@ -100,8 +174,44 @@
   }
 }
 
+.note,
+.error {
+  grid-column: 2;
+}
+
+.note {
+  @include b.body(1.3rem, rgb(221 207 178 / 70%));
+}
+
+// As a field's error (common/Field): a crimson dot, a lighter crimson line.
+.error {
+  display: flex;
+  gap: 0.8rem;
+  align-items: baseline;
+  margin-top: 0.4rem;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: 1.3rem;
+  line-height: 1.4;
+  color: var(--color-crimson-light);
+
+  &::before {
+    content: '';
+    flex: none;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background-color: var(--color-crimson-glow);
+    box-shadow: 0 0 0.6rem 0 rgb(196 69 58 / 90%);
+    translate: 0 -0.1rem;
+  }
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
 .secure {
   @include b.body(1.3rem, var(--color-concrete-light));
 
-  margin-top: 1.2rem;
+  margin-top: 1.6rem;
 }

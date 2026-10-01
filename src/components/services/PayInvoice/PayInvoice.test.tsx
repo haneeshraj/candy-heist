@@ -65,11 +65,12 @@ describe('PayInvoice', () => {
       })
     ).toBeInTheDocument();
     expect(window.location.search).toBe('?invoice=CH-7Q4K2M9X');
-    expect(screen.getByRole('link', { ...ALL, name: 'terms' })).toHaveAttribute(
-      'href',
-      '/terms'
+    await user.click(
+      screen.getByRole('checkbox', {
+        ...ALL,
+        name: new RegExp(copy.pay.terms.link)
+      })
     );
-
     await user.click(screen.getByRole('button', { ...ALL, name: /^Pay/ }));
     expect(
       await screen.findByRole('heading', {

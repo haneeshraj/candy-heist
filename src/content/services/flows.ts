@@ -169,8 +169,15 @@ export const producerFlowSchema = z.object({
     label: text,
     card: z.object({ number: text, expiry: text, cvc: text, name: text }),
     secure: text,
-    /** Under the button: payments are final, with a link to the terms. */
-    terms: z.object({ text, link: text }),
+    /** A box to tick before paying: the terms, read and accepted. */
+    terms: z.object({
+      accept: text.refine((value) => value.includes('{link}'), {
+        message: 'needs {link}, where the terms link goes'
+      }),
+      link: text,
+      note: text,
+      error: text
+    }),
     back: text,
     cta: text,
     paying: text,

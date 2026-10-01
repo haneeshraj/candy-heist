@@ -1,7 +1,10 @@
+'use client';
+
 import Link from 'next/link';
+import { useId, useRef, useState } from 'react';
 import { CornerTicks } from '@/components/common/CornerTicks';
 import { SigilChip } from '@/components/common/SigilChip';
-import { ArrowIcon } from '@/components/icons';
+import { ArrowIcon, CheckIcon } from '@/components/icons';
 import { fill } from '@/lib/booking/format';
 import styles from './PaymentPanel.module.scss';
 import type { PaymentPanelProps } from './PaymentPanel.types';
@@ -13,12 +16,15 @@ const CARD_PLACEHOLDERS = [
   { key: 'name', value: '' }
 ] as const;
 
-// Figma "Booking / Payment", card only: what's paid now, the card, the
-// button, and under it that payments are final, with the terms. The
-// fields mark where Stripe's own card form mounts: card details are typed
-// into Stripe's frame, never into this page, so these are placeholders
-// rather than inputs until the Stripe keys and the Server Action are in.
-// Shared by the booking flow and the invoice page.
+// Figma "Booking / Payment", card only: what's paid now, the card, a box
+// to tick for the terms, the button. The fields mark where Stripe's own
+// card form mounts: card details are typed into Stripe's frame, never
+// into this page, so these are placeholders rather than inputs until the
+// Stripe keys and the Server Action are in. Payments are final, so Pay
+// won't go ahead until the terms are accepted: pressed without, it says
+// so and puts focus on the box; the terms open in a new tab, so reading
+// them doesn't lose the place. Shared by the booking flow and the
+// invoice page.
 export default function PaymentPanel({
   copy,
   amount,
@@ -26,7 +32,25 @@ export default function PaymentPanel({
   onPay,
   className
 }: PaymentPanelProps) {
-  const [beforeLink, afterLink = ''] = copy.terms.text.split('{link}');
+  const boxRef = useRef<HTMLInputElement | null>(null);
+  const baseId = useId();
+  const [accepted, setAccepted] = useState(false);
+  const [attempted, setAttempted] = useState(false);
+  const [beforeLink, afterLink = ''] = copy.terms.accept.split('{link}');
+
+  const boxId = `${baseId}-terms`;
+  const noteId = `${boxId}-note`;
+  const errorId = `${boxId}-error`;
+  const missing = attempted && !accepted;
+
+  function pay() {
+    if (!accepted) {
+      setAttempted(true);
+      boxRef.current?.focus();
+      return;
+    }
+    onPay();
+  }
 
   return (
     <div className={[styles.panel, className].filter(Boolean).join(' ')}>
@@ -49,22 +73,54 @@ export default function PaymentPanel({
         ))}
       </div>
 
+      <div className={styles.accept} data-invalid={missing || undefined}>
+        <span className={styles.box}>
+          <input
+            ref={boxRef}
+            id={boxId}
+            className={styles.boxInput}
+            type="checkbox"
+            checked={accepted}
+            onChange={(event) => setAccepted(event.target.checked)}
+            disabled={paying}
+            aria-required="true"
+            aria-invalid={missing || undefined}
+            aria-describedby={missing ? `${noteId} ${errorId}` : noteId}
+          />
+          <CheckIcon className={styles.tick} />
+        </span>
+        <label className={styles.acceptLabel} htmlFor={boxId}>
+          {beforeLink}
+          <Link
+            className={styles.termsLink}
+            href="/terms"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {copy.terms.link}
+            <span className={styles.srOnly}> (opens in a new tab)</span>
+          </Link>
+          {afterLink}
+        </label>
+        <p id={noteId} className={styles.note}>
+          {copy.terms.note}
+        </p>
+        {missing ? (
+          <p id={errorId} className={styles.error}>
+            {copy.terms.error}
+          </p>
+        ) : null}
+      </div>
+
       <SigilChip
         variant="solid"
         icon={<ArrowIcon />}
-        onClick={onPay}
+        onClick={pay}
         disabled={paying}
         aria-busy={paying || undefined}
       >
         {paying ? copy.paying : fill(copy.cta, { price: amount })}
       </SigilChip>
-      <p className={styles.terms}>
-        {beforeLink}
-        <Link className={styles.termsLink} href="/terms">
-          {copy.terms.link}
-        </Link>
-        {afterLink}
-      </p>
       <p className={styles.secure}>{copy.secure}</p>
     </div>
   );

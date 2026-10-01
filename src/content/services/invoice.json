@@ -41,8 +41,10 @@
     },
     "secure": "Handled securely by Stripe. Your card details never touch this site.",
     "terms": {
-      "text": "Payments are final, with no refunds. By paying, you agree to the {link}.",
-      "link": "terms"
+      "accept": "I’ve read and accept the {link}.",
+      "link": "terms and conditions",
+      "note": "Please read them before you pay. Payments are final, with no refunds.",
+      "error": "Please read the terms and conditions, then tick the box to accept them."
     },
     "cta": "Pay {price} now",
     "paying": "Confirming",

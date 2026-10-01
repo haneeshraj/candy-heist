@@ -36,7 +36,15 @@ export const invoiceCopySchema = z.object({
     panel: text,
     card: z.object({ number: text, expiry: text, cvc: text, name: text }),
     secure: text,
-    terms: z.object({ text, link: text }),
+    /** A box to tick before paying: the terms, read and accepted. */
+    terms: z.object({
+      accept: text.refine((value) => value.includes('{link}'), {
+        message: 'needs {link}, where the terms link goes'
+      }),
+      link: text,
+      note: text,
+      error: text
+    }),
     cta: text,
     paying: text,
     /** A toast, when the payment fails. */

@@ -6,8 +6,16 @@ export interface PaymentPanelCopy {
   /** "Pay {price} now". */
   cta: string;
   paying: string;
-  /** "… By paying, you agree to the {link}." and the link's words. */
-  terms: { text: string; link: string };
+  terms: {
+    /** The box to tick: "I’ve read and accept the {link}." */
+    accept: string;
+    /** The link's words, to the terms page (in a new tab). */
+    link: string;
+    /** Under the box: read them first, payments are final. */
+    note: string;
+    /** When Pay is pressed with the box unticked. */
+    error: string;
+  };
 }
 
 export interface PaymentPanelProps {

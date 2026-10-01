@@ -245,6 +245,12 @@ describe('BookingFlow', () => {
       await screen.findByText(commission.payment.panel)
     ).toBeInTheDocument();
     expect(screen.getByText(commission.summary.total)).toBeInTheDocument();
+    await user.click(
+      screen.getByRole('checkbox', {
+        ...ALL,
+        name: new RegExp(content.payment.terms.link)
+      })
+    );
     await user.click(screen.getByRole('button', { ...ALL, name: /^Pay/ }));
 
     expect(
