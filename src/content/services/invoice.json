@@ -1,0 +1,61 @@
+{
+  "meta": {
+    "title": "Pay an invoice · Candy Heist",
+    "description": "Pay the other half of a commission with Candy Heist, with the invoice ID from your email."
+  },
+  "price": "$ –",
+  "find": {
+    "label": "Pay an invoice",
+    "heading": "The other half",
+    "sub": "When your commission is ready, Candy emails you an invoice for the rest. Enter its ID to pay it.",
+    "field": {
+      "label": "Invoice ID",
+      "placeholder": "As it appears in the email"
+    },
+    "cta": "Find the invoice",
+    "finding": "Finding it",
+    "errors": {
+      "missing": "Add the invoice ID from your email.",
+      "invalid": "That doesn’t look like an invoice ID. Check it against the email.",
+      "notFound": "There’s no invoice with that ID. Check it against the email, or write to Candy."
+    }
+  },
+  "pay": {
+    "label": "Invoice {id}",
+    "heading": "Pay the rest",
+    "sub": "The other half of your commission, due now it’s ready.",
+    "slip": {
+      "label": "Your invoice",
+      "item": "Your commission",
+      "invoice": "Invoice",
+      "price": "Price",
+      "paid": "Paid upfront",
+      "due": "Due now"
+    },
+    "panel": "Due now",
+    "card": {
+      "number": "Card number",
+      "expiry": "Expiry",
+      "cvc": "CVC",
+      "name": "Name on card"
+    },
+    "secure": "Handled securely by Stripe. Your card details never touch this site.",
+    "terms": {
+      "text": "Payments are final, with no refunds. By paying, you agree to the {link}.",
+      "link": "terms"
+    },
+    "cta": "Pay {price} now",
+    "paying": "Confirming",
+    "back": "A different invoice"
+  },
+  "paid": {
+    "heading": "Paid.",
+    "body": "That’s the rest of your commission settled. Your receipt is on its way to your email.",
+    "receipt": {
+      "invoice": "Invoice",
+      "paid": "Paid"
+    },
+    "services": "See all services",
+    "home": "Back to home"
+  }
+}

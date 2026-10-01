@@ -1,0 +1,207 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+@use '../../booking/booking' as b;
+
+// The booking pages' look: the 1248 column, the payment panel with a 380
+// aside (the invoice), and the confirmation over the rings.
+
+.page {
+  min-height: 70svh;
+}
+
+.step {
+  @include b.column;
+
+  padding-top: clamp(6.4rem, 9vw, 9.6rem);
+  padding-bottom: 12rem;
+}
+
+// ---- Find
+
+.findLayout {
+  max-width: 64rem;
+}
+
+.findForm {
+  display: flex;
+  flex-direction: column;
+  gap: 2.8rem;
+  align-items: flex-start;
+  margin-top: 4.8rem;
+
+  > :first-child {
+    align-self: stretch;
+  }
+}
+
+// ---- Pay
+
+.layout {
+  @include b.with-aside;
+}
+
+.main {
+  min-width: 0;
+}
+
+.panelSlot {
+  margin-top: 4.8rem;
+}
+
+.back {
+  margin-top: 3.2rem;
+}
+
+.slip {
+  @include b.panel;
+
+  display: flex;
+  flex-direction: column;
+  padding: 2.8rem;
+  border-color: rgb(210 169 97 / 20%);
+
+  @media #{t.$query-desktop} {
+    position: sticky;
+    top: 3.2rem;
+  }
+}
+
+.slipLabel {
+  @include b.mono(1rem, 0.4em);
+
+  color: var(--color-concrete-light);
+}
+
+.slipItem {
+  @include b.caps(2rem);
+
+  margin-top: 1.2rem;
+}
+
+.slipRows {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-top: 2.4rem;
+}
+
+.slipRow {
+  display: flex;
+  gap: 1.6rem;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.slipKey {
+  @include b.mono(1rem, 0.4em);
+
+  flex: none;
+  color: var(--color-concrete-light);
+}
+
+.slipValue {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: 1.5rem;
+  text-align: right;
+  color: var(--color-cream);
+}
+
+.slipDue {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgb(182 158 124 / 18%);
+}
+
+.slipDueValue {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: var(--color-cream);
+}
+
+// ---- Paid
+
+.paid {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(8rem, 12vw, 16rem);
+}
+
+.rings {
+  position: absolute;
+  top: 50%;
+  left: 25%;
+  width: max(120rem, 90vw);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+}
+
+.paidMain {
+  @include b.column;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.seal {
+  display: grid;
+  place-items: center;
+  width: 8.8rem;
+  height: 8.8rem;
+  border-radius: 50%;
+  color: var(--color-obsidian);
+  background-color: var(--color-gilt);
+
+  > svg {
+    width: 2.8rem;
+    height: 2.8rem;
+  }
+}
+
+.paidHeading {
+  @include b.display(clamp(4rem, 2.4rem + 3vw, 6.4rem));
+
+  margin-top: 3.2rem;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+}
+
+.paidBody {
+  @include b.body(1.8rem, rgb(221 207 178 / 85%));
+
+  max-width: 64rem;
+  margin-top: 2.4rem;
+}
+
+.receipt {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  width: min(100%, 42rem);
+  margin-top: 3.2rem;
+  padding-block: 1.8rem;
+  border-block: 1px solid rgb(182 158 124 / 14%);
+}
+
+.paidActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.4rem;
+  align-items: center;
+  margin-top: 4rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rings {
+    animation: none;
+  }
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}

@@ -110,6 +110,10 @@
       "name": "Name on card"
     },
     "secure": "Handled securely by Stripe. Your card details never touch this site.",
+    "terms": {
+      "text": "Payments are final, with no refunds. By paying, you agree to the {link}.",
+      "link": "terms"
+    },
     "back": "Back",
     "cta": "Pay {price} now",
     "paying": "Confirming"
@@ -181,7 +185,7 @@
         },
         "email": {
           "subject": "Your commission is in",
-          "body": "Thanks for your commission. Candy will contact you through email, Instagram or Discord, so stay tuned and get your files ready."
+          "body": "Thanks for your commission. Candy will contact you through email, Instagram or Discord, so stay tuned and get your files ready. When it’s done, he’ll email you an invoice for the other half, to pay on this site."
         }
       }
     },

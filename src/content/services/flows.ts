@@ -169,6 +169,8 @@ export const producerFlowSchema = z.object({
     label: text,
     card: z.object({ number: text, expiry: text, cvc: text, name: text }),
     secure: text,
+    /** Under the button: payments are final, with a link to the terms. */
+    terms: z.object({ text, link: text }),
     back: text,
     cta: text,
     paying: text

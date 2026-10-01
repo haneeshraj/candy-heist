@@ -16,81 +16,8 @@
   min-width: 0;
 }
 
-.panel {
-  @include b.panel;
-
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  max-width: 64rem;
+.panelSlot {
   margin-top: 4.8rem;
-  padding: clamp(2.4rem, 3vw, 3.2rem);
-  border-color: rgb(210 169 97 / 20%);
-}
-
-.panelHead {
-  display: flex;
-  align-items: center;
-  align-self: stretch;
-  justify-content: space-between;
-}
-
-.panelLabel {
-  @include b.mono(1rem, 0.4em);
-
-  color: var(--color-cream);
-}
-
-.amount {
-  font-family: var(--font-archivo), sans-serif;
-  font-size: 2.2rem;
-  font-weight: 600;
-  line-height: 1;
-  color: var(--color-cream);
-}
-
-.card {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 2rem 1.6rem;
-  align-self: stretch;
-  margin: 3.2rem 0;
-}
-
-.cardField {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-
-  &[data-field='number'],
-  &[data-field='name'] {
-    grid-column: 1 / -1;
-  }
-}
-
-.cardLabel {
-  @include b.mono(1rem, 0.4em);
-
-  color: var(--color-concrete-light);
-}
-
-.cardBox {
-  display: flex;
-  align-items: center;
-  min-height: 5.2rem;
-  padding: 0 1.8rem;
-  border: 1px solid rgb(182 158 124 / 18%);
-  font-family: var(--font-archivo), sans-serif;
-  font-size: 1.5rem;
-  color: rgb(138 128 113 / 80%);
-  background-color: var(--color-obsidian);
-}
-
-.secure {
-  @include b.body(1.3rem, var(--color-concrete-light));
-
-  margin-top: 2rem;
 }
 
 .actions {
