@@ -1,0 +1,337 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+@use '../../booking/booking' as b;
+
+// Figma "Services II v2 · Three doors": the 1248 column of the 1440 frame,
+// a centred headline, three doors of 400 × 800 with a semicircle for a
+// top, then how it works across the column. Below the desktop breakpoint
+// the doors stack, shorter, one to a row.
+
+.services {
+  @include b.column;
+
+  padding-top: clamp(6.4rem, 9vw, 12.8rem);
+  padding-bottom: clamp(12rem, 14vw, 18rem);
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+// ---- The headline, centred
+
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.label {
+  @include b.mono(1.1rem, 0.44em);
+
+  display: flex;
+  gap: 1.2rem;
+  align-items: center;
+  color: var(--color-gold);
+}
+
+.labelSigil {
+  display: block;
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--color-gilt);
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.headline {
+  margin-top: 2rem;
+  font-weight: 400;
+}
+
+.headlineVisual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lead {
+  display: block;
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: clamp(3.2rem, 2.2rem + 1.8vw, 4.8rem);
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--color-gold);
+}
+
+.statement {
+  display: block;
+  margin-top: 0.4rem;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: clamp(4.4rem, 2rem + 4.4vw, 8rem);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+}
+
+.intro {
+  @include b.body(1.7rem, rgb(221 207 178 / 85%));
+
+  max-width: 60rem;
+  margin-top: 2.4rem;
+  text-wrap: balance;
+}
+
+// ---- The doors
+
+.doors {
+  display: grid;
+  gap: 2.4rem;
+  justify-items: center;
+  margin-top: clamp(5.6rem, 7vw, 9.6rem);
+
+  @media #{t.$query-desktop} {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    justify-items: stretch;
+  }
+}
+
+// A semicircle on top: the vertical radius is half the width, as a share
+// of the height (3 : 4 below the desktop breakpoint, 1 : 2 from it).
+.door {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  width: 100%;
+  max-width: 48rem;
+  aspect-ratio: 3 / 4;
+  border: 1px solid rgb(182 158 124 / 22%);
+  border-radius: 50% 50% 0 0 / 37.5% 37.5% 0 0;
+  background-color: var(--color-obsidian);
+  transition:
+    translate 0.7s t.$ease-signature,
+    border-color 0.7s t.$ease-signature,
+    box-shadow 0.7s t.$ease-signature;
+
+  &[data-soon='true'] {
+    border-color: rgb(182 158 124 / 30%);
+    background-color: var(--color-obsidian-raised);
+  }
+
+  &:has(:focus-visible) {
+    outline: 1px solid var(--color-gilt);
+    outline-offset: 6px;
+  }
+
+  @media #{t.$query-desktop} {
+    max-width: none;
+    aspect-ratio: 1 / 2;
+    border-radius: 50% 50% 0 0 / 25% 25% 0 0;
+  }
+
+  // Lifts, with the faintest shadow; the photo pushes in.
+  @media #{t.$query-hover} {
+    &:hover {
+      border-color: rgb(210 169 97 / 60%);
+      box-shadow: 0 0.8rem 3.2rem rgb(0 0 0 / 22%);
+      translate: 0 -0.8rem;
+    }
+  }
+}
+
+.media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.photo {
+  object-fit: cover;
+  transition: scale 1.4s t.$ease-signature;
+
+  @media #{t.$query-hover} {
+    .door:hover & {
+      scale: 1.05;
+    }
+  }
+}
+
+// The words sit on a dark that rises from the foot.
+.fade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgb(12 12 12 / 15%) 0,
+    rgb(12 12 12 / 30%) 30%,
+    rgb(12 12 12 / 88%) 58%,
+    rgb(12 12 12 / 97%) 100%
+  );
+
+  .door[data-soon='true'] & {
+    display: none;
+  }
+}
+
+// Sealed: the vortex in the arch, turning slowly.
+.seal {
+  position: absolute;
+  inset: 12% 18% auto;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+}
+
+.sealMark {
+  width: 100%;
+  height: auto;
+  color: var(--color-gold);
+  opacity: 0.32;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: seal-turn 48s linear infinite;
+  }
+}
+
+@keyframes seal-turn {
+  to {
+    rotate: 360deg;
+  }
+}
+
+// The whole door is a target for the pointer.
+.doorLink {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.doorBody {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 3.2rem;
+  pointer-events: none;
+
+  @media #{t.$query-desktop} {
+    padding: 3.6rem;
+  }
+}
+
+.kicker {
+  @include b.mono(1.1rem, 0.44em);
+
+  color: var(--color-gold);
+}
+
+.doorTitle {
+  display: flex;
+  gap: 1.4rem;
+  align-items: center;
+  margin-top: 1.4rem;
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: clamp(3.6rem, 2.8rem + 1vw, 4.2rem);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--color-cream);
+}
+
+// The page's one crimson point: what isn't out yet.
+.soonDot {
+  flex: none;
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 50%;
+  background-color: var(--color-crimson-glow);
+}
+
+.doorLine {
+  @include b.body(1.5rem, rgb(221 207 178 / 78%));
+
+  max-width: 32rem;
+  margin-top: 1rem;
+}
+
+.doorCta {
+  display: inline-flex;
+  margin-top: 3.2rem;
+  pointer-events: auto;
+}
+
+// ---- How it works
+
+.how {
+  position: relative;
+  margin-top: clamp(8rem, 10vw, 12rem);
+  padding-top: 3.2rem;
+}
+
+.howRule {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background-color: rgb(182 158 124 / 30%);
+}
+
+.howLabel {
+  @include b.mono(1.1rem, 0.44em);
+
+  color: var(--color-gold);
+}
+
+.howSteps {
+  display: grid;
+  gap: 3.2rem;
+  margin-top: 4rem;
+  list-style: none;
+
+  @media #{t.$query-tablet} {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4.8rem;
+  }
+}
+
+.howStep {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem 1.6rem;
+  align-items: baseline;
+}
+
+.howMark {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background-color: var(--color-gilt);
+  translate: 0 -0.4rem;
+}
+
+.howTitle {
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: 3rem;
+  font-style: italic;
+  line-height: 1.1;
+  color: var(--color-cream);
+}
+
+.howText {
+  @include b.body(1.5rem, rgb(221 207 178 / 70%));
+
+  grid-column: 2;
+  max-width: 36rem;
+}

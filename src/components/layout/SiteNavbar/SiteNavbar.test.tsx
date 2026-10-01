@@ -161,11 +161,11 @@ describe('SiteNavbar', () => {
     const { user, toggle, rerender } = renderNavbar();
     await user.click(toggle);
 
-    pathname.current = '/sessions';
+    pathname.current = '/services/sessions';
     act(() => rerender(<SiteNavbar content={navbarContent} />));
 
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
-    expect(toggle).toHaveAccessibleName('Open menu (Sessions)');
+    expect(toggle).toHaveAccessibleName('Open menu (Services)');
   });
 
   it('falls back to a plain name on pages outside the menu', () => {

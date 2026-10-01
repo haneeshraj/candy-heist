@@ -29,14 +29,14 @@ export const navbarContent: NavbarContent = {
   links: [
     { label: 'Home', href: '/' },
     { label: 'About', href: '/about' },
-    { label: 'Sessions', href: '/sessions' },
+    { label: 'Services', href: '/services' },
     { label: 'Discography', href: '/discography' },
     { label: 'Lore', href: '/lore' },
     { label: 'Contact', href: '/contact' }
   ],
   socialsLabel: 'Follow',
   socials: socialLinks,
-  cta: { label: 'Book a session', href: '/sessions' },
+  cta: { label: 'Book a session', href: '/services/sessions' },
   // Evaluated on the server, so the year updates with every build.
   copyright: `© ${new Date().getFullYear()} Candy Heist`,
   credit: 'Designed & developed by Haneesh Raj'
