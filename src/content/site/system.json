@@ -13,6 +13,10 @@
     "region": "Notifications",
     "close": "Close the message"
   },
+  "scrollHint": {
+    "lead": "Scroll",
+    "trail": "for more"
+  },
   "error": {
     "title": "Something went wrong · Candy Heist",
     "label": "Error",

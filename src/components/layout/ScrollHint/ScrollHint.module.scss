@@ -1,19 +1,27 @@
 @use '../../../styles/tokens' as t;
 
-// Centred over the navbar, under its panels. It comes in after a beat, so
-// scrolling back up past the page's end doesn't flash it, and goes at
-// once.
+// The pill as drawn (SiteNavbar): half its width at rest and its height.
+// The halves sit a little further out than that, so the pill widening
+// under the pointer doesn't reach them.
+$pill-half: (
+    2 * t.$navbar-pill-block + t.$navbar-pill-label + 2 * t.$navbar-pill-gap
+  ) *
+  t.$navbar-pill-scale * 0.5;
+$pill-height: t.$navbar-pill-block * t.$navbar-pill-scale;
+$clearance: 2.8rem;
+
+// A zero-width strip at the middle of the screen, as tall as the pill and
+// level with it; each half hangs off one side. It comes in after a beat,
+// so scrolling back up past the page's end doesn't flash it, and goes at
+// once. Under the navbar's panels.
 .hint {
   position: fixed;
-  bottom: calc(var(--navbar-clearance, 0rem) + 1.6rem);
+  bottom: t.$navbar-pill-bottom;
   left: 50%;
   z-index: 89;
-  display: grid;
-  place-items: center;
-  color: var(--color-gilt);
+  height: $pill-height;
   opacity: 0;
   pointer-events: none;
-  translate: -50% 0;
   transition: opacity 0.25s t.$ease-signature;
 
   &[data-shown] {
@@ -22,9 +30,42 @@
   }
 }
 
+.side {
+  position: absolute;
+  top: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: center;
+  translate: 0 -50%;
+
+  &[data-side='lead'] {
+    right: $pill-half + $clearance;
+  }
+
+  &[data-side='trail'] {
+    left: $pill-half + $clearance;
+  }
+}
+
+// The tracking trails the last letter, so the same on the left keeps the
+// word centred over its chevron.
+.word {
+  padding-left: 0.4em;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-concrete-light);
+}
+
 .chevron {
-  width: 1.6rem;
-  height: 1.6rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  color: var(--color-gilt);
 
   .hint[data-shown] & {
     animation: nudge 1.8s ease-in-out infinite;
@@ -42,6 +83,6 @@
   }
 
   50% {
-    translate: 0 0.5rem;
+    translate: 0 0.4rem;
   }
 }

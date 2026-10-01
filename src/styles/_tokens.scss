@@ -12,3 +12,13 @@ $query-tablet: '(min-width: #{$breakpoint-tablet})';
 $query-desktop: '(min-width: #{$breakpoint-desktop})';
 $query-hover: '(hover: hover) and (pointer: fine)';
 $ease-signature: cubic-bezier(0.64, 0, 0, 0.97);
+
+// The navbar's floating pill, from tablet up (SiteNavbar): its square
+// blocks, the label block between them, the gaps, how far it floats off
+// the foot of the screen, and the scale it's drawn at. Shared so what sits
+// beside it (the scroll hint) lines up with it.
+$navbar-pill-block: 4.4rem;
+$navbar-pill-label: 16rem;
+$navbar-pill-gap: 0.3rem;
+$navbar-pill-bottom: 2rem;
+$navbar-pill-scale: 1.25;

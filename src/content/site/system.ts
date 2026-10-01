@@ -23,6 +23,8 @@ export const systemCopySchema = z.object({
   }),
   /** The toasts' region and their ×, for assistive tech. */
   toast: z.object({ region: text, close: text }),
+  /** Either side of the navbar when a page rests at its end: "Scroll", "for more". */
+  scrollHint: z.object({ lead: text, trail: text }),
   error: z.object({
     title: text,
     label: text,

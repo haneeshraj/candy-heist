@@ -4,6 +4,7 @@ import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteNavbar } from '@/components/layout/SiteNavbar';
 import { footerContent } from '@/content/site/footer';
 import { navbarContent } from '@/content/site/navbar';
+import { systemCopy } from '@/content/site/system';
 import styles from './layout.module.scss';
 
 // Every page of the site: the navbar over it, the footer after it, and
@@ -14,7 +15,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
       <SiteNavbar content={navbarContent} />
       <div className={styles.content}>{children}</div>
       <SiteFooter content={footerContent} />
-      <ScrollHint />
+      <ScrollHint copy={systemCopy.scrollHint} />
     </div>
   );
 }
