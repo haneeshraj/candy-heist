@@ -204,12 +204,25 @@
   display: inline-flex;
 }
 
-// Bottom right, just above the horizon.
+// Bottom right, just above the horizon: Contact outlined, then the DJ
+// booking solid in the corner.
 .cta {
   position: absolute;
   right: m.dp(24);
   bottom: m.dp(104);
-  display: inline-flex;
+  left: m.dp(24);
+  display: flex;
+  flex-wrap: wrap;
+  gap: m.dp(12) m.dp(16);
+  justify-content: flex-end;
+
+  // It scales in from the corner.
+  transform-origin: 100% 100%;
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
 
   @media #{t.$query-desktop} {
     right: calc(96 * var(--dpx));

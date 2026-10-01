@@ -10,10 +10,9 @@ import styles from './ServicesPage.module.scss';
 import type { ServicesPageProps } from './ServicesPage.types';
 import { useServicesMotion } from './useServicesMotion';
 
-// The services page (Figma "Three doors v2"): a centred headline, a door
-// to each kind of service (commissions, sessions, and sounds and presets,
-// sealed until they're out), then how it works. The items themselves are
-// chosen on each kind's own page.
+// The services page (Figma "Services v2 · Two doors"): a centred
+// headline, a door to each way to book (as a music producer, as a DJ),
+// then how it works. What's booked is chosen behind each door.
 export default function ServicesPage({ content }: ServicesPageProps) {
   const rootRef = useRef<HTMLElement | null>(null);
   const headingId = useId();

@@ -36,7 +36,7 @@ export const navbarContent: NavbarContent = {
   ],
   socialsLabel: 'Follow',
   socials: socialLinks,
-  cta: { label: 'Book a session', href: '/services/sessions' },
+  cta: { label: 'Book me as a DJ', href: '/services/dj' },
   // Evaluated on the server, so the year updates with every build.
   copyright: `© ${new Date().getFullYear()} Candy Heist`,
   credit: 'Designed & developed by Haneesh Raj'

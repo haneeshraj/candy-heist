@@ -14,8 +14,10 @@ export const contactCopySchema = z.object({
   /** Italic lead-in over the uppercased statement. */
   headline: z.object({ lead: text, statement: text }),
   intro: text,
-  /** The one main action, bottom right. */
-  cta: z.object({ label: text, href: text })
+  /** The main action, bottom right: booking a DJ set. */
+  cta: z.object({ label: text, href: text }),
+  /** Beside it, outlined: the contact page. */
+  secondary: z.object({ label: text, href: text })
 });
 
 export type ContactContent = z.infer<typeof contactCopySchema> & SiteContact;

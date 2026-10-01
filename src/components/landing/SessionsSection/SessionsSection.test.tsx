@@ -57,6 +57,9 @@ describe('SessionsSection', () => {
     expect(
       screen.getByRole('link', { name: sessionsContent.cta.label })
     ).toHaveAttribute('href', sessionsContent.cta.href);
+    expect(
+      screen.getByRole('link', { name: sessionsContent.secondary.label })
+    ).toHaveAttribute('href', sessionsContent.secondary.href);
     expect(screen.getByAltText(sessionsContent.photo.alt)).toHaveAttribute(
       'src',
       sessionsContent.photo.src

@@ -56,14 +56,15 @@ describe('ServicesPage', () => {
     }
   });
 
-  it('seals what is not out yet: no photo behind it', () => {
+  it('has the two ways to book: as a music producer and as a DJ', () => {
     render(<ServicesPage content={content} />);
-    const soon = content.doors.find((door) => door.soon)!;
-    const article = screen
-      .getByRole('heading', { ...ALL, level: 2, name: soon.title })
-      .closest('article')!;
-    expect(article).toHaveAttribute('data-soon', 'true');
-    expect(within(article).queryByRole('img', ALL)).not.toBeInTheDocument();
+    const hrefs = screen
+      .getAllByRole('article', ALL)
+      .map((door) => within(door).getByRole('link').getAttribute('href'));
+    expect(hrefs).toEqual(['/services/producer', '/services/dj']);
+    // Each behind its photo.
+    for (const door of screen.getAllByRole('article', ALL))
+      expect(within(door).getByRole('img', ALL)).toBeInTheDocument();
   });
 
   it('says how it works, step by step', () => {

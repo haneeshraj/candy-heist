@@ -1,9 +1,8 @@
 import { z } from 'zod';
 import servicesData from './services.json';
 
-// The services page (/services): the headline, a door to each kind of
-// service (commissions, sessions, and sounds and presets, coming soon),
-// and how it works. Plain JSON checked against this schema, so a
+// The services page (/services): the headline, a door to each way to book
+// Candy Heist (as a music producer, as a DJ), and how it works. Plain JSON checked against this schema, so a
 // server-side loader can hand over the same shape later.
 
 const text = z.string().trim().min(1);
@@ -13,9 +12,7 @@ const door = z.object({
   title: text,
   line: text,
   cta: z.object({ label: text, href: text }),
-  /** Not offered yet: the door is sealed, with no photo. */
-  soon: z.boolean().optional(),
-  photo: z.object({ src: text, alt: text }).optional()
+  photo: z.object({ src: text, alt: text })
 });
 
 export const servicesPageSchema = z.object({
@@ -25,12 +22,7 @@ export const servicesPageSchema = z.object({
   lead: text,
   statement: text,
   intro: text,
-  doors: z
-    .array(door)
-    .min(1)
-    .refine((doors) => doors.every((d) => d.soon || d.photo), {
-      message: 'An open door needs its photo'
-    }),
+  doors: z.array(door).min(1),
   how: z.object({
     label: text,
     steps: z.array(z.object({ title: text, text })).min(1)

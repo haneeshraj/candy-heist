@@ -3,7 +3,8 @@
   "status": "Now booking",
   "headline": { "lead": "One on one,", "statement": "In the studio." },
   "intro": "One on one sessions, mixing, mastering and beats, straight from the booth.",
-  "cta": { "label": "Book a session", "href": "/services/sessions" },
+  "cta": { "label": "Book me as a DJ", "href": "/services/dj" },
+  "secondary": { "label": "Book a session", "href": "/services/producer" },
   "featured": [
     "production-session",
     "dj-lessons",

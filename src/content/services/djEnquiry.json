@@ -1,0 +1,75 @@
+{
+  "meta": {
+    "title": "Book me as a DJ · Candy Heist",
+    "description": "Book Candy Heist to DJ your event. For agencies, promoters and venues: tell him about the event and he’ll reach out."
+  },
+  "intro": {
+    "lead": "Book me as a",
+    "statement": "DJ.",
+    "body": "For agencies, promoters and venues booking a set."
+  },
+  "form": {
+    "label": "Send an enquiry",
+    "heading": "Tell me about the event",
+    "sub": "Your details and the event. Candy reads every enquiry and replies by email.",
+    "required": "Required",
+    "groups": {
+      "you": "Your details",
+      "event": "The event"
+    },
+    "fields": {
+      "name": { "label": "Name", "placeholder": "Your name" },
+      "title": { "label": "Title", "placeholder": "Booking agent, promoter…" },
+      "email": { "label": "Email", "placeholder": "you@agency.com" },
+      "phone": { "label": "Phone", "placeholder": "+1 (902) 555 0123" },
+      "eventName": {
+        "label": "Event name",
+        "placeholder": "What’s it called?"
+      },
+      "eventVenue": {
+        "label": "Event venue",
+        "placeholder": "The venue and the city"
+      },
+      "budget": { "label": "Budget", "placeholder": "Your budget for the set" },
+      "about": {
+        "label": "Tell me about the event",
+        "placeholder": "The date, the crowd, how long a set, the sound you’re after…"
+      }
+    },
+    "errors": {
+      "name": "Add your name.",
+      "email": "Add an email address Candy can reply to.",
+      "emailInvalid": "That email address doesn’t look right.",
+      "phone": "That phone number doesn’t look right.",
+      "budget": "Add a budget for the set.",
+      "about": "Tell Candy a little about the event.",
+      "tooLong": "Keep it under {max} characters."
+    },
+    "send": "Send enquiry",
+    "sending": "Sending"
+  },
+  "aside": {
+    "photo": {
+      "src": "/img/sessions/intro-poster.jpeg",
+      "alt": "Candy Heist at the decks on a stage lit crimson and gold"
+    },
+    "write": "Rather write?"
+  },
+  "sent": {
+    "heading": "Sent.",
+    "body": "We’ve sent your message. Candy will reach out to you soon.",
+    "questions": "Questions?",
+    "discord": "Discord",
+    "copied": "Copied {value}",
+    "services": "See all services",
+    "home": "Back to home",
+    "slip": {
+      "sent": "Sent · to Candy Heist",
+      "subject": "Your enquiry",
+      "event": "Event",
+      "venue": "Venue",
+      "budget": "Budget",
+      "from": "From {name}"
+    }
+  }
+}

@@ -18,8 +18,10 @@ export const sessionsCopySchema = z.object({
   /** Italic lead-in over the uppercased statement. */
   headline: z.object({ lead: text, statement: text }),
   intro: text,
-  /** The one action: every service is booked from the same page. */
+  /** The main action: booking a DJ set. */
   cta: z.object({ label: text, href: text }),
+  /** Beside it, outlined: booking a session or a commission. */
+  secondary: z.object({ label: text, href: text }),
   /** The services listed, by catalogue id, in order. */
   featured: z
     .array(text.refine((id) => Boolean(findItem(id)), 'Not in the catalogue'))

@@ -1,41 +1,31 @@
 {
   "meta": {
     "title": "Services · Candy Heist",
-    "description": "Mixing, mastering and beat production made for your record, or one on one sessions with Candy Heist to learn it yourself."
+    "description": "Book Candy Heist as a music producer, for mixing, mastering, beats and one on one sessions, or as a DJ for your event."
   },
   "label": "Services",
-  "lead": "Made for you, or with you,",
+  "lead": "In the studio, or on the decks,",
   "statement": "Services.",
-  "intro": "Mixing, mastering and beats made for your record, or one on one to learn it yourself.",
+  "intro": "Mixing, mastering and beats for your record, one on one sessions, or a set for your event.",
   "doors": [
     {
-      "kicker": "Commissions",
-      "title": "Made for you.",
-      "line": "Send the track, get it back finished.",
-      "cta": { "label": "Start a commission", "href": "/services/commissions" },
+      "kicker": "In the studio",
+      "title": "Book me as a music producer.",
+      "line": "Commissions and one on one sessions: mixing, mastering, beats and more.",
+      "cta": { "label": "Browse and book", "href": "/services/producer" },
       "photo": {
         "src": "/img/sessions/mix-portrait.jpeg",
         "alt": "A microphone stand in gold light on Candy Heist’s stage"
       }
     },
     {
-      "kicker": "Sessions",
-      "title": "Made with you.",
-      "line": "One on one, live, at your pace.",
-      "cta": { "label": "Book a session", "href": "/services/sessions" },
+      "kicker": "On the decks",
+      "title": "Book me as a DJ.",
+      "line": "For agencies, promoters and venues: tell me about the event.",
+      "cta": { "label": "Send an enquiry", "href": "/services/dj" },
       "photo": {
         "src": "/img/sessions/dj-portrait.jpeg",
         "alt": "Candy Heist mid-set, headphones on, hands on the mixer"
-      }
-    },
-    {
-      "kicker": "Sounds & presets",
-      "title": "Coming soon.",
-      "line": "Sample packs and presets, straight from the booth.",
-      "soon": true,
-      "cta": {
-        "label": "Notify me",
-        "href": "mailto:booking@candyheist.com?subject=Tell%20me%20when%20the%20sounds%20%26%20presets%20are%20out"
       }
     }
   ],
@@ -44,15 +34,15 @@
     "steps": [
       {
         "title": "Choose",
-        "text": "A commission or a session, whatever the track needs."
+        "text": "Something made for you, a session one on one, or a set for your event."
       },
       {
-        "title": "Pay upfront",
-        "text": "One price, paid securely when you book."
+        "title": "Book",
+        "text": "A commission takes half upfront and a session is paid in full; a set starts with an enquiry."
       },
       {
-        "title": "Get it back",
-        "text": "Finished files from Candy, or a live session at your time."
+        "title": "Hear back",
+        "text": "Candy reaches out to get started."
       }
     ]
   }

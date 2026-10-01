@@ -129,7 +129,7 @@ export default function SessionsSection({ content }: SessionsSectionProps) {
           />
         </div>
 
-        {/* Motion wraps the chip so it never fights the magnetic pull. */}
+        {/* Motion wraps the chips so it never fights the magnetic pull. */}
         <span className={styles.ctaWrap} data-motion="cta">
           <SigilChip
             variant="solid"
@@ -137,6 +137,13 @@ export default function SessionsSection({ content }: SessionsSectionProps) {
             icon={<ArrowIcon />}
           >
             {content.cta.label}
+          </SigilChip>
+          <SigilChip
+            variant="outline"
+            href={content.secondary.href}
+            icon={<ArrowIcon />}
+          >
+            {content.secondary.label}
           </SigilChip>
         </span>
 

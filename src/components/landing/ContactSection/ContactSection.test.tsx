@@ -46,6 +46,9 @@ describe('ContactSection', () => {
     expect(
       screen.getByRole('link', { name: contactContent.cta.label })
     ).toHaveAttribute('href', contactContent.cta.href);
+    expect(
+      screen.getByRole('link', { name: contactContent.secondary.label })
+    ).toHaveAttribute('href', contactContent.secondary.href);
   });
 
   it('reads the label as plain text', () => {

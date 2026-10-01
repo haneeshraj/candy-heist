@@ -2,9 +2,9 @@
 @use '../../../styles/mixins' as m;
 @use '../../booking/booking' as b;
 
-// Figma "Services II v2 · Three doors": the 1248 column of the 1440 frame,
-// a centred headline, three doors of 400 × 800 with a semicircle for a
-// top, then how it works across the column. Below the desktop breakpoint
+// Figma "Services v2 · Two doors": the 1248 column of the 1440 frame, a
+// centred headline, two doors of 400 × 800 with a semicircle for a top,
+// centred, then how it works across the column. Below the desktop breakpoint
 // the doors stack, shorter, one to a row.
 
 .services {
@@ -98,7 +98,8 @@
   margin-top: clamp(5.6rem, 7vw, 9.6rem);
 
   @media #{t.$query-desktop} {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 40rem));
+    justify-content: center;
     justify-items: stretch;
   }
 }
@@ -119,11 +120,6 @@
     translate 0.7s t.$ease-signature,
     border-color 0.7s t.$ease-signature,
     box-shadow 0.7s t.$ease-signature;
-
-  &[data-soon='true'] {
-    border-color: rgb(182 158 124 / 30%);
-    background-color: var(--color-obsidian-raised);
-  }
 
   &:has(:focus-visible) {
     outline: 1px solid var(--color-gilt);
@@ -174,36 +170,6 @@
     rgb(12 12 12 / 88%) 58%,
     rgb(12 12 12 / 97%) 100%
   );
-
-  .door[data-soon='true'] & {
-    display: none;
-  }
-}
-
-// Sealed: the vortex in the arch, turning slowly.
-.seal {
-  position: absolute;
-  inset: 12% 18% auto;
-  display: grid;
-  place-items: center;
-  aspect-ratio: 1;
-}
-
-.sealMark {
-  width: 100%;
-  height: auto;
-  color: var(--color-gold);
-  opacity: 0.32;
-
-  @media (prefers-reduced-motion: no-preference) {
-    animation: seal-turn 48s linear infinite;
-  }
-}
-
-@keyframes seal-turn {
-  to {
-    rotate: 360deg;
-  }
 }
 
 // The whole door is a target for the pointer.
@@ -237,9 +203,6 @@
 }
 
 .doorTitle {
-  display: flex;
-  gap: 1.4rem;
-  align-items: center;
   margin-top: 1.4rem;
   font-family: var(--font-cormorant-garamond), serif;
   font-size: clamp(3.6rem, 2.8rem + 1vw, 4.2rem);
@@ -247,15 +210,6 @@
   font-weight: 400;
   line-height: 1.1;
   color: var(--color-cream);
-}
-
-// The page's one crimson point: what isn't out yet.
-.soonDot {
-  flex: none;
-  width: 0.9rem;
-  height: 0.9rem;
-  border-radius: 50%;
-  background-color: var(--color-crimson-glow);
 }
 
 .doorLine {

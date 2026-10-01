@@ -118,6 +118,13 @@ export default function ContactSection({ content }: ContactSectionProps) {
 
         <span className={styles.cta} data-motion="cta">
           <SigilChip
+            variant="outline"
+            href={content.secondary.href}
+            icon={<ArrowIcon />}
+          >
+            {content.secondary.label}
+          </SigilChip>
+          <SigilChip
             variant="solid"
             href={content.cta.href}
             icon={<ArrowIcon />}

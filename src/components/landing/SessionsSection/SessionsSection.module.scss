@@ -304,7 +304,9 @@
 // chip keeps its 48 px touch height at every scale, so the gap gives back
 // what it doesn't shrink by: 76 + 48 design px, less the real 48.
 .ctaWrap {
-  display: inline-flex;
+  display: flex;
+  flex-wrap: wrap;
+  gap: m.dp(12) m.dp(16);
   margin-top: m.dp(28);
 
   @media #{t.$query-desktop} {
