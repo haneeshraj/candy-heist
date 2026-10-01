@@ -23,7 +23,14 @@
       "count": "{shown} of {total} releases",
       "clear": "Clear all",
       "remove": "Remove {filter}",
-      "empty": "Nothing matches these filters."
+      "empty": "Nothing matches. Try another search, or clear the filters."
+    },
+    "search": {
+      "open": "Search the releases",
+      "label": "Search the releases",
+      "placeholder": "A title, a track, a year…",
+      "submit": "Search",
+      "clear": "Clear the search"
     },
     "forthcoming": "Forthcoming",
     "open": "Open release",

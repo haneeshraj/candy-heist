@@ -2,13 +2,14 @@ import { describe, expect, it } from 'vitest';
 import { DEFAULT_QUERY, parseQuery, queryString } from './useDiscographyQuery';
 
 describe('the discography query', () => {
-  it('reads the view, filters and sort from the address', () => {
+  it('reads the view, filters, sort and search from the address', () => {
     expect(
-      parseQuery('?view=index&kind=ep,single&year=2024&sort=oldest')
+      parseQuery('?view=index&kind=ep,single&year=2024&sort=oldest&q=+halls+')
     ).toEqual({
       view: 'index',
       sort: 'oldest',
-      filters: { kinds: ['ep', 'single'], years: [2024] }
+      filters: { kinds: ['ep', 'single'], years: [2024] },
+      search: 'halls'
     });
   });
 
@@ -28,8 +29,9 @@ describe('the discography query', () => {
       queryString({
         ...DEFAULT_QUERY,
         view: 'monument',
-        filters: { kinds: ['album'], years: [] }
+        filters: { kinds: ['album'], years: [] },
+        search: 'the halls'
       })
-    ).toBe('view=monument&kind=album');
+    ).toBe('view=monument&kind=album&q=the+halls');
   });
 });

@@ -116,6 +116,21 @@ describe('sorting and filtering', () => {
     expect(applyFilters(list, NO_FILTERS, 'newest')).toHaveLength(4);
   });
 
+  it('searches the title, the kind, the year and the track titles', () => {
+    const search = (query: string) =>
+      applyFilters(
+        [...list, { ...album, trackTitles: album.tracks.map((t) => t.title) }],
+        NO_FILTERS,
+        'newest',
+        query
+      ).map((r) => r.slug);
+    expect(search('gam')).toEqual(['c']);
+    expect(search('single 2021')).toEqual(['d']);
+    // A song finds the album it's on.
+    expect(search('deep cut')).toEqual(['album']);
+    expect(search('nothing like it')).toEqual([]);
+  });
+
   it('counts kinds, years and the filters that are on', () => {
     expect(kindCounts(list).get('single')).toBe(2);
     expect(releaseYears(list)).toEqual([2024, 2023, 2021]);

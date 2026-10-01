@@ -86,6 +86,33 @@ describe('DiscographyPage', () => {
     expect(window.location.search).toBe('');
   });
 
+  it('searches only when asked, then keeps the search in the address', () => {
+    renderPage();
+    fireEvent.click(
+      screen.getByRole('button', { ...all, name: copy.search.open })
+    );
+    const box = screen.getByRole('searchbox', {
+      ...all,
+      name: copy.search.label
+    });
+    const target = list[list.length - 1];
+    fireEvent.change(box, { target: { value: target.title } });
+    // Typing alone changes nothing.
+    expect(within(grid()).getAllByRole('link', all)).toHaveLength(list.length);
+
+    fireEvent.click(
+      screen.getByRole('button', { ...all, name: copy.search.submit })
+    );
+    const links = within(grid()).getAllByRole('link', all);
+    expect(links.length).toBeLessThan(list.length);
+    expect(links.map((link) => link.getAttribute('href'))).toContain(
+      `/discography/${target.slug}`
+    );
+    expect(new URLSearchParams(window.location.search).get('q')).toBe(
+      target.title
+    );
+  });
+
   it('reads a shared view and its filters from the address', () => {
     window.history.replaceState(
       null,

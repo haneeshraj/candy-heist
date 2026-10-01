@@ -26,6 +26,14 @@ export const discographyCopySchema = z.object({
       remove: text,
       empty: text
     }),
+    /** The lens in the bar, and the box it opens. */
+    search: z.object({
+      open: text,
+      label: text,
+      placeholder: text,
+      submit: text,
+      clear: text
+    }),
     forthcoming: text,
     open: text,
     scroll: text,

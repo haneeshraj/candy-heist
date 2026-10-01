@@ -20,14 +20,14 @@ import { VaultView } from '../VaultView';
 import styles from './DiscographyPage.module.scss';
 import type { DiscographyPageProps } from './DiscographyPage.types';
 import FilterBar from './FilterBar';
-import FilterTray from './FilterTray';
+import ReleaseFilterTray from './ReleaseFilterTray';
 import {
   useDiscographyQuery,
   type DiscographyView
 } from './useDiscographyQuery';
 
 // Figma "Discography page": the headline, then the bar that pins (Filter &
-// sort, the view switch) and the releases in the chosen view: the Vault
+// sort, the search, the view switch) and the releases in the chosen view: the Vault
 // (every cover, a grid), the Monument (one release a screen, the rail
 // scrolling sideways) or the Index (the titles set as type). The view and
 // the filters live in the address, so a filtered view can be shared.
@@ -45,8 +45,8 @@ export default function DiscographyPage({
   const kinds = useMemo(() => kindCounts(releases), [releases]);
   const years = useMemo(() => releaseYears(releases), [releases]);
   const shown = useMemo(
-    () => applyFilters(releases, query.filters, query.sort),
-    [releases, query.filters, query.sort]
+    () => applyFilters(releases, query.filters, query.sort, query.search),
+    [releases, query.filters, query.sort, query.search]
   );
   // A new set of releases plays its view's entrance afresh.
   const viewKey = `${query.view}:${shown.map((r) => r.slug).join(',')}`;
@@ -57,6 +57,7 @@ export default function DiscographyPage({
   };
   const onFilters = (filters: Filters) => update({ filters });
   const onSort = (sort: SortKey) => update({ sort });
+  const onSearch = (search: string) => update({ search });
   const onView = (view: DiscographyView) => update({ view });
 
   return (
@@ -106,6 +107,7 @@ export default function DiscographyPage({
         <FilterBar
           copy={copy}
           filters={query.filters}
+          search={query.search}
           view={query.view}
           shown={shown.length}
           total={releases.length}
@@ -114,10 +116,11 @@ export default function DiscographyPage({
           buttonRef={buttonRef}
           onToggleTray={() => setTrayOpen((open) => !open)}
           onFilters={onFilters}
+          onSearch={onSearch}
           onView={onView}
         />
 
-        <FilterTray
+        <ReleaseFilterTray
           id={trayId}
           open={trayOpen}
           copy={copy.filters}

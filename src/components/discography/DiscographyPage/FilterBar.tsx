@@ -1,7 +1,8 @@
 'use client';
 
 import type { RefObject } from 'react';
-import { CloseIcon, MixIcon } from '@/components/icons';
+import { FilterButton, FilterTags } from '@/components/common/Filters';
+import { SearchToggle } from '@/components/common/SearchToggle';
 import type { DiscographyCopy } from '@/content/discography/discography';
 import { activeFilterCount, type Filters } from '@/lib/discography/catalogue';
 import { KIND_LABEL } from '@/lib/discography/format';
@@ -13,6 +14,7 @@ import ViewSwitch from './ViewSwitch';
 interface FilterBarProps {
   copy: DiscographyCopy['page'];
   filters: Filters;
+  search: string;
   view: DiscographyView;
   shown: number;
   total: number;
@@ -21,15 +23,17 @@ interface FilterBarProps {
   buttonRef: RefObject<HTMLButtonElement | null>;
   onToggleTray: () => void;
   onFilters: (filters: Filters) => void;
+  onSearch: (search: string) => void;
   onView: (view: DiscographyView) => void;
 }
 
-// The bar that pins over the page: Filter & sort on the left (with the
-// number of filters on), the filters themselves as tags while the tray is
-// shut, and the view switch on the right.
+// The bar that pins over the page: Filter & sort and the search on the
+// left (the filters on, as tags, while the tray is shut), and the view
+// switch on the right.
 export default function FilterBar({
   copy,
   filters,
+  search,
   view,
   shown,
   total,
@@ -38,6 +42,7 @@ export default function FilterBar({
   buttonRef,
   onToggleTray,
   onFilters,
+  onSearch,
   onView
 }: FilterBarProps) {
   const active = activeFilterCount(filters);
@@ -66,48 +71,27 @@ export default function FilterBar({
     <div className={styles.bar}>
       <div className={styles.barRow}>
         <div className={styles.barStart}>
-          <button
-            ref={buttonRef}
-            type="button"
-            className={styles.filterButton}
-            data-active={active > 0 || trayOpen}
-            aria-expanded={trayOpen}
-            aria-controls={trayId}
+          <FilterButton
+            label={copy.filters.button}
+            count={active}
+            open={trayOpen}
+            controls={trayId}
+            buttonRef={buttonRef}
             onClick={onToggleTray}
-          >
-            <MixIcon className={styles.filterGlyph} />
-            <span>{copy.filters.button}</span>
-            {active > 0 && (
-              <span className={styles.filterCount}>
-                <span className={styles.srOnly}>, on: </span>
-                {active}
-              </span>
-            )}
-          </button>
-          {!trayOpen && active > 0 && (
-            <>
-              <ul className={styles.tags}>
-                {tags.map((tag) => (
-                  <li key={tag.key}>
-                    <button
-                      type="button"
-                      className={styles.tag}
-                      onClick={tag.remove}
-                      aria-label={fill(copy.filters.remove, {
-                        filter: tag.label
-                      })}
-                    >
-                      {tag.label}
-                      <CloseIcon className={styles.tagGlyph} />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              <p className={styles.shownCount}>
-                {fill(copy.filters.count, { shown, total })}
-              </p>
-            </>
-          )}
+          />
+          <SearchToggle
+            className={styles.barSearch}
+            copy={copy.search}
+            value={search}
+            onSearch={onSearch}
+          />
+          {!trayOpen && (active > 0 || search) ? (
+            <FilterTags
+              tags={tags}
+              remove={copy.filters.remove}
+              count={fill(copy.filters.count, { shown, total })}
+            />
+          ) : null}
         </div>
         <ViewSwitch copy={copy.views} value={view} onChange={onView} />
       </div>

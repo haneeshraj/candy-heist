@@ -262,6 +262,20 @@ export function CloseIcon(props: IconProps) {
   );
 }
 
+// A lens and its handle; the lens's inner circle runs the other way round,
+// so it stays open.
+export function SearchIcon(props: IconProps) {
+  return (
+    <Icon
+      path={[
+        'M5 0.5A4.5 4.5 0 1 1 5 9.5A4.5 4.5 0 1 1 5 0.5ZM5 1.7A3.3 3.3 0 1 0 5 8.3A3.3 3.3 0 1 0 5 1.7Z',
+        'M8.15 7.3L11.5 10.65L10.65 11.5L7.3 8.15Z'
+      ]}
+      {...props}
+    />
+  );
+}
+
 export function CheckIcon(props: IconProps) {
   return (
     <Icon

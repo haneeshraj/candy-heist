@@ -17,12 +17,15 @@ export interface DiscographyQuery {
   view: DiscographyView;
   sort: SortKey;
   filters: Filters;
+  /** The words searched for; '' for none. */
+  search: string;
 }
 
 export const DEFAULT_QUERY: DiscographyQuery = {
   view: 'vault',
   sort: 'newest',
-  filters: NO_FILTERS
+  filters: NO_FILTERS,
+  search: ''
 };
 
 const VIEWS: readonly DiscographyView[] = ['vault', 'monument', 'index'];
@@ -46,7 +49,8 @@ export function parseQuery(search: string): DiscographyQuery {
       years: list(params.get('year'))
         .map(Number)
         .filter((y) => Number.isInteger(y) && y > 1900)
-    }
+    },
+    search: (params.get('q') ?? '').trim().slice(0, 120)
   };
 }
 
@@ -59,13 +63,15 @@ export function queryString(query: DiscographyQuery) {
   if (query.filters.years.length)
     params.set('year', query.filters.years.join(','));
   if (query.sort !== DEFAULT_QUERY.sort) params.set('sort', query.sort);
+  if (query.search) params.set('q', query.search);
   return params.toString();
 }
 
-// The address is the store: the view, the filters and the sort live in
-// its query, so a filtered view can be shared or come back to. The page is
-// prerendered with the defaults (the server snapshot), then reads the
-// address. Changes replace the history entry instead of adding to it.
+// The address is the store: the view, the filters, the sort and the
+// search live in its query, so a filtered view can be shared or come back
+// to. The page is prerendered with the defaults (the server snapshot),
+// then reads the address. Changes replace the history entry instead of
+// adding to it.
 const listeners = new Set<() => void>();
 
 function subscribe(listener: () => void) {

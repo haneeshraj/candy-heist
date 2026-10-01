@@ -1,0 +1,198 @@
+@use '../../../styles/tokens' as t;
+@use '../../../styles/mixins' as m;
+
+// In design pixels (m.dp), like the Filter & sort button it sits beside:
+// they scale with a page that sets the design scale, and are plain pixels
+// anywhere else.
+
+$height: max(#{m.dp(45)}, 4rem);
+$focus: 1.5px solid rgb(227 194 134 / 90%);
+
+@mixin mono($size) {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: max(#{m.dp($size)}, 0.9rem);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+.search {
+  display: flex;
+  min-width: 0;
+
+  &[data-open='true'] {
+    flex: 1 1 auto;
+    max-width: m.dp(440);
+  }
+}
+
+// ---- Shut: the lens
+
+.toggle {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: $height;
+  height: $height;
+  padding: 0;
+  border: 1px solid rgb(182 158 124 / 25%);
+  background-color: var(--color-obsidian);
+  color: var(--color-gilt);
+  cursor: pointer;
+  transition:
+    border-color 0.35s t.$ease-signature,
+    color 0.35s t.$ease-signature;
+
+  &:focus-visible {
+    outline: $focus;
+    outline-offset: 3px;
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      border-color: rgb(210 169 97 / 90%);
+      color: var(--color-gilt-bright);
+    }
+  }
+}
+
+.toggleGlyph {
+  width: max(#{m.dp(13)}, 1.2rem);
+  height: max(#{m.dp(13)}, 1.2rem);
+}
+
+// ---- Open: the box grows out of the lens, then its insides come in.
+
+.box {
+  display: flex;
+  flex: 1;
+  gap: m.dp(10);
+  align-items: center;
+  min-width: 0;
+  height: $height;
+  padding: 0 m.dp(4) 0 m.dp(16);
+  border: 1px solid rgb(210 169 97 / 90%);
+  background-color: var(--color-obsidian);
+  animation: grow 0.5s t.$ease-signature both;
+
+  &:has(:focus-visible) {
+    outline: $focus;
+    outline-offset: 3px;
+  }
+
+  > * {
+    animation: appear 0.35s 0.2s t.$ease-signature both;
+  }
+}
+
+@keyframes grow {
+  from {
+    max-width: $height;
+  }
+
+  to {
+    max-width: 100%;
+  }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+}
+
+.lens {
+  flex: none;
+  width: max(#{m.dp(12)}, 1.1rem);
+  height: max(#{m.dp(12)}, 1.1rem);
+  color: var(--color-gilt);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: max(#{m.dp(15)}, 1.5rem);
+  color: var(--color-cream);
+  caret-color: var(--color-gilt);
+
+  &::placeholder {
+    color: rgb(221 207 178 / 45%);
+  }
+
+  // The browser's own clear button: × already does that.
+  &::-webkit-search-cancel-button {
+    appearance: none;
+  }
+}
+
+.submit {
+  @include mono(10);
+
+  flex: none;
+  height: calc(100% - #{m.dp(8)});
+  padding: 0 m.dp(14) 0 calc(#{m.dp(14)} + 0.4em);
+  border: 0;
+  background-color: var(--color-gilt);
+  color: var(--color-obsidian);
+  cursor: pointer;
+  transition: background-color 0.3s t.$ease-signature;
+
+  &:focus-visible {
+    outline: $focus;
+    outline-offset: 2px;
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      background-color: var(--color-gilt-bright);
+    }
+  }
+}
+
+.close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: m.dp(32);
+  height: calc(100% - #{m.dp(8)});
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-gold);
+  cursor: pointer;
+  transition: color 0.3s t.$ease-signature;
+
+  &:focus-visible {
+    outline: $focus;
+    outline-offset: 2px;
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      color: var(--color-cream);
+    }
+  }
+}
+
+.closeGlyph {
+  width: max(#{m.dp(10)}, 1rem);
+  height: max(#{m.dp(10)}, 1rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .box,
+  .box > * {
+    animation: none;
+  }
+}

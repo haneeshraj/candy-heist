@@ -25,6 +25,7 @@ export {
   TidalIcon,
   LinkIcon,
   CloseIcon,
+  SearchIcon,
   CheckIcon,
   VaultViewIcon,
   MonumentViewIcon,

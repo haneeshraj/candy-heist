@@ -1,4 +1,6 @@
 import type { Release, ReleaseKind } from '@/content/discography/releases';
+import { matchesSearch, searchTerms } from '@/lib/text/search';
+import { KIND_LABEL } from './format';
 
 // The discography page's rules: which releases get a place in the grid,
 // whether one is out yet, and how the filters and sorts narrow the rest.
@@ -87,13 +89,40 @@ export function sortReleases<T extends Sortable>(
   return list.sort(byDate(sort === 'newest' ? -1 : 1));
 }
 
-/** The releases the filters leave, in the chosen order. */
-export function applyFilters<T extends Sortable>(
+/** What a search reads: the title and whatever else a release lists. */
+type Searchable = Sortable &
+  Partial<Pick<Release, 'subtitle' | 'artist'>> & {
+    trackTitles?: readonly string[];
+  };
+
+/** True when every word searched is in the release's title, artist,
+ * kind, year or track titles. */
+export function matchesRelease(release: Searchable, terms: readonly string[]) {
+  const kind = KIND_LABEL[release.kind];
+  return matchesSearch(
+    [
+      release.title,
+      release.subtitle,
+      release.artist,
+      kind.one,
+      kind.many,
+      release.date?.slice(0, 4),
+      ...(release.trackTitles ?? [])
+    ],
+    terms
+  );
+}
+
+/** The releases the filters and the search leave, in the chosen order. */
+export function applyFilters<T extends Searchable>(
   releases: readonly T[],
   filters: Filters,
-  sort: SortKey
+  sort: SortKey,
+  search = ''
 ) {
+  const terms = searchTerms(search);
   const kept = releases.filter((r) => {
+    if (!matchesRelease(r, terms)) return false;
     if (filters.kinds.length && !filters.kinds.includes(r.kind)) return false;
     if (filters.years.length) {
       const year = yearOf(r);

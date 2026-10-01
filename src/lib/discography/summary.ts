@@ -14,6 +14,8 @@ export interface ReleaseSummary {
   date?: string;
   cover: Release['cover'];
   trackCount: number;
+  /** For the search: a song finds the release it's on. */
+  trackTitles: string[];
   /** Not out yet, as of when the page was made. */
   forthcoming: boolean;
 }
@@ -28,6 +30,7 @@ export function summarize(release: Release, now: number): ReleaseSummary {
     date: release.date,
     cover: release.cover,
     trackCount: release.tracks.length,
+    trackTitles: release.tracks.map((track) => track.title),
     forthcoming: !isOut(release, now)
   };
 }
