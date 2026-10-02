@@ -14,7 +14,8 @@ import { toSiteReleases } from './toSite';
 //
 // Cached until the next send, not read per visit: the routes that write
 // refresh the `releases` tag (revalidate.ts), so a visit after a change
-// sees it, and every other visit is served from the cache.
+// sees it, and every other visit is served from the cache. Read again each
+// hour as well, so a release shows on the day it's out.
 //
 // Null means the site shows its own releases: Haven hasn't published
 // everything yet, or this server has no database (local development
@@ -49,7 +50,7 @@ async function read(): Promise<PublishedReleases | null> {
     .find()
     .sort({ date: -1, title: 1 })
     .toArray();
-  const visible = docs.filter(isVisible);
+  const visible = docs.filter((doc) => isVisible(doc));
   const slugById = new Map(
     visible.map((doc) => [doc._id.toHexString(), doc.slug])
   );
@@ -65,5 +66,5 @@ async function read(): Promise<PublishedReleases | null> {
 export const readPublishedReleases = unstable_cache(
   read,
   ['releases-published'],
-  { tags: [RELEASES_TAG] }
+  { tags: [RELEASES_TAG], revalidate: 3600 }
 );

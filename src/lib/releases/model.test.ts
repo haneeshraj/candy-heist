@@ -109,10 +109,27 @@ describe('recognising a release', () => {
 
 describe('who sees a release', () => {
   it('shows what’s out and hides what isn’t, unless switched', () => {
-    expect(isVisible({ shown: null, status: 'released' })).toBe(true);
-    expect(isVisible({ shown: null, status: 'scheduled' })).toBe(false);
-    expect(isVisible({ shown: true, status: 'scheduled' })).toBe(true);
-    expect(isVisible({ shown: false, status: 'released' })).toBe(false);
+    const on = '2026-10-02';
+    const r = (
+      shown: boolean | null,
+      status: 'released' | 'scheduled',
+      date: string | null = null
+    ) => ({ shown, status, date });
+    expect(isVisible(r(null, 'released'), on)).toBe(true);
+    expect(isVisible(r(null, 'scheduled'), on)).toBe(false);
+    expect(isVisible(r(null, 'scheduled', '2026-10-23'), on)).toBe(false);
+    expect(isVisible(r(true, 'scheduled'), on)).toBe(true);
+    expect(isVisible(r(false, 'released'), on)).toBe(false);
+  });
+
+  it('shows a release on its day, even if its status was never moved', () => {
+    const scheduled = {
+      shown: null,
+      status: 'scheduled' as const,
+      date: '2026-10-02'
+    };
+    expect(isVisible(scheduled, '2026-10-01')).toBe(false);
+    expect(isVisible(scheduled, '2026-10-02')).toBe(true);
   });
 
   it('holds up to eight on the shelf, each once', () => {

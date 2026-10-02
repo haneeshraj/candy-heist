@@ -210,11 +210,25 @@ export function spotifyAlbumId(
 export const titleKey = (title: string, kind: HavenKind) =>
   `${slugify(title) || title.trim().toLowerCase()}|${kind}`;
 
-/** Whether visitors see it: as switched in RELEASES, or as its status says. */
-export const isVisible = (release: {
-  shown: boolean | null;
-  status: ReleaseStatus;
-}) => release.shown ?? release.status === 'released';
+/** Today as a release date is written, YYYY-MM-DD, in UTC. */
+export const today = () => new Date().toISOString().slice(0, 10);
+
+/**
+ * Whether visitors see it: as switched in RELEASES; otherwise when it's
+ * out, by its status or by its date having come, so a release whose status
+ * nobody moved on the day still shows.
+ */
+export const isVisible = (
+  release: {
+    shown: boolean | null;
+    status: ReleaseStatus;
+    date: string | null;
+  },
+  on: string = today()
+) =>
+  release.shown ??
+  (release.status === 'released' ||
+    (release.date !== null && release.date <= on));
 
 // ---------------------------------------------------------------- snapshot
 
