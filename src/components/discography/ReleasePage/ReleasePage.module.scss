@@ -95,8 +95,10 @@
   gap: m.dp(32);
   margin-top: m.dp(64);
 
+  // The cover keeps its size; the release takes the rest of the row, so a
+  // screen wider than the 1440 frame doesn't leave a gap on the right.
   @media #{t.$query-desktop} {
-    grid-template-columns: m.dp(560) m.dp(608);
+    grid-template-columns: m.dp(560) minmax(0, 1fr);
     gap: m.dp(80);
     align-items: start;
     margin-top: m.dp(78);
@@ -355,7 +357,7 @@
 
   @media #{t.$query-desktop} {
     grid-template-rows: repeat(var(--rows), auto);
-    grid-template-columns: m.dp(560) m.dp(608);
+    grid-template-columns: m.dp(560) minmax(0, 1fr);
     grid-auto-flow: column;
     column-gap: m.dp(80);
   }
