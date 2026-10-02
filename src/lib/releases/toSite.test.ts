@@ -26,13 +26,21 @@ const sent = (patch: Partial<SentRelease>): SentRelease => ({
 describe('releases as the pages show them', () => {
   afterEach(() => vi.restoreAllMocks());
 
-  it('gives every release the placeholder cover and tape, which exist', () => {
+  it('gives a release with no cover yet the placeholder cover and tape, which exist', () => {
     const [release] = toSiteReleases([sent({})]);
     expect(release.cover.src).toBe(PLACEHOLDER_COVER);
     expect(release.cover.alt).toBe('Menace: cover art to come');
     expect(release.tape).toBe(PLACEHOLDER_TAPE);
     for (const src of [PLACEHOLDER_COVER, PLACEHOLDER_TAPE])
       expect(existsSync(join(process.cwd(), 'public', src))).toBe(true);
+  });
+
+  it('shows the cover Haven sent, once it has one', () => {
+    const url =
+      'https://project.supabase.co/storage/v1/object/public/covers/x/a.webp';
+    const [release] = toSiteReleases([sent({ cover: { url } })]);
+    expect(release.cover).toEqual({ src: url, alt: 'Menace: cover art' });
+    expect(release.tape).toBe(PLACEHOLDER_TAPE);
   });
 
   it('leaves a release with no date undated', () => {

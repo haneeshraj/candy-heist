@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  changesSchema,
   isVisible,
   releasePatchSchema,
   releaseSchema,
@@ -108,28 +109,39 @@ describe('recognising a release', () => {
 });
 
 describe('who sees a release', () => {
-  it('shows what’s out and hides what isn’t, unless switched', () => {
-    const on = '2026-10-02';
-    const r = (
-      shown: boolean | null,
-      status: 'released' | 'scheduled',
-      date: string | null = null
-    ) => ({ shown, status, date });
+  const on = '2026-10-02';
+  const r = (
+    shown: boolean | null,
+    status: 'draft' | 'scheduled' | 'released',
+    date: string | null = null
+  ) => ({ shown, status, date });
+
+  it('shows what’s out or announced, and keeps a draft back', () => {
     expect(isVisible(r(null, 'released'), on)).toBe(true);
+    expect(isVisible(r(null, 'scheduled', '2026-10-23'), on)).toBe(true);
+    // Scheduled for no day: nothing to announce, so it waits like a draft.
     expect(isVisible(r(null, 'scheduled'), on)).toBe(false);
-    expect(isVisible(r(null, 'scheduled', '2026-10-23'), on)).toBe(false);
-    expect(isVisible(r(true, 'scheduled'), on)).toBe(true);
-    expect(isVisible(r(false, 'released'), on)).toBe(false);
+    expect(isVisible(r(null, 'draft'), on)).toBe(false);
+    expect(isVisible(r(null, 'draft', '2026-10-23'), on)).toBe(false);
   });
 
-  it('shows a release on its day, even if its status was never moved', () => {
-    const scheduled = {
-      shown: null,
-      status: 'scheduled' as const,
-      date: '2026-10-02'
-    };
-    expect(isVisible(scheduled, '2026-10-01')).toBe(false);
-    expect(isVisible(scheduled, '2026-10-02')).toBe(true);
+  it('keeps a release hidden by hand hidden, even once it’s out', () => {
+    expect(isVisible(r(false, 'released'), on)).toBe(false);
+    expect(isVisible(r(false, 'scheduled', '2026-10-23'), on)).toBe(false);
+    expect(isVisible(r(false, 'draft', '2026-10-01'), on)).toBe(false);
+  });
+
+  it('takes shown as only “not hidden”: a draft stays back', () => {
+    expect(isVisible(r(true, 'draft'), on)).toBe(false);
+    expect(isVisible(r(true, 'draft', '2026-10-23'), on)).toBe(false);
+    expect(isVisible(r(true, 'scheduled', '2026-10-23'), on)).toBe(true);
+  });
+
+  it('shows a draft on its day, even if its status was never moved', () => {
+    const draft = r(null, 'draft', '2026-10-02');
+    expect(isVisible(draft, '2026-10-01')).toBe(false);
+    expect(isVisible(draft, '2026-10-02')).toBe(true);
+    expect(isVisible(draft, '2026-10-03')).toBe(true);
   });
 
   it('holds up to eight on the shelf, each once', () => {
@@ -142,5 +154,67 @@ describe('who sees a release', () => {
         .success
     ).toBe(false);
     expect(shelfSchema.safeParse({ ids: [id(1), id(1)] }).success).toBe(false);
+  });
+});
+
+describe('several changes in one request', () => {
+  const ID = '6650f0f0f0f0f0f0f0f0f0f0';
+  const OTHER = '6650f0f0f0f0f0f0f0f0f0f1';
+
+  it('needs something to change, and an empty shelf is something', () => {
+    expect(changesSchema.safeParse({}).success).toBe(false);
+    expect(changesSchema.safeParse({ update: [], add: [] }).success).toBe(
+      false
+    );
+    const cleared = changesSchema.parse({ shelf: [] });
+    expect(cleared).toEqual({ add: [], update: [], visibility: [], shelf: [] });
+    // Left out, the shelf stays as it is.
+    expect(
+      changesSchema.parse({ visibility: [{ id: ID, shown: false }] }).shelf
+    ).toBeUndefined();
+  });
+
+  it('names a release once in each list, but in more than one list', () => {
+    const update = { id: ID, fields: { label: 'Self-released' } };
+    expect(
+      changesSchema.safeParse({
+        update: [update],
+        visibility: [{ id: ID, shown: false }],
+        shelf: [ID]
+      }).success
+    ).toBe(true);
+    expect(changesSchema.safeParse({ update: [update, update] }).success).toBe(
+      false
+    );
+    expect(
+      changesSchema.safeParse({
+        visibility: [
+          { id: ID, shown: true },
+          { id: ID.toUpperCase(), shown: null }
+        ]
+      }).success
+    ).toBe(false);
+    expect(changesSchema.safeParse({ shelf: [ID, OTHER, ID] }).success).toBe(
+      false
+    );
+  });
+
+  it('checks each part as its own request would', () => {
+    expect(
+      changesSchema.safeParse({ update: [{ id: ID, fields: {} }] }).success
+    ).toBe(false);
+    expect(
+      changesSchema.safeParse({ add: [{ ref: 'a', fields: release() }] })
+        .success
+    ).toBe(true);
+    expect(
+      changesSchema.safeParse({
+        add: [{ ref: 'a', fields: release({ tracks: [] }) }]
+      }).success
+    ).toBe(false);
+    expect(
+      changesSchema.safeParse({ visibility: [{ id: 'nope', shown: false }] })
+        .success
+    ).toBe(false);
   });
 });

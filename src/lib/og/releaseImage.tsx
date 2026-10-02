@@ -6,11 +6,25 @@ import { isOut, yearOf } from '@/lib/discography/catalogue';
 import { KIND_LABEL, formatDate } from '@/lib/discography/format';
 import { artistLine } from '@/lib/discography/summary';
 import { findAlbumTrack } from '@/lib/discography/tracks';
+import { PLACEHOLDER_COVER } from '@/lib/releases/toSite';
 import { fill } from '@/lib/text/fill';
 import { imageDataUrl, ogFonts, vortexPath } from './assets';
 import { OG_SIZE, ReleaseCard } from './cards';
 
 const copy = previewCopy.release;
+
+const COVER_WIDTH = 932;
+
+/** The release's cover for its preview: the placeholder when one in storage can't be had. */
+function coverDataUrl(src: string) {
+  return imageDataUrl(src, COVER_WIDTH).catch((error: unknown) => {
+    console.error(
+      `Cover "${src}" could not be read for a link preview.`,
+      error
+    );
+    return imageDataUrl(PLACEHOLDER_COVER, COVER_WIDTH);
+  });
+}
 
 /**
  * A release's link preview, or one of its album tracks': the cover, what
@@ -36,7 +50,7 @@ export async function releaseImage(slug: string, trackSlug?: string) {
       : copy.forthcoming;
 
   const [cover, mark, fonts] = await Promise.all([
-    imageDataUrl(release.cover.src, 932),
+    coverDataUrl(release.cover.src),
     vortexPath(),
     ogFonts()
   ]);

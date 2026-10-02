@@ -14,9 +14,9 @@ import type { ReleaseFields } from './model';
 // which case the row goes to the single's page, as the site's own
 // catalogue does it by hand.
 //
-// The covers aren't sent yet: every release shows the placeholder cover,
-// and the shelf the placeholder tape, until the artwork has somewhere to
-// live online.
+// A release's cover is the one Haven sent, from storage, or the
+// placeholder cover until it has one. The shelf shows the placeholder
+// tape for every release for now.
 //
 // Pure: the loader (published.ts) uses it, and so do the tests.
 
@@ -26,11 +26,13 @@ export const PLACEHOLDER_TAPE = '/img/discography/placeholder-tape.webp';
 /** Shown in a running order while a track is still to be named. */
 export const UNNAMED_TRACK = 'Title to come';
 
-/** A release as stored: Haven's fields, its address, and no empty optional fields. */
+/** A release as stored: Haven's fields, its address, its cover if it has one, and no empty optional fields. */
 export type SentRelease = Omit<ReleaseFields, 'subtitle' | 'label'> & {
   subtitle?: string;
   label?: string;
   slug: string;
+  /** Its cover's public address in storage, and its tape's. */
+  cover?: { url: string; tape?: { url: string } };
 };
 
 const ONE_TRACK = new Set(['single', 'remix']);
@@ -86,11 +88,13 @@ export function toSiteReleases(releases: readonly SentRelease[]): Release[] {
       artist: release.artist,
       date: release.date ?? undefined,
       label: release.label,
-      cover: {
-        src: PLACEHOLDER_COVER,
-        alt: `${release.title}: cover art to come`
-      },
-      tape: PLACEHOLDER_TAPE,
+      cover: release.cover
+        ? { src: release.cover.url, alt: `${release.title}: cover art` }
+        : {
+            src: PLACEHOLDER_COVER,
+            alt: `${release.title}: cover art to come`
+          },
+      tape: release.cover?.tape?.url ?? PLACEHOLDER_TAPE,
       credits: release.credits,
       tracks: tracksOf(release, singles),
       distribution: release.distribution

@@ -5,8 +5,8 @@ import sharp from 'sharp';
 // What the link previews (the Open Graph images) are drawn with: the
 // brand's three faces as files (the image renderer can't use next/font),
 // the site's photos and covers as data URLs (WebP covers turned into PNG
-// first, which the renderer can read), and the vortex's path. Read once
-// per build and reused.
+// first, which the renderer can read; a cover in storage fetched first),
+// and the vortex's path. Read once per build and reused.
 
 const root = process.cwd();
 const font = (file: string) => readFile(join(root, 'src/assets/fonts', file));
@@ -43,9 +43,27 @@ async function loadFonts() {
 
 export const ogFonts = () => (fontsOnce ??= loadFonts());
 
-/** A file under /public as a PNG data URL, resized to `width`. */
-export async function imageDataUrl(publicPath: string, width: number) {
-  const png = await sharp(join(root, 'public', publicPath))
+/** How long a cover in storage has to arrive before the preview gives up on it. */
+const FETCH_TIMEOUT_MS = 8000;
+
+/** An image online, as bytes. */
+async function fetchImage(url: string): Promise<Buffer> {
+  const response = await fetch(url, {
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS)
+  });
+  if (!response.ok) throw new Error(`${url} answered ${response.status}.`);
+  return Buffer.from(await response.arrayBuffer());
+}
+
+/**
+ * A file under /public, or an image online (a cover in storage), as a PNG
+ * data URL, resized to `width`.
+ */
+export async function imageDataUrl(src: string, width: number) {
+  const input = /^https?:\/\//.test(src)
+    ? await fetchImage(src)
+    : join(root, 'public', src);
+  const png = await sharp(input)
     .resize({ width, withoutEnlargement: true })
     .png()
     .toBuffer();

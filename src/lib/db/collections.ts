@@ -110,11 +110,27 @@ export interface ReleasePublishedDocument extends Omit<
   /** How the other copy of Haven finds it (see model.ts). */
   spotifyId: string;
   titleKey: string;
-  /** As switched in RELEASES; null when its status decides. */
+  /** False when hidden by hand in RELEASES; true or null leave it to its status and date. */
   shown: boolean | null;
+  /** Its cover art in storage; left out, it shows the placeholder. */
+  cover?: ReleaseCoverDocument;
   createdAt: Date;
   updatedAt: Date;
   updatedBy: Uid;
+}
+
+/** A release's cover, as the site made it from the image Haven sent (lib/storage/covers.ts). */
+export interface ReleaseCoverDocument {
+  /** Where it is in the bucket: <release id>/<hash>.webp. */
+  path: string;
+  /** Its public address, which the pages load. */
+  url: string;
+  width: number;
+  height: number;
+  bytes: number;
+  updatedAt: Date;
+  /** The shelf's tape, made from this cover; missing if it couldn't be made. */
+  tape?: { path: string; url: string; bytes: number };
 }
 
 export interface ReleasesMetaDocument {

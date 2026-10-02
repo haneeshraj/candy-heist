@@ -41,14 +41,20 @@ export const HAVEN_KINDS = [
 ] as const;
 export type HavenKind = (typeof HAVEN_KINDS)[number];
 
-/** Out, or committed to and not out yet. */
-export const RELEASE_STATUSES = ['released', 'scheduled'] as const;
+/**
+ * Not announced yet (draft), announced with its day to come (scheduled,
+ * shown with its pre-save links), or out (released).
+ */
+export const RELEASE_STATUSES = ['draft', 'scheduled', 'released'] as const;
 export type ReleaseStatus = (typeof RELEASE_STATUSES)[number];
 
 const OBJECT_ID = /^[a-f0-9]{24}$/i;
 
 /** A release's id on the site: an ObjectId, in hex, made when it's first sent. */
 export const isReleaseId = (id: string) => OBJECT_ID.test(id);
+
+/** Lower-cased, so the same release is the same id however it was written. */
+const releaseId = z.string().regex(OBJECT_ID).toLowerCase();
 
 const required = (max: number, message: string) =>
   z.string().trim().min(1, message).max(max);
@@ -174,18 +180,63 @@ export const batchSchema = z.object({
     .max(RELEASE_LIMITS.batch)
 });
 
-/** Shown, hidden, or (null) as its status says: out shows, not out yet doesn't. */
-export const visibilitySchema = z.object({ shown: z.boolean().nullable() });
+/** Hidden by hand (false), or not (true, or null): then its status and date decide. */
+const shownSchema = z.boolean().nullable();
+export const visibilitySchema = z.object({ shown: shownSchema });
+
+const eachOnce = (keys: string[]) => new Set(keys).size === keys.length;
+const onceEach = (changes: Array<{ id: string }>) =>
+  eachOnce(changes.map((change) => change.id));
+
+/** The shelf's releases, in order: up to eight, each once. */
+const shelfIds = z
+  .array(releaseId)
+  .max(RELEASE_LIMITS.shelf, `The shelf holds ${RELEASE_LIMITS.shelf}`)
+  .refine(eachOnce, { message: 'A release is on the shelf once' });
 
 /** The home page shelf: up to eight releases, in order. */
-export const shelfSchema = z.object({
-  ids: z
-    .array(z.string().regex(OBJECT_ID))
-    .max(RELEASE_LIMITS.shelf, `The shelf holds ${RELEASE_LIMITS.shelf}`)
-    .refine((ids) => new Set(ids).size === ids.length, {
-      message: 'A release is on the shelf once'
-    })
-});
+export const shelfSchema = z.object({ ids: shelfIds });
+
+/**
+ * Several changes in one request, made together or not at all: releases
+ * this copy of Haven sends for the first time, changed fields, hidden or
+ * not, and the whole shelf. A release can be changed and hidden in the
+ * same request, but is named once in each list. One only just sent can't
+ * go on the shelf until the next request: Haven doesn't have its id yet.
+ */
+export const changesSchema = z
+  .object({
+    add: z
+      .array(releaseEntrySchema)
+      .max(RELEASE_LIMITS.batch)
+      .refine((entries) => eachOnce(entries.map((entry) => entry.ref)), {
+        message: 'A release is sent once in a request'
+      })
+      .default([]),
+    update: z
+      .array(z.object({ id: releaseId, fields: releasePatchSchema }))
+      .max(RELEASE_LIMITS.batch)
+      .refine(onceEach, { message: 'A release is changed once in a request' })
+      .default([]),
+    visibility: z
+      .array(z.object({ id: releaseId, shown: shownSchema }))
+      .max(RELEASE_LIMITS.batch)
+      .refine(onceEach, {
+        message: 'A release is hidden or shown once in a request'
+      })
+      .default([]),
+    /** The whole shelf, in order; left out, the shelf stays as it is. */
+    shelf: shelfIds.optional()
+  })
+  .refine(
+    (changes) =>
+      changes.add.length > 0 ||
+      changes.update.length > 0 ||
+      changes.visibility.length > 0 ||
+      changes.shelf !== undefined,
+    { message: 'There is nothing to change' }
+  );
+export type ReleaseChanges = z.infer<typeof changesSchema>;
 
 // ---------------------------------------------------------------- matching
 
@@ -214,21 +265,27 @@ export const titleKey = (title: string, kind: HavenKind) =>
 export const today = () => new Date().toISOString().slice(0, 10);
 
 /**
- * Whether visitors see it: as switched in RELEASES; otherwise when it's
- * out, by its status or by its date having come, so a release whose status
- * nobody moved on the day still shows.
+ * Whether visitors see it. Hidden by hand in RELEASES, never. Otherwise
+ * once it's out, by its status or by its date having come (so a release
+ * whose status nobody moved on the day still shows), and before then only
+ * once it's announced: a scheduled release shows with its pre-save links,
+ * a draft waits for its day. Scheduled for no day isn't announced (Haven
+ * won't schedule one without a date), so it waits too.
  */
-export const isVisible = (
+export function isVisible(
   release: {
     shown: boolean | null;
     status: ReleaseStatus;
     date: string | null;
   },
   on: string = today()
-) =>
-  release.shown ??
-  (release.status === 'released' ||
-    (release.date !== null && release.date <= on));
+): boolean {
+  if (release.shown === false) return false;
+  const out =
+    release.status === 'released' ||
+    (release.date !== null && release.date <= on);
+  return out || (release.status === 'scheduled' && release.date !== null);
+}
 
 // ---------------------------------------------------------------- snapshot
 
@@ -244,10 +301,12 @@ export interface PublishedReleaseForHaven {
   upc: string;
   spotifyId: string;
   titleKey: string;
-  /** As switched in RELEASES; null when its status decides. */
+  /** False when hidden by hand in RELEASES; true or null leave it to its status and date. */
   shown: boolean | null;
   /** Whether visitors see it now. */
   visible: boolean;
+  /** Its cover's public address; null while it shows the placeholder. */
+  cover: string | null;
   updatedAt: string;
   /** Who sent it last: a Firebase account id from Haven. */
   updatedBy: string;
