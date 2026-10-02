@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { LorePage } from '@/components/lore/LorePage';
-import { loadLore } from '@/content/lore/loadLore';
+import { getLore } from '@/content/lore/getLore';
 import { copyOf, summarize } from '@/content/lore/lore';
 
 export const metadata: Metadata = {
@@ -11,8 +11,9 @@ export const metadata: Metadata = {
 
 // The lore's way in: the arrival and the chapters, each a link to its
 // page. Only what the index shows is sent down, not the chapters' text.
-export default function LoreRoute() {
-  const lore = loadLore();
+// Built once and kept until Candy Haven publishes again (getLore.ts).
+export default async function LoreRoute() {
+  const lore = await getLore();
   return (
     <main>
       <LorePage copy={copyOf(lore)} chapters={lore.chapters.map(summarize)} />

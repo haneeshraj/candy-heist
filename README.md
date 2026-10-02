@@ -37,12 +37,27 @@ same names go in Vercel's environment variables for the live site.
 Without them the site still runs; the two forms say they couldn't send,
 and the API answers that it isn't configured.
 
-The store's database test is opt-in, against a server you don't mind a
-scratch database on (it drops it after):
+The stores' database tests are opt-in, against a server you don't mind a
+scratch database on (each drops its own after):
 
 ```bash
 TEST_MONGODB_URI=mongodb://127.0.0.1:27017 npx vitest run store.integration
 ```
+
+## Lore from Candy Haven
+
+The lore is written in Candy Haven's LORE department and published here
+through the same API (`/api/haven/lore/*`). Until Haven publishes its first
+chapter, `/lore` shows the markdown files in `src/content/lore/chapters`;
+from then on it shows only what Haven has published, refreshed on each
+publish rather than read per visit.
+
+Each chapter's planet is data, drawn by the planet engine in
+`src/lib/planets` (`engine` for the shapes, `react` for the SVG). Haven
+draws its editor's previews with a copy of the same folders, so edit them
+here and run Haven's `npm run sync:planets`. In development,
+[`/dev/planets`](http://localhost:3000/dev/planets) shows every preset and
+layer type.
 
 ## Learn More
 

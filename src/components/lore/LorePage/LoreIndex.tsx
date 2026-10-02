@@ -34,7 +34,7 @@ export default function LoreIndex({
   onSelect
 }: LoreIndexProps) {
   const headingId = useId();
-  const chapter = chapters[selected];
+  const chapter = chapters[selected] ?? chapters[0];
 
   return (
     <section
@@ -55,39 +55,49 @@ export default function LoreIndex({
               </span>
               {intro.label}
             </p>
-            {/* Keyed, so each preview writes itself in afresh. */}
-            <div
-              key={chapter.slug}
-              className={styles.preview}
-              style={
-                {
-                  '--preview-size': titleSize(chapter.title, 360, 64)
-                } as CSSProperties
-              }
-            >
-              <p className={styles.previewNumeral}>
-                {copy.chapter} {chapter.numeral}
-              </p>
-              <p className={styles.previewTitle}>
-                <ClipRevealText text={chapter.title} trigger="mount" />
-              </p>
-              <WordReveal
-                as="p"
-                className={styles.previewLine}
-                text={chapter.line}
-                trigger="mount"
-                startDelay={0.2}
-                staggerDelay={0.04}
-              />
-              <span className={styles.previewCta}>
-                <SigilChip
-                  href={chapterHref(chapter.slug)}
-                  icon={<ArrowIcon />}
-                >
-                  {copy.read}
-                </SigilChip>
-              </span>
-            </div>
+            {/* Keyed, so each preview writes itself in afresh. With no
+                chapter yet, the one still being written stands in. */}
+            {!chapter && (
+              <div className={styles.preview}>
+                <p className={styles.previewTitle}>
+                  <ClipRevealText text={copy.unwritten} trigger="mount" />
+                </p>
+              </div>
+            )}
+            {chapter && (
+              <div
+                key={chapter.slug}
+                className={styles.preview}
+                style={
+                  {
+                    '--preview-size': titleSize(chapter.title, 360, 64)
+                  } as CSSProperties
+                }
+              >
+                <p className={styles.previewNumeral}>
+                  {copy.chapter} {chapter.numeral}
+                </p>
+                <p className={styles.previewTitle}>
+                  <ClipRevealText text={chapter.title} trigger="mount" />
+                </p>
+                <WordReveal
+                  as="p"
+                  className={styles.previewLine}
+                  text={chapter.line}
+                  trigger="mount"
+                  startDelay={0.2}
+                  staggerDelay={0.04}
+                />
+                <span className={styles.previewCta}>
+                  <SigilChip
+                    href={chapterHref(chapter.slug)}
+                    icon={<ArrowIcon />}
+                  >
+                    {copy.read}
+                  </SigilChip>
+                </span>
+              </div>
+            )}
           </div>
 
           {/* The stacked page's list; on desktop, the orbit is it. */}

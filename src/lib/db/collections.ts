@@ -1,6 +1,7 @@
 import type { Db, ObjectId } from 'mongodb';
 import type { ContactMessage } from '@/lib/contact/message';
 import type { DjEnquiry } from '@/lib/enquiry/enquiry';
+import type { PlanetSpec } from '@/lib/planets/engine';
 
 // The collections the site writes, and what each document holds.
 //
@@ -14,7 +15,15 @@ export const COLLECTIONS = {
   /** What Candy Haven deleted, so a second copy of Haven drops it too. */
   deletions: 'deletions',
   /** Recent sends per visitor, for the hourly limit. */
-  rateLimits: 'rate_limits'
+  rateLimits: 'rate_limits',
+  /** The lore as Candy Haven is writing it: one draft per chapter. */
+  loreDrafts: 'lore_drafts',
+  /** The planets made in Haven's LORE editor (presets live in code). */
+  lorePlanets: 'lore_planets',
+  /** What the lore pages show: each chapter as it was last published. */
+  lorePublished: 'lore_published',
+  /** Whether Haven's lore has replaced the files: one document, `lore`. */
+  loreMeta: 'lore_meta'
 } as const;
 
 interface Filed {
@@ -36,6 +45,62 @@ export interface DeletionDocument {
   id: string;
   deletedAt: Date;
   expireAt: Date;
+}
+
+/** Who last wrote something: a Firebase account id from Candy Haven. */
+type Uid = string;
+
+export interface LoreDraftDocument {
+  _id: ObjectId;
+  slug: string;
+  title: string;
+  line: string;
+  /** `preset:<look>` or a saved planet's id. */
+  planetId: string;
+  /** The text, in the lore's markdown. */
+  body: string;
+  order: number;
+  /** Goes up by one on every save, so two writers notice each other. */
+  revision: number;
+  createdAt: Date;
+  updatedAt: Date;
+  updatedBy: Uid;
+}
+
+export interface LorePlanetDocument {
+  _id: ObjectId;
+  name: string;
+  spec: PlanetSpec;
+  revision: number;
+  createdAt: Date;
+  updatedAt: Date;
+  updatedBy: Uid;
+}
+
+/** A chapter as published, keyed by its draft's id. Self-contained: the
+ * planet is copied in, so changing it in Haven changes nothing on the site
+ * until the chapter is published again. */
+export interface LorePublishedDocument {
+  _id: ObjectId;
+  slug: string;
+  title: string;
+  line: string;
+  body: string;
+  planet: PlanetSpec;
+  planetId: string;
+  planetRevision: number;
+  order: number;
+  /** The draft revision this is. */
+  revision: number;
+  publishedAt: Date;
+  publishedBy: Uid;
+}
+
+export interface LoreMetaDocument {
+  _id: 'lore';
+  /** Set by the first publish, never unset: from then on, only Haven's lore shows. */
+  live: true;
+  liveSince: Date;
 }
 
 export interface RateLimitDocument {
@@ -75,7 +140,15 @@ export function ensureIndexes(db: Db): Promise<void> {
     db.collection(COLLECTIONS.rateLimits).createIndex({ key: 1, at: 1 }),
     db
       .collection(COLLECTIONS.rateLimits)
-      .createIndex({ expireAt: 1 }, { expireAfterSeconds: 0 })
+      .createIndex({ expireAt: 1 }, { expireAfterSeconds: 0 }),
+    db
+      .collection(COLLECTIONS.loreDrafts)
+      .createIndex({ slug: 1 }, { unique: true }),
+    db.collection(COLLECTIONS.loreDrafts).createIndex({ order: 1 }),
+    db
+      .collection(COLLECTIONS.lorePublished)
+      .createIndex({ slug: 1 }, { unique: true }),
+    db.collection(COLLECTIONS.lorePublished).createIndex({ order: 1 })
   ]).then(() => undefined);
   indexed.catch(() => {
     indexed = null;

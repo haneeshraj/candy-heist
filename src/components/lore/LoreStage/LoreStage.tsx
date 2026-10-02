@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { NayaraPlanet } from '@/components/common/NayaraPlanet';
 import { StarField } from '@/components/common/StarField';
 import type { LoreChapterSummary, LoreCopy } from '@/content/lore/lore';
+import { DEFAULT_PRESET } from '@/lib/planets/engine';
 import { gsap } from '@/lib/animation/gsap';
 import Orbit from './Orbit';
 import styles from './LoreStage.module.scss';
@@ -34,8 +35,12 @@ export default function LoreStage({
 }: LoreStageProps) {
   const planetRef = useRef<HTMLDivElement | null>(null);
   const [hovered, setHovered] = useState<number | null>(null);
+  // With no chapter yet, the planet still stands, in its first look.
   const layers = useMemo(
-    () => chapters.map(({ state, render }) => ({ state, render })),
+    () =>
+      chapters.length
+        ? chapters.map(({ planet, render }) => ({ planet, render }))
+        : [{ planet: DEFAULT_PRESET.spec }],
     [chapters]
   );
   const shown = current >= 0 ? current : selected;
@@ -55,11 +60,9 @@ export default function LoreStage({
     if (!planet || firstLook.current === look) return;
     firstLook.current = -1;
     planet
-      .querySelectorAll<SVGGElement>('[data-planet-look], [data-planet-core]')
+      .querySelectorAll<SVGGElement>('[data-planet-look]')
       .forEach((layer) => {
-        const index = Number(
-          layer.dataset.planetLook ?? layer.dataset.planetCore
-        );
+        const index = Number(layer.dataset.planetLook);
         gsap.to(layer, {
           opacity: index === look ? 1 : 0,
           duration: 0.8,

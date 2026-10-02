@@ -2,6 +2,7 @@
 
 import { useId, useRef, useState } from 'react';
 import { useScrollRefresh } from '@/hooks/useScrollRefresh';
+import { DEFAULT_PRESET } from '@/lib/planets/engine';
 import { LoreStage } from '../LoreStage';
 import LoreArrival from './LoreArrival';
 import LoreIndex from './LoreIndex';
@@ -34,7 +35,7 @@ export default function LorePage({ copy, chapters }: LorePageProps) {
       <LoreArrival
         copy={copy.intro}
         headingId={headingId}
-        look={chapters[0].state}
+        look={chapters[0]?.planet ?? DEFAULT_PRESET.spec}
       />
       <LoreIndex
         copy={copy.index}

@@ -1,33 +1,19 @@
 import { z } from 'zod';
+import { planetSpecSchema } from '@/lib/planets/engine';
 import { toRoman } from '@/lib/text/roman';
 
 // The lore of Nayara (source: candy-haven/info/lore.md, plus the canon on
 // its reference boards): the copy around it, and its chapters.
 //
-// The copy is JSON (lore.json); each chapter is a markdown file in
-// chapters/, read by loadLore.ts into the shape below. When Candy Haven
-// can publish chapters, a loader reading the same markdown from its
-// database hands the pages this same shape and nothing downstream
-// changes. Chapters are numbered by their place in the list, so a new one
-// takes the next numeral and the orbit simply grows a node.
+// The copy is JSON (lore.json). The chapters come from Candy Haven once it
+// has published any (getLore.ts reads them from the database); until then
+// from the markdown files in chapters/, read by loadLore.ts. Either way
+// they arrive in the shape below, so nothing downstream knows which.
+// Chapters are numbered by their place in the list, so a new one takes the
+// next numeral and the orbit simply grows a node.
 //
 // Nothing here touches the file system, so the pages' client components
 // can import its types and helpers.
-
-// How the planet looks while a chapter is read. A chapter picks one.
-export const PLANET_STATES = [
-  'network',
-  'omun',
-  'unity',
-  'many',
-  'disconnect',
-  'sigil',
-  'suppress',
-  'order',
-  'forget',
-  'candy',
-  'heist'
-] as const;
 
 const text = z.string().trim().min(1);
 const link = z.object({ label: text, href: text });
@@ -57,7 +43,8 @@ export const chapterSchema = z.object({
   title: text,
   /** The one line it's known by, on the orbit and under its title. */
   line: text,
-  state: z.enum(PLANET_STATES),
+  /** How the planet looks while it's read: a preset, or one made in Haven. */
+  planet: planetSpecSchema,
   /** Its Blender render, once there is one; until then the planet is. */
   render: z.object({ src: text, alt: z.string() }).optional(),
   blocks: z.array(block).min(1)
@@ -102,9 +89,10 @@ export const loreCopySchema = z.object({
 });
 
 export const loreSchema = loreCopySchema.extend({
+  // Possibly none: once Haven's lore is live, it has only what Haven
+  // published, and the pages say the first chapter is still being written.
   chapters: z
     .array(chapterSchema)
-    .min(1)
     .refine(
       (chapters) =>
         new Set(chapters.map((c) => c.slug)).size === chapters.length,
@@ -115,7 +103,6 @@ export const loreSchema = loreCopySchema.extend({
 export type LoreCopy = z.infer<typeof loreCopySchema>;
 export type LoreBlock = z.infer<typeof block>;
 export type LoreRun = z.infer<typeof run>;
-export type PlanetState = (typeof PLANET_STATES)[number];
 
 export type LoreChapter = z.infer<typeof chapterSchema> & {
   /** Its place, from 0. */
@@ -140,8 +127,8 @@ export function withNumerals(lore: z.infer<typeof loreSchema>): LoreContent {
 }
 
 export function summarize(chapter: LoreChapter): LoreChapterSummary {
-  const { slug, title, line, state, render, index, numeral } = chapter;
-  return { slug, title, line, state, render, index, numeral };
+  const { slug, title, line, planet, render, index, numeral } = chapter;
+  return { slug, title, line, planet, render, index, numeral };
 }
 
 /** The copy around the chapters, without them. */

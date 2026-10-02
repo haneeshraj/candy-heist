@@ -109,4 +109,15 @@ describe('LorePage', () => {
       document.querySelectorAll('[data-motion="node"][data-state="next"]')
     ).toHaveLength(1);
   });
+  it('stands with no chapters yet, the first still being written', () => {
+    render(<LorePage copy={copy} chapters={[]} />);
+    expect(
+      screen.getAllByText(copy.index.unwritten, { exact: false }).length
+    ).toBeGreaterThan(0);
+    expect(
+      screen
+        .queryAllByRole('link', all)
+        .filter((link) => link.getAttribute('href')?.startsWith('/lore/'))
+    ).toEqual([]);
+  });
 });

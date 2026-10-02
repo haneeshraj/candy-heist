@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { presetFor } from '@/lib/planets/engine';
 import { chapterFrom, loadLore } from './loadLore';
 import {
   chapterHref,
@@ -64,6 +65,28 @@ describe('lore content', () => {
     expect(summary).toMatchObject({ slug: 'omun', numeral: 'II', index: 1 });
     expect(summary).not.toHaveProperty('blocks');
     expect(copyOf(lore)).not.toHaveProperty('chapters');
+  });
+
+  it('draws each file chapter in the preset its look names', () => {
+    expect(findChapter(lore.chapters, 'omun')?.planet).toEqual(
+      presetFor('omun').spec
+    );
+    expect(findChapter(lore.chapters, 'heist')?.planet).toEqual(
+      presetFor('heist').spec
+    );
+    const nameless = chapterFrom(
+      'nameless',
+      ['---', 'title: A', 'line: B', 'state: sun', '---', '', 'Text.'].join(
+        '\n'
+      )
+    );
+    expect(
+      loreSchema.safeParse({ ...lore, chapters: [nameless] }).success
+    ).toBe(false);
+  });
+
+  it('accepts a lore with no chapters yet', () => {
+    expect(loreSchema.safeParse({ ...lore, chapters: [] }).success).toBe(true);
   });
 
   it('links to a chapter by its slug', () => {

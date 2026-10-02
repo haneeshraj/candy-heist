@@ -3,15 +3,16 @@
 import { ClipRevealText } from '@/components/common/ClipRevealText';
 import { NayaraPlanet } from '@/components/common/NayaraPlanet';
 import { WordReveal } from '@/components/common/WordReveal';
-import type { LoreCopy, PlanetState } from '@/content/lore/lore';
+import type { LoreCopy } from '@/content/lore/lore';
+import type { PlanetSpec } from '@/lib/planets/engine';
 import { SigilIcon } from '@/components/icons';
 import styles from './LorePage.module.scss';
 
 interface LoreArrivalProps {
   copy: LoreCopy['intro'];
   headingId: string;
-  /** The first chapter's look, for the still planet on phones. */
-  look: PlanetState;
+  /** The first chapter's planet, for the still planet on phones. */
+  look: PlanetSpec;
 }
 
 // Figma "Lore A · 0": the planet alone with the line. On desktop the
@@ -34,7 +35,7 @@ export default function LoreArrival({
         </p>
 
         <div className={styles.arrivalFigure}>
-          <NayaraPlanet layers={[{ state: look }]} />
+          <NayaraPlanet layers={[{ planet: look }]} />
         </div>
 
         <h1 id={headingId} className={styles.arrivalHeading}>

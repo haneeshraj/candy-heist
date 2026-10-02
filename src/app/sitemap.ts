@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { releases } from '@/content/discography/releases';
-import { loadLore } from '@/content/lore/loadLore';
+import { getLore } from '@/content/lore/getLore';
 import { gridReleases } from '@/lib/discography/catalogue';
 import { albumTracks } from '@/lib/discography/tracks';
 import { absolute } from '@/lib/site/url';
@@ -20,13 +20,14 @@ const PAGES = [
   '/terms'
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const lore = await getLore();
   return [
     ...PAGES,
     ...gridReleases(releases).map((release) => `/discography/${release.slug}`),
     ...albumTracks(releases).map(
       ({ release, track }) => `/discography/${release.slug}/${track.slug}`
     ),
-    ...loadLore().chapters.map((chapter) => `/lore/${chapter.slug}`)
+    ...lore.chapters.map((chapter) => `/lore/${chapter.slug}`)
   ].map((path) => ({ url: absolute(path) }));
 }

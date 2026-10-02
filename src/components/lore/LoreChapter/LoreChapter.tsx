@@ -99,7 +99,7 @@ export default function LoreChapter({
       <header className={styles.header}>
         <div className={styles.figure}>
           <NayaraPlanet
-            layers={[{ state: chapter.state, render: chapter.render }]}
+            layers={[{ planet: chapter.planet, render: chapter.render }]}
           />
         </div>
         <p className={styles.numeral}>
