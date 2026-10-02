@@ -2,10 +2,9 @@
 import { ObjectId } from 'mongodb';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { verifyHavenToken } from '@/lib/haven/auth';
-import { changesSince, deleteFiled, setStatus } from '@/lib/inbox/store';
+import { changesSince, deleteFiled } from '@/lib/inbox/store';
 import { GET } from './inbox/route';
-import { DELETE, PATCH } from './messages/[id]/route';
-import { PATCH as PATCH_ENQUIRY } from './enquiries/[id]/route';
+import { DELETE } from './messages/[id]/route';
 
 // The routes as Haven meets them, with the database and Google's keys
 // stood in for. Who gets in is tested properly in auth.test.ts; here the
@@ -22,7 +21,6 @@ vi.mock('@/lib/forms/limits', () => ({
 vi.mock('@/lib/inbox/store', async (actual) => ({
   ...(await actual<typeof import('@/lib/inbox/store')>()),
   changesSince: vi.fn(),
-  setStatus: vi.fn(),
   deleteFiled: vi.fn()
 }));
 
@@ -95,45 +93,10 @@ describe('Candy Haven’s API', () => {
     ).toBe(400);
   });
 
-  it('moves a message along to a status it can have', async () => {
-    vi.mocked(setStatus).mockResolvedValue(true);
-    const response = await PATCH(
-      request('/x', {
-        method: 'PATCH',
-        body: JSON.stringify({ status: 'replied' })
-      }),
-      context
-    );
-    expect(response.status).toBe(204);
-    expect(setStatus).toHaveBeenCalledWith(
-      'message',
-      expect.any(ObjectId),
-      'replied'
-    );
-  });
-
-  it('keeps each kind to its own statuses', async () => {
-    const body = JSON.stringify({ status: 'in_talks' });
-    expect(
-      (await PATCH(request('/x', { method: 'PATCH', body }), context)).status
-    ).toBe(400);
-    vi.mocked(setStatus).mockResolvedValue(true);
-    expect(
-      (await PATCH_ENQUIRY(request('/x', { method: 'PATCH', body }), context))
-        .status
-    ).toBe(204);
-  });
-
-  it('says when there’s no such message', async () => {
-    vi.mocked(setStatus).mockResolvedValue(false);
-    const response = await PATCH(
-      request('/x', {
-        method: 'PATCH',
-        body: JSON.stringify({ status: 'read' })
-      }),
-      context
-    );
-    expect(response.status).toBe(404);
+  it('has no way to set a status: that stays in Haven', async () => {
+    const routes = await import('./messages/[id]/route');
+    expect(routes).not.toHaveProperty('PATCH');
+    expect(await import('./enquiries/[id]/route')).not.toHaveProperty('PATCH');
   });
 
   it('deletes a message for good', async () => {

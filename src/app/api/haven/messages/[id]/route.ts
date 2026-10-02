@@ -1,16 +1,6 @@
-import {
-  deleteFiledRoute,
-  patchFiled,
-  type FiledContext
-} from '@/lib/haven/filedRoutes';
-import { isMessageStatus } from '@/lib/inbox/status';
+import { deleteFiledRoute, type FiledContext } from '@/lib/haven/filedRoutes';
 
-// One contact message, for Candy Haven: PATCH { status } moves it along,
-// DELETE removes it for good.
-
-export function PATCH(request: Request, context: FiledContext) {
-  return patchFiled('message', isMessageStatus, request, context);
-}
+// One contact message, for Candy Haven: DELETE removes it for good.
 
 export function DELETE(request: Request, context: FiledContext) {
   return deleteFiledRoute('message', request, context);

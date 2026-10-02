@@ -1,13 +1,12 @@
 import type { Db, ObjectId } from 'mongodb';
 import type { ContactMessage } from '@/lib/contact/message';
 import type { DjEnquiry } from '@/lib/enquiry/enquiry';
-import type { EnquiryStatus, MessageStatus } from '@/lib/inbox/status';
 
 // The collections the site writes, and what each document holds.
 //
-// The site owns what the visitor typed: it's written once, as sent, and
-// never edited. Candy Haven owns the workflow around it, the status, and
-// changes nothing else.
+// The site keeps what the visitor typed: written once, as sent, and never
+// edited. Where each one stands, and any notes, are Candy Haven's, kept on
+// the machine it runs on and never written here.
 
 export const COLLECTIONS = {
   messages: 'contact_messages',
@@ -23,18 +22,11 @@ interface Filed {
   /** A short code for people: MSG-7KQ2FD, DJ-H3XN8P. */
   ref: string;
   createdAt: Date;
-  updatedAt: Date;
 }
 
-export type MessageDocument = Filed &
-  ContactMessage & {
-    status: MessageStatus;
-  };
+export type MessageDocument = Filed & ContactMessage;
 
-export type EnquiryDocument = Filed &
-  DjEnquiry & {
-    status: EnquiryStatus;
-  };
+export type EnquiryDocument = Filed & DjEnquiry;
 
 export type DeletedKind = 'message' | 'enquiry';
 
@@ -71,11 +63,11 @@ export function ensureIndexes(db: Db): Promise<void> {
     db
       .collection(COLLECTIONS.messages)
       .createIndex({ ref: 1 }, { unique: true }),
-    db.collection(COLLECTIONS.messages).createIndex({ updatedAt: 1 }),
+    db.collection(COLLECTIONS.messages).createIndex({ createdAt: 1 }),
     db
       .collection(COLLECTIONS.enquiries)
       .createIndex({ ref: 1 }, { unique: true }),
-    db.collection(COLLECTIONS.enquiries).createIndex({ updatedAt: 1 }),
+    db.collection(COLLECTIONS.enquiries).createIndex({ createdAt: 1 }),
     db.collection(COLLECTIONS.deletions).createIndex({ deletedAt: 1 }),
     db
       .collection(COLLECTIONS.deletions)

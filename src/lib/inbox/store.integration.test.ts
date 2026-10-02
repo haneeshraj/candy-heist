@@ -42,36 +42,27 @@ describe.skipIf(!uri)('the store, against a real database', () => {
     links: ''
   };
 
-  it('files, hands over, moves along and deletes', async () => {
-    const { changesSince, deleteFiled, fileMessage, setStatus } =
-      await import('./store');
+  it('files, hands over and deletes', async () => {
+    const { changesSince, deleteFiled, fileMessage } = await import('./store');
     const before = new Date();
     const ref = await fileMessage(message);
     expect(ref).toMatch(/^MSG-/);
 
     const first = await changesSince(new Date(0));
     expect(first.messages).toHaveLength(1);
-    expect(first.messages[0]).toMatchObject({
-      ref,
-      status: 'new',
-      name: 'Alex'
-    });
+    expect(first.messages[0]).toMatchObject({ ref, name: 'Alex' });
+    expect(first.messages[0]).not.toHaveProperty('status');
     expect(new Date(first.cursor).getTime()).toBeGreaterThanOrEqual(
       before.getTime() - 5
     );
 
     const id = new ObjectId(first.messages[0].id);
-    await expect(setStatus('message', id, 'replied')).resolves.toBe(true);
-    const moved = await changesSince(new Date(first.cursor));
-    expect(moved.messages[0].status).toBe('replied');
-
     await deleteFiled('message', id);
-    const gone = await changesSince(new Date(moved.cursor));
+    const gone = await changesSince(new Date(first.cursor));
     expect(gone.messages).toHaveLength(0);
     expect(gone.deletions).toEqual([
       expect.objectContaining({ kind: 'message', id: id.toHexString() })
     ]);
-    await expect(setStatus('message', id, 'read')).resolves.toBe(false);
   });
 
   it('holds a visitor to the hourly limit', async () => {
@@ -96,6 +87,6 @@ describe.skipIf(!uri)('the store, against a real database', () => {
     });
     expect(ref).toMatch(/^DJ-/);
     const changes = await changesSince(new Date(0));
-    expect(changes.enquiries[0]).toMatchObject({ ref, status: 'new' });
+    expect(changes.enquiries[0]).toMatchObject({ ref });
   });
 });

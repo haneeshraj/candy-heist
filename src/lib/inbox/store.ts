@@ -20,14 +20,13 @@ import {
   type MessageForHaven
 } from './documents';
 import { newRef, type RefPrefix } from './ref';
-import type { EnquiryStatus, MessageStatus } from './status';
 
 // The site's reads and writes of messages and enquiries. The forms file
 // them; everything else here is for Candy Haven, through its API.
 
 const DAY = 24 * 60 * 60 * 1000;
 
-/** How many of each a single sync hands over before asking for the rest. */
+/** How many of each a single check-in hands over before asking for the rest. */
 export const PAGE_SIZE = 200;
 
 const DUPLICATE_KEY = 11000;
@@ -85,7 +84,9 @@ export interface Changes {
 }
 
 /**
- * Everything new, changed or deleted at or after `since`, oldest first.
+ * Everything filed or deleted at or after `since`, oldest first. Nothing
+ * filed is ever edited, so what was sent and what was deleted is all there
+ * is to hand over.
  *
  * At or after, not after: two writes can share a millisecond, and one that
  * lands just behind the cursor would otherwise never be seen. Haven files
@@ -93,18 +94,18 @@ export interface Changes {
  */
 export async function changesSince(since: Date): Promise<Changes> {
   const db = await getDb();
-  const changed = { updatedAt: { $gte: since } };
+  const changed = { createdAt: { $gte: since } };
   const [messages, enquiries, deletions] = await Promise.all([
     db
       .collection<MessageDocument>(COLLECTIONS.messages)
       .find(changed)
-      .sort({ updatedAt: 1 })
+      .sort({ createdAt: 1 })
       .limit(PAGE_SIZE)
       .toArray(),
     db
       .collection<EnquiryDocument>(COLLECTIONS.enquiries)
       .find(changed)
-      .sort({ updatedAt: 1 })
+      .sort({ createdAt: 1 })
       .limit(PAGE_SIZE)
       .toArray(),
     db
@@ -123,14 +124,14 @@ export async function changesSince(since: Date): Promise<Changes> {
   const ends = [
     ...[messages, enquiries]
       .filter((page) => page.length === PAGE_SIZE)
-      .map((page) => page[page.length - 1].updatedAt),
+      .map((page) => page[page.length - 1].createdAt),
     ...(deletions.length === PAGE_SIZE
       ? [deletions[deletions.length - 1].deletedAt]
       : [])
   ];
   const latest = [
-    ...messages.map((doc) => doc.updatedAt),
-    ...enquiries.map((doc) => doc.updatedAt),
+    ...messages.map((doc) => doc.createdAt),
+    ...enquiries.map((doc) => doc.createdAt),
     ...deletions.map((doc) => doc.deletedAt)
   ];
   const cursor = more
@@ -162,19 +163,6 @@ export function parseId(id: string): ObjectId | null {
   return ObjectId.isValid(id) && /^[a-f0-9]{24}$/i.test(id)
     ? new ObjectId(id)
     : null;
-}
-
-/** Sets where one stands. False when there's no such document. */
-export async function setStatus(
-  kind: DeletedKind,
-  id: ObjectId,
-  status: MessageStatus | EnquiryStatus
-): Promise<boolean> {
-  const db = await getDb();
-  const result = await db
-    .collection(KIND_COLLECTION[kind])
-    .updateOne({ _id: id }, { $set: { status, updatedAt: new Date() } });
-  return result.matchedCount === 1;
 }
 
 /**

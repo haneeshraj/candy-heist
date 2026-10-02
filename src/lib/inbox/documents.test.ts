@@ -8,7 +8,6 @@ import {
   messageForHaven
 } from './documents';
 import { newRef, REF_PATTERN } from './ref';
-import { isEnquiryStatus, isMessageStatus } from './status';
 
 describe('cleanMessage', () => {
   it('keeps only the form’s fields, trimmed', () => {
@@ -46,15 +45,15 @@ describe('filing and handing over', () => {
     message: 'Hello'
   });
 
-  it('files a message as new, under its ref', () => {
+  it('files a message as sent, under its ref, and nothing more', () => {
     const doc = messageDocument(message, 'MSG-7KQ2FD', now);
     expect(doc).toMatchObject({
       ref: 'MSG-7KQ2FD',
-      status: 'new',
       name: 'Alex',
-      createdAt: now,
-      updatedAt: now
+      createdAt: now
     });
+    expect(doc).not.toHaveProperty('status');
+    expect(doc).not.toHaveProperty('updatedAt');
   });
 
   it('hands Haven the id and dates as text', () => {
@@ -69,18 +68,11 @@ describe('filing and handing over', () => {
   });
 });
 
-describe('refs and statuses', () => {
+describe('refs', () => {
   it('draws refs that read cleanly', () => {
     for (let i = 0; i < 50; i++) {
       expect(newRef('MSG')).toMatch(REF_PATTERN);
       expect(newRef('DJ')).toMatch(/^DJ-/);
     }
-  });
-
-  it('knows each kind’s statuses', () => {
-    expect(isMessageStatus('replied')).toBe(true);
-    expect(isMessageStatus('in_talks')).toBe(false);
-    expect(isEnquiryStatus('in_talks')).toBe(true);
-    expect(isEnquiryStatus('read')).toBe(false);
   });
 });

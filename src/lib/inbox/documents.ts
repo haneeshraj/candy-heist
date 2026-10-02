@@ -7,7 +7,6 @@ import {
   type DjEnquiry
 } from '@/lib/enquiry/enquiry';
 import type { EnquiryDocument, MessageDocument } from '@/lib/db/collections';
-import type { EnquiryStatus, MessageStatus } from './status';
 
 // Between what a visitor sends, what's filed, and what Candy Haven reads.
 
@@ -44,7 +43,7 @@ export function messageDocument(
   ref: string,
   now: Date
 ): Omit<MessageDocument, '_id'> {
-  return { ref, ...message, status: 'new', createdAt: now, updatedAt: now };
+  return { ref, ...message, createdAt: now };
 }
 
 export function enquiryDocument(
@@ -52,7 +51,7 @@ export function enquiryDocument(
   ref: string,
   now: Date
 ): Omit<EnquiryDocument, '_id'> {
-  return { ref, ...enquiry, status: 'new', createdAt: now, updatedAt: now };
+  return { ref, ...enquiry, createdAt: now };
 }
 
 // What Candy Haven is handed: the same fields, with the id as a string and
@@ -61,17 +60,13 @@ export function enquiryDocument(
 export type MessageForHaven = ContactMessage & {
   id: string;
   ref: string;
-  status: MessageStatus;
   createdAt: string;
-  updatedAt: string;
 };
 
 export type EnquiryForHaven = DjEnquiry & {
   id: string;
   ref: string;
-  status: EnquiryStatus;
   createdAt: string;
-  updatedAt: string;
 };
 
 export function messageForHaven(doc: MessageDocument): MessageForHaven {
@@ -79,9 +74,7 @@ export function messageForHaven(doc: MessageDocument): MessageForHaven {
     ...pick(MESSAGE_FIELDS, doc),
     id: doc._id.toHexString(),
     ref: doc.ref,
-    status: doc.status,
-    createdAt: doc.createdAt.toISOString(),
-    updatedAt: doc.updatedAt.toISOString()
+    createdAt: doc.createdAt.toISOString()
   };
 }
 
@@ -90,8 +83,6 @@ export function enquiryForHaven(doc: EnquiryDocument): EnquiryForHaven {
     ...pick(ENQUIRY_FIELDS, doc),
     id: doc._id.toHexString(),
     ref: doc.ref,
-    status: doc.status,
-    createdAt: doc.createdAt.toISOString(),
-    updatedAt: doc.updatedAt.toISOString()
+    createdAt: doc.createdAt.toISOString()
   };
 }
