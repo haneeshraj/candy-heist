@@ -62,6 +62,24 @@ here and run Haven's `npm run sync:planets`. In development,
 [`/dev/planets`](http://localhost:3000/dev/planets) shows every preset and
 layer type.
 
+## Releases from Candy Haven
+
+The discography's releases come from Candy Haven's RELEASES department
+through the same API (`/api/haven/releases/*`). The whole catalogue stays
+in Haven's DISCOGRAPHY; the database here keeps what RELEASES sends
+(`releases_published`, `releases_meta`): each release's public fields,
+whether it's shown, and the home page shelf (up to eight, in order).
+
+Until Haven presses "Publish everything", the site shows its own
+`src/content/discography/releases.json`; from then on, only Haven's
+releases, refreshed on each send rather than read per visit
+(`getCatalogue`). A release that's out shows unless it's hidden; one that
+isn't out yet shows only once it's switched on. Each copy of Haven sends
+only the fields it changed, and a release from the other copy is
+recognised by its UPC, its Spotify album, or its title and kind. Covers
+aren't sent yet: every release from Haven shows the placeholder cover and
+tape in `public/img/discography`.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

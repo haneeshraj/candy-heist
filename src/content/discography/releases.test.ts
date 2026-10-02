@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import {
   findRelease,
   releaseHref,
-  releases,
+  fileReleases as releases,
   releaseSchema,
   trackHref
 } from './releases';
@@ -32,14 +32,14 @@ describe('releases', () => {
   });
 
   it('finds a release by slug and links to its page', () => {
-    expect(findRelease('4x4')?.title).toBe('4x4');
-    expect(findRelease('nope')).toBeUndefined();
+    expect(findRelease(releases, '4x4')?.title).toBe('4x4');
+    expect(findRelease(releases, 'nope')).toBeUndefined();
     expect(releaseHref('over-the-moon')).toBe('/discography/over-the-moon');
     expect(trackHref('the-halls', 'nave')).toBe('/discography/the-halls/nave');
   });
 
   it('gives a track a page of its own or its single’s, never both, once per release', () => {
-    const halls = findRelease('the-halls')!;
+    const halls = findRelease(releases, 'the-halls')!;
     const withTracks = (tracks: typeof halls.tracks) => ({ ...halls, tracks });
     expect(releaseSchema.safeParse(halls).success).toBe(true);
     expect(
@@ -61,7 +61,7 @@ describe('releases', () => {
   });
 
   it('keeps a single to its own page: its one track has none', () => {
-    const single = findRelease('alabaster')!;
+    const single = findRelease(releases, 'alabaster')!;
     expect(
       releaseSchema.safeParse({
         ...single,

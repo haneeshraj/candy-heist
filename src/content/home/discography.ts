@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { releases, type Release } from '@/content/discography/releases';
+import type { Release } from '@/content/discography/releases';
 import discographyData from './discography.json';
 
 // The home page Discography section: its copy, and the releases on the shelf
-// (from the catalogue). Plain JSON checked against this schema, so a
+// (the catalogue's shelf: see getCatalogue). Plain JSON checked against this schema, so a
 // server-side loader can hand over the same shape later without touching
 // the component. Draft copy until the client confirms it.
 
@@ -23,7 +23,9 @@ export type DiscographyContent = z.infer<typeof discographyCopySchema> & {
   releases: Release[];
 };
 
-export const discographyContent: DiscographyContent = {
-  ...discographyCopySchema.parse(discographyData),
-  releases
-};
+export const homeDiscographyCopy = discographyCopySchema.parse(discographyData);
+
+/** The section's content, with the shelf's releases. */
+export const discographyContentFor = (
+  releases: Release[]
+): DiscographyContent => ({ ...homeDiscographyCopy, releases });

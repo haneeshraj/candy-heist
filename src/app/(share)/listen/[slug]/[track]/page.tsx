@@ -2,19 +2,20 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { SharePage } from '@/components/discography/SharePage';
 import { discographyCopy } from '@/content/discography/discography';
-import { releases } from '@/content/discography/releases';
+import { getCatalogue } from '@/content/discography/getCatalogue';
 import { isOut } from '@/lib/discography/catalogue';
 import { formatDate } from '@/lib/discography/format';
 import { albumTracks, findAlbumTrack } from '@/lib/discography/tracks';
 import { fill } from '@/lib/text/fill';
 
 // A track's share link page: the track, in its release's cover, to play
-// once the release is out and to pre-save before. Built ahead of time and
-// made again each hour, as the release's is.
-export const dynamicParams = false;
+// once the release is out and to pre-save before. Built ahead of time (or
+// on its first visit, for a release Candy Haven sends later) and made
+// again each hour, as the release's is.
 export const revalidate = 3600;
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const { releases } = await getCatalogue();
   return albumTracks(releases).map(({ release, track }) => ({
     slug: release.slug,
     track: track.slug
@@ -24,6 +25,7 @@ export function generateStaticParams() {
 export async function generateMetadata(
   props: PageProps<'/listen/[slug]/[track]'>
 ): Promise<Metadata> {
+  const { releases } = await getCatalogue();
   const { slug, track } = await props.params;
   const found = findAlbumTrack(releases, slug, track);
   if (!found) return {};
@@ -44,6 +46,7 @@ export async function generateMetadata(
 export default async function ListenTrackRoute(
   props: PageProps<'/listen/[slug]/[track]'>
 ) {
+  const { releases } = await getCatalogue();
   const { slug, track } = await props.params;
   const found = findAlbumTrack(releases, slug, track);
   if (!found) notFound();

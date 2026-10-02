@@ -1,4 +1,4 @@
-import { releases } from '@/content/discography/releases';
+import { getCatalogue } from '@/content/discography/getCatalogue';
 import { previewCopy } from '@/content/site/preview';
 import { albumTracks } from '@/lib/discography/tracks';
 import { OG_SIZE } from '@/lib/og/cards';
@@ -10,7 +10,8 @@ export const size = OG_SIZE;
 export const contentType = 'image/png';
 export const revalidate = 3600;
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const { releases } = await getCatalogue();
   return albumTracks(releases).map(({ release, track }) => ({
     slug: release.slug,
     track: track.slug

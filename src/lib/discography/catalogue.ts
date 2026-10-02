@@ -181,3 +181,22 @@ export function moreLike(
     'newest'
   ).slice(0, count);
 }
+
+/** Tapes on the home page shelf, at most. */
+export const SHELF_SIZE = 8;
+
+/**
+ * The home page shelf: the releases picked in Candy Haven's RELEASES, in
+ * their order; with none picked, the newest. Without picks at all (the
+ * site's own catalogue), the releases in the order they're written.
+ */
+export function shelfOf(
+  releases: readonly Release[],
+  picks?: readonly string[]
+): Release[] {
+  if (!picks) return releases.slice(0, SHELF_SIZE);
+  const bySlug = new Map(releases.map((r) => [r.slug, r]));
+  const picked = picks.flatMap((slug) => bySlug.get(slug) ?? []);
+  if (picked.length) return picked.slice(0, SHELF_SIZE);
+  return sortReleases(releases, 'newest').slice(0, SHELF_SIZE);
+}

@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { findRelease, releases } from '@/content/discography/releases';
+import {
+  findRelease,
+  fileReleases as releases
+} from '@/content/discography/releases';
 import {
   albumTracks,
   appearsOn,
@@ -9,7 +12,7 @@ import {
   rowHref
 } from './tracks';
 
-const release = (slug: string) => findRelease(slug)!;
+const release = (slug: string) => findRelease(releases, slug)!;
 
 describe('albumTracks', () => {
   it('gives each named track of a release with several a page of its own', () => {

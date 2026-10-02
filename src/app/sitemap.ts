@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { releases } from '@/content/discography/releases';
+import { getCatalogue } from '@/content/discography/getCatalogue';
 import { getLore } from '@/content/lore/getLore';
 import { gridReleases } from '@/lib/discography/catalogue';
 import { albumTracks } from '@/lib/discography/tracks';
@@ -21,6 +21,7 @@ const PAGES = [
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const { releases } = await getCatalogue();
   const lore = await getLore();
   return [
     ...PAGES,

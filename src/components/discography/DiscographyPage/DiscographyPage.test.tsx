@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { discographyCopy } from '@/content/discography/discography';
-import { releases } from '@/content/discography/releases';
+import { fileReleases as releases } from '@/content/discography/releases';
 import { gridReleases } from '@/lib/discography/catalogue';
 import { summarize } from '@/lib/discography/summary';
 import DiscographyPage from './DiscographyPage';

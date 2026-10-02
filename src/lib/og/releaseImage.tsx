@@ -1,5 +1,6 @@
 import { ImageResponse } from 'next/og';
-import { findRelease, releases } from '@/content/discography/releases';
+import { getCatalogue } from '@/content/discography/getCatalogue';
+import { findRelease } from '@/content/discography/releases';
 import { previewCopy } from '@/content/site/preview';
 import { isOut, yearOf } from '@/lib/discography/catalogue';
 import { KIND_LABEL, formatDate } from '@/lib/discography/format';
@@ -17,7 +18,8 @@ const copy = previewCopy.release;
  * and Listen now or Pre-save.
  */
 export async function releaseImage(slug: string, trackSlug?: string) {
-  const release = findRelease(slug);
+  const { releases } = await getCatalogue();
+  const release = findRelease(releases, slug);
   const found = trackSlug ? findAlbumTrack(releases, slug, trackSlug) : null;
   if (!release || (trackSlug && !found))
     return new Response('Not found', { status: 404 });

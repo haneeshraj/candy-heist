@@ -2,7 +2,10 @@ import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { discographyCopy } from '@/content/discography/discography';
-import { findRelease, releases } from '@/content/discography/releases';
+import {
+  findRelease,
+  fileReleases as releases
+} from '@/content/discography/releases';
 import { findAlbumTrack } from '@/lib/discography/tracks';
 import SharePage from './SharePage';
 
@@ -25,7 +28,7 @@ const now = new Date(2026, 8, 30, 12).getTime();
 const all = { hidden: true } as const;
 
 function renderShare(slug: string) {
-  const release = findRelease(slug)!;
+  const release = findRelease(releases, slug)!;
   render(
     <SharePage copy={discographyCopy} release={release} renderedAt={now} />
   );

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { DiscographyPage } from '@/components/discography/DiscographyPage';
 import { discographyCopy } from '@/content/discography/discography';
-import { releases } from '@/content/discography/releases';
+import { getCatalogue } from '@/content/discography/getCatalogue';
 import { gridReleases } from '@/lib/discography/catalogue';
 import { summarize } from '@/lib/discography/summary';
 
@@ -13,7 +13,8 @@ export const revalidate = 3600;
 
 // The catalogue's grid: an album's tracks sit inside it, not beside it,
 // and every list sends only the summaries it shows.
-export default function DiscographyRoute() {
+export default async function DiscographyRoute() {
+  const { releases } = await getCatalogue();
   // A Server Component, made once per revalidation: the time it's made
   // is what "forthcoming" is measured against.
   // eslint-disable-next-line react-hooks/purity

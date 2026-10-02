@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ReleasePage } from '@/components/discography/ReleasePage';
 import { discographyCopy } from '@/content/discography/discography';
-import { releases } from '@/content/discography/releases';
+import { getCatalogue } from '@/content/discography/getCatalogue';
 import { moreLike } from '@/lib/discography/catalogue';
 import { summarize } from '@/lib/discography/summary';
 import { albumTracks, findAlbumTrack } from '@/lib/discography/tracks';
@@ -10,12 +10,13 @@ import { fill } from '@/lib/text/fill';
 
 // A track's own page: one that came out with its album (or EP, or
 // compilation), in the album's cover. The grid never lists it; the album's
-// running order leads here. Built ahead of time and made again each hour,
-// as the album's page is; any other track is a 404.
-export const dynamicParams = false;
+// running order leads here. Built ahead of time (or on its first visit,
+// for a release Candy Haven sends later) and made again each hour, as the
+// album's page is; any other track is a 404.
 export const revalidate = 3600;
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const { releases } = await getCatalogue();
   return albumTracks(releases).map(({ release, track }) => ({
     slug: release.slug,
     track: track.slug
@@ -25,6 +26,7 @@ export function generateStaticParams() {
 export async function generateMetadata(
   props: PageProps<'/discography/[slug]/[track]'>
 ): Promise<Metadata> {
+  const { releases } = await getCatalogue();
   const { slug, track } = await props.params;
   const found = findAlbumTrack(releases, slug, track);
   if (!found) return {};
@@ -42,6 +44,7 @@ export async function generateMetadata(
 export default async function TrackRoute(
   props: PageProps<'/discography/[slug]/[track]'>
 ) {
+  const { releases } = await getCatalogue();
   const { slug, track } = await props.params;
   const found = findAlbumTrack(releases, slug, track);
   if (!found) notFound();

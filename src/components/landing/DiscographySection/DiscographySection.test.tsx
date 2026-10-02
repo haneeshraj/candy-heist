@@ -2,7 +2,11 @@ import type { ReactNode } from 'react';
 import { render, screen } from '@testing-library/react';
 import { MotionGlobalConfig } from 'motion/react';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
-import { discographyContent } from '@/content/home/discography';
+import { fileReleases } from '@/content/discography/releases';
+import { discographyContentFor } from '@/content/home/discography';
+import { shelfOf } from '@/lib/discography/catalogue';
+
+const discographyContent = discographyContentFor(shelfOf(fileReleases));
 import { SHELF_POOL } from '@/lib/shelf/shelf';
 import DiscographySection from './DiscographySection';
 

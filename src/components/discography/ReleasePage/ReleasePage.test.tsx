@@ -2,7 +2,10 @@ import type { ReactNode } from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { discographyCopy } from '@/content/discography/discography';
-import { findRelease, releases } from '@/content/discography/releases';
+import {
+  findRelease,
+  fileReleases as releases
+} from '@/content/discography/releases';
 import { moreLike } from '@/lib/discography/catalogue';
 import { summarize } from '@/lib/discography/summary';
 import { appearsOn, findAlbumTrack } from '@/lib/discography/tracks';
@@ -34,7 +37,7 @@ const all = { hidden: true } as const;
 
 // As the routes do: a release's page, and a track's under it.
 function renderRelease(slug: string) {
-  const release = findRelease(slug)!;
+  const release = findRelease(releases, slug)!;
   render(
     <ReleasePage
       copy={copy}

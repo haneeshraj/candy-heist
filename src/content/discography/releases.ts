@@ -1,8 +1,10 @@
 import { z } from 'zod';
 import releasesData from './releases.json';
 
-// The catalogue, in shelf order (the home page's tape shelf runs through it
-// as written; the discography page sorts it itself).
+// The catalogue's shape, and the site's own catalogue, in shelf order (the
+// home page's tape shelf runs through it as written; the discography page
+// sorts it itself). Candy Haven's RELEASES replaces it whole once it
+// publishes (getCatalogue.ts), in this same shape.
 //
 // DUMMY DATA: only 4x4, Truths Collide and Over The Moon are real releases
 // (from the Candy Haven discography notes), and they carry only what those
@@ -123,7 +125,12 @@ export type ReleaseKind = Release['kind'];
 export type Platform = (typeof PLATFORMS)[number];
 export type Track = Release['tracks'][number];
 
-export const releases: Release[] = z
+/**
+ * The site's own catalogue, from releases.json: what the pages show until
+ * Candy Haven's RELEASES publishes, and never after. Read the catalogue the
+ * pages show through getCatalogue (getCatalogue.ts), not this.
+ */
+export const fileReleases: Release[] = z
   .array(releaseSchema)
   .min(1)
   .refine((list) => new Set(list.map((r) => r.slug)).size === list.length, {
@@ -131,7 +138,10 @@ export const releases: Release[] = z
   })
   .parse(releasesData);
 
-export function findRelease(slug: string | null | undefined) {
+export function findRelease(
+  releases: readonly Release[],
+  slug: string | null | undefined
+) {
   return releases.find((release) => release.slug === slug);
 }
 
