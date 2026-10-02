@@ -3,21 +3,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { verifyHavenToken } from '@/lib/haven/auth';
 import { revalidateLore } from '@/lib/lore/revalidate';
 import {
-  createChapter,
-  deleteChapter,
   loreSnapshot,
   publishChapter,
   publishOrder,
-  saveChapter,
-  savePlanet,
+  unpublishChapter,
   type LoreOutcome
 } from '@/lib/lore/store';
 import { GET } from './route';
-import { POST as CREATE } from './chapters/route';
-import { DELETE as DELETE_CHAPTER, PUT as SAVE } from './chapters/[id]/route';
-import { POST as PUBLISH } from './chapters/[id]/publish/route';
-import { POST as PUBLISH_ORDER } from './order/publish/route';
-import { PUT as SAVE_PLANET } from './planets/[id]/route';
+import { DELETE as UNPUBLISH, PUT as PUBLISH } from './chapters/[id]/route';
+import { PUT as ORDER } from './order/route';
 
 // The lore routes as Candy Haven meets them, with the store and Google's
 // keys stood in for: who gets in, what each passes on, and that the
@@ -34,21 +28,14 @@ vi.mock('@/lib/forms/limits', () => ({
 vi.mock('@/lib/lore/revalidate', () => ({ revalidateLore: vi.fn() }));
 vi.mock('@/lib/lore/store', () => ({
   loreSnapshot: vi.fn(),
-  createChapter: vi.fn(),
-  saveChapter: vi.fn(),
-  deleteChapter: vi.fn(),
   publishChapter: vi.fn(),
   unpublishChapter: vi.fn(),
-  reorderChapters: vi.fn(),
-  publishOrder: vi.fn(),
-  createPlanet: vi.fn(),
-  savePlanet: vi.fn(),
-  deletePlanet: vi.fn()
+  publishOrder: vi.fn()
 }));
 
 const ID = '6650f0f0f0f0f0f0f0f0f0f0';
 const context = { params: Promise.resolve({ id: ID }) };
-const snapshot = { live: false, chapters: [], planets: [] };
+const snapshot = { live: false, chapters: [] };
 const ok = (siteChanged = false): LoreOutcome => ({
   ok: true,
   snapshot,
@@ -85,18 +72,18 @@ describe('the lore API', () => {
     vi.mocked(verifyHavenToken).mockResolvedValue({ ok: false, status: 401 });
     expect((await GET(request('/api/haven/lore'))).status).toBe(401);
     expect(
-      (await CREATE(request('/x', json('POST', { title: 'A' })))).status
-    ).toBe(401);
-    expect(
-      (await DELETE_CHAPTER(request('/x', { method: 'DELETE' }), context))
+      (await PUBLISH(request('/x', json('PUT', { title: 'A' })), context))
         .status
     ).toBe(401);
+    expect(
+      (await UNPUBLISH(request('/x', { method: 'DELETE' }), context)).status
+    ).toBe(401);
     expect(loreSnapshot).not.toHaveBeenCalled();
-    expect(createChapter).not.toHaveBeenCalled();
-    expect(deleteChapter).not.toHaveBeenCalled();
+    expect(publishChapter).not.toHaveBeenCalled();
+    expect(unpublishChapter).not.toHaveBeenCalled();
   });
 
-  it('hands over the whole lore, uncached', async () => {
+  it('hands over what’s published, uncached', async () => {
     vi.mocked(loreSnapshot).mockResolvedValue(snapshot);
     const response = await GET(request('/api/haven/lore'));
     expect(response.status).toBe(200);
@@ -104,79 +91,73 @@ describe('the lore API', () => {
     expect(await response.json()).toEqual(snapshot);
   });
 
-  it('passes a new chapter on with who wrote it, and answers with the lore', async () => {
-    vi.mocked(createChapter).mockResolvedValue(ok());
-    const response = await CREATE(
-      request('/x', json('POST', { title: 'Omun' }))
-    );
+  it('passes a chapter on with who published it, and answers with the lore', async () => {
+    vi.mocked(publishChapter).mockResolvedValue(ok(true));
+    const body = { title: 'Omun', baseRevision: 0 };
+    const response = await PUBLISH(request('/x', json('PUT', body)), context);
     expect(response.status).toBe(200);
-    expect(createChapter).toHaveBeenCalledWith({ title: 'Omun' }, 'candy-uid');
-    expect(revalidateLore).not.toHaveBeenCalled();
+    expect(await response.json()).toEqual(snapshot);
+    expect(publishChapter).toHaveBeenCalledWith(ID, body, 'candy-uid');
   });
 
   it('refuses a body that isn’t JSON', async () => {
-    const response = await SAVE(
+    const response = await PUBLISH(
       request('/x', { method: 'PUT', body: 'not json' }),
       context
     );
     expect(response.status).toBe(400);
-    expect(saveChapter).not.toHaveBeenCalled();
+    expect(publishChapter).not.toHaveBeenCalled();
   });
 
   it('passes a conflict back as it is, with the newer version', async () => {
     const current = { id: ID, revision: 4 };
-    vi.mocked(saveChapter).mockResolvedValue({
+    vi.mocked(publishChapter).mockResolvedValue({
       ok: false,
       status: 409,
       body: { error: 'conflict', current }
     });
-    const response = await SAVE(
+    const response = await PUBLISH(
       request('/x', json('PUT', { title: 'Omun', baseRevision: 3 })),
       context
     );
     expect(response.status).toBe(409);
     expect(await response.json()).toEqual({ error: 'conflict', current });
-    expect(saveChapter).toHaveBeenCalledWith(
-      ID,
-      { title: 'Omun', baseRevision: 3 },
-      'candy-uid'
-    );
+    expect(revalidateLore).not.toHaveBeenCalled();
   });
 
   it('makes the lore pages again only when the site changed', async () => {
     vi.mocked(publishChapter).mockResolvedValue(ok(true));
-    expect(
-      (await PUBLISH(request('/x', json('POST', { revision: 2 })), context))
-        .status
-    ).toBe(200);
-    expect(publishChapter).toHaveBeenCalledWith(
-      ID,
-      { revision: 2 },
-      'candy-uid'
-    );
+    await PUBLISH(request('/x', json('PUT', { title: 'Omun' })), context);
     expect(revalidateLore).toHaveBeenCalledTimes(1);
 
     vi.mocked(publishOrder).mockResolvedValue(ok(false));
-    await PUBLISH_ORDER(request('/x', { method: 'POST' }));
+    await ORDER(request('/x', json('PUT', { ids: [] })));
+    expect(publishOrder).toHaveBeenCalledWith({ ids: [] });
     expect(revalidateLore).toHaveBeenCalledTimes(1);
 
-    vi.mocked(deleteChapter).mockResolvedValue(ok(true));
-    await DELETE_CHAPTER(request('/x', { method: 'DELETE' }), context);
+    vi.mocked(unpublishChapter).mockResolvedValue(ok(true));
+    await UNPUBLISH(request('/x', { method: 'DELETE' }), context);
+    expect(unpublishChapter).toHaveBeenCalledWith(ID);
     expect(revalidateLore).toHaveBeenCalledTimes(2);
   });
 
-  it('says why a planet in use can’t go', async () => {
-    vi.mocked(savePlanet).mockResolvedValue({
+  it('says why a chapter can’t be published', async () => {
+    vi.mocked(publishChapter).mockResolvedValue({
       ok: false,
       status: 400,
-      body: { error: 'invalid', message: 'A planet needs a name' }
+      body: {
+        error: 'invalid',
+        message: 'Give the chapter its one line before publishing it.'
+      }
     });
-    const response = await SAVE_PLANET(
-      request('/x', json('PUT', { name: '' })),
+    const response = await PUBLISH(
+      request('/x', json('PUT', { title: 'Omun' })),
       context
     );
     expect(response.status).toBe(400);
-    expect((await response.json()).message).toBe('A planet needs a name');
+    expect((await response.json()).message).toBe(
+      'Give the chapter its one line before publishing it.'
+    );
   });
 
   it('answers a database that isn’t there as unavailable, not a crash', async () => {

@@ -47,10 +47,13 @@ TEST_MONGODB_URI=mongodb://127.0.0.1:27017 npx vitest run store.integration
 ## Lore from Candy Haven
 
 The lore is written in Candy Haven's LORE department and published here
-through the same API (`/api/haven/lore/*`). Until Haven publishes its first
-chapter, `/lore` shows the markdown files in `src/content/lore/chapters`;
-from then on it shows only what Haven has published, refreshed on each
-publish rather than read per visit.
+through the same API (`/api/haven/lore/*`). Drafts and the planet library
+stay in Haven, on the machine they're written on; the database here keeps
+only what's published (`lore_published`, `lore_meta`), each chapter with a
+copy of its planet. Until Haven publishes its first chapter, `/lore` shows
+the markdown files in `src/content/lore/chapters`; from then on it shows
+only what Haven has published, refreshed on each publish rather than read
+per visit.
 
 Each chapter's planet is data, drawn by the planet engine in
 `src/lib/planets` (`engine` for the shapes, `react` for the SVG). Haven

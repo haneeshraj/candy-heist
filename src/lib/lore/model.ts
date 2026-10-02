@@ -5,9 +5,13 @@ import {
   type PlanetSpec
 } from '@/lib/planets/engine';
 
-// The lore as Candy Haven writes it, in the terms its API speaks: what a
-// draft chapter and a planet carry, how long each part may be, and the
-// snapshot of the whole lore Haven gets back from every request.
+// The lore as Candy Haven publishes it, in the terms its API speaks.
+//
+// Haven keeps the drafts and the planet library on the machine they're
+// written on. What reaches the site is a chapter as it stood when it was
+// published, with a copy of its planet. So this is what a published
+// chapter carries, how long each part may be, and the lore Haven gets
+// back from every request.
 //
 // Pure: the store (store.ts) and the routes use it, and so do the tests.
 
@@ -21,119 +25,78 @@ export const LORE_LIMITS = {
 
 export const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-/** A chapter's address from its title: "The Great Disconnection" → the-great-disconnection. */
-export function slugify(title: string): string {
-  const slug = title
-    .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, LORE_LIMITS.slug)
-    .replace(/-+$/g, '');
-  return slug || 'chapter';
-}
-
 const OBJECT_ID = /^[a-f0-9]{24}$/i;
 
-/** A preset (`preset:omun`) or a saved planet's id. */
+/** A chapter's id, made by Haven with the chapter: an ObjectId, in hex. */
+export const isChapterId = (id: string) => OBJECT_ID.test(id);
+
+/** A preset (`preset:omun`) or a planet from Haven's library. */
 export const isPlanetId = (id: string) => isPresetId(id) || OBJECT_ID.test(id);
 
-const planetId = z
-  .string()
-  .max(60)
-  .refine(isPlanetId, 'Pick a planet from the library');
-
-/** What Haven sends to create or save a chapter. Drafts may be unfinished. */
-export const chapterInputSchema = z.object({
+/** What Haven sends to publish a chapter: all of it, as it stands. */
+export const publishInputSchema = z.object({
+  slug: z
+    .string()
+    .trim()
+    .min(1, 'A chapter needs an address')
+    .max(LORE_LIMITS.slug)
+    .regex(SLUG_PATTERN, 'An address is lowercase words joined by dashes'),
   title: z
     .string()
     .trim()
     .min(1, 'A chapter needs a title')
     .max(LORE_LIMITS.title),
-  line: z.string().trim().max(LORE_LIMITS.line).default(''),
-  /** Its address. Left out, it's made from the title. Fixed once published. */
-  slug: z
+  line: z
     .string()
     .trim()
-    .max(LORE_LIMITS.slug)
-    .regex(SLUG_PATTERN, 'An address is lowercase words joined by dashes')
-    .optional(),
-  planetId: planetId.default('preset:network'),
-  body: z.string().max(LORE_LIMITS.body).default('')
-});
-export type ChapterInput = z.infer<typeof chapterInputSchema>;
-
-export const saveChapterSchema = chapterInputSchema.extend({
-  /** The revision the writer started from: a different one means someone else saved since. */
+    .min(1, 'Give the chapter its one line before publishing it.')
+    .max(LORE_LIMITS.line),
+  body: z.string().max(LORE_LIMITS.body),
+  /** Its planet, copied: changing it in Haven changes nothing here until it's published again. */
+  planet: z.object({
+    id: z.string().max(60).refine(isPlanetId, 'That planet has no id'),
+    name: z
+      .string()
+      .trim()
+      .min(1, 'A planet needs a name')
+      .max(LORE_LIMITS.planetName),
+    spec: planetSpecSchema
+  }),
+  /** The published revision Haven's draft started from: 0 when it's never been published. */
   baseRevision: z.number().int().min(0),
-  /** Save anyway, over the other person's version. */
+  /** Publish anyway, over a newer version someone else published. */
   force: z.boolean().default(false)
 });
+export type PublishInput = z.infer<typeof publishInputSchema>;
 
-export const planetInputSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, 'A planet needs a name')
-    .max(LORE_LIMITS.planetName),
-  spec: planetSpecSchema
-});
-
-export const savePlanetSchema = planetInputSchema.extend({
-  baseRevision: z.number().int().min(0),
-  force: z.boolean().default(false)
-});
-
-export const publishSchema = z.object({
-  /** The draft revision Haven is publishing, so it's the one the writer saw. */
-  revision: z.number().int().min(1)
-});
-
+/** The published chapters' order, as the full list of their ids. */
 export const orderSchema = z.object({
   ids: z.array(z.string().regex(OBJECT_ID)).max(500)
 });
 
 // ---------------------------------------------------------------- snapshot
 
-export interface PublishedForHaven {
-  revision: number;
-  planetRevision: number;
-  order: number;
-  publishedAt: string;
-  publishedBy: string;
-}
-
-export interface ChapterForHaven {
+export interface PublishedChapterForHaven {
   id: string;
   slug: string;
   title: string;
   line: string;
-  planetId: string;
   body: string;
+  planetId: string;
+  planetName: string;
+  planet: PlanetSpec;
   order: number;
+  /** Goes up by one on every publish, so two writers notice each other. */
   revision: number;
-  createdAt: string;
-  updatedAt: string;
-  updatedBy: string;
-  /** What's on the site for it, or null while it's only a draft. */
-  published: PublishedForHaven | null;
+  publishedAt: string;
+  /** Who published it last: a Firebase account id from Haven. */
+  publishedBy: string;
 }
 
-export interface PlanetForHaven {
-  id: string;
-  name: string;
-  spec: PlanetSpec;
-  revision: number;
-  createdAt: string;
-  updatedAt: string;
-  updatedBy: string;
-}
-
-/** The whole lore, as every request hands it back. */
+/** What's published, as every request hands it back. */
 export interface LoreSnapshot {
   /** Whether Haven's lore has replaced the site's files. */
   live: boolean;
-  chapters: ChapterForHaven[];
-  planets: PlanetForHaven[];
+  /** In their order on the site. */
+  chapters: PublishedChapterForHaven[];
 }

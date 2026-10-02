@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { randomUUID } from 'node:crypto';
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { vi } from 'vitest';
 import { presetFor } from '@/lib/planets/engine';
@@ -22,6 +22,16 @@ const snapshot = (outcome: LoreOutcome): LoreSnapshot => {
   return outcome.snapshot;
 };
 
+const chapter = (patch: object = {}) => ({
+  slug: 'omun',
+  title: 'Omun',
+  line: 'A resonance.',
+  body: 'It rises.',
+  planet: { id: 'preset:omun', name: 'Omun', spec: presetFor('omun').spec },
+  baseRevision: 0,
+  ...patch
+});
+
 describe.skipIf(!uri)('the lore store, against a real database', () => {
   beforeAll(() => {
     vi.stubEnv('MONGODB_URI', uri ?? '');
@@ -35,159 +45,118 @@ describe.skipIf(!uri)('the lore store, against a real database', () => {
     vi.unstubAllEnvs();
   });
 
-  it('writes, guards and publishes the lore', async () => {
+  it('publishes, guards and orders the lore', async () => {
     const store = await import('./store');
+    const omun = new ObjectId().toHexString();
+    const nayara = new ObjectId().toHexString();
 
-    // A planet of its own, made from a preset.
-    let lore = snapshot(
-      await store.createPlanet(
-        { name: 'Ember', spec: presetFor('candy').spec },
-        'mist'
+    // Nothing published: the site keeps its files.
+    expect(await store.loreSnapshot()).toEqual({ live: false, chapters: [] });
+
+    // Text the pages can't show is refused before anything is kept.
+    expect(
+      await store.publishChapter(omun, chapter({ body: '' }), 'mist')
+    ).toMatchObject({ ok: false, status: 400 });
+
+    // The first publish switches the site over.
+    const first = await store.publishChapter(omun, chapter(), 'mist');
+    expect(first).toMatchObject({ ok: true, siteChanged: true });
+    let lore = snapshot(first);
+    expect(lore.live).toBe(true);
+    expect(lore.chapters).toEqual([
+      expect.objectContaining({
+        id: omun,
+        slug: 'omun',
+        planetId: 'preset:omun',
+        planetName: 'Omun',
+        order: 0,
+        revision: 1,
+        publishedBy: 'mist'
+      })
+    ]);
+
+    // A second chapter can't take the first one's address; with its own,
+    // it goes last.
+    expect(
+      await store.publishChapter(nayara, chapter({ title: 'Nayara' }), 'candy')
+    ).toMatchObject({ ok: false, status: 409, body: { error: 'slug_taken' } });
+    lore = snapshot(
+      await store.publishChapter(
+        nayara,
+        chapter({ slug: 'nayara', title: 'Nayara' }),
+        'candy'
       )
     );
-    expect(lore.planets).toHaveLength(1);
-    const ember = lore.planets[0];
-    expect(ember).toMatchObject({
-      name: 'Ember',
-      revision: 1,
-      updatedBy: 'mist'
-    });
-
-    // Two chapters, the second taking a number for its address.
-    lore = snapshot(
-      await store.createChapter({ title: 'Omun', planetId: ember.id }, 'mist')
-    );
-    lore = snapshot(await store.createChapter({ title: 'Omun' }, 'candy'));
     expect(lore.chapters.map((c) => [c.slug, c.order])).toEqual([
       ['omun', 0],
-      ['omun-2', 1]
+      ['nayara', 1]
     ]);
-    expect(lore.live).toBe(false);
-    const [first, second] = lore.chapters;
 
-    // A save from an older revision is refused with the newer one...
+    // A publish from an older version is refused with the newer one...
     lore = snapshot(
-      await store.saveChapter(
-        first.id,
-        {
-          title: 'Omun',
-          line: 'A resonance.',
-          body: 'It rises.',
-          planetId: ember.id,
-          baseRevision: 1
-        },
+      await store.publishChapter(
+        omun,
+        chapter({ body: 'It *rises*.', baseRevision: 1 }),
         'mist'
       )
     );
-    const stale = await store.saveChapter(
-      first.id,
-      { title: 'Omun?', planetId: ember.id, baseRevision: 1 },
+    const stale = await store.publishChapter(
+      omun,
+      chapter({ body: 'It falls.', baseRevision: 1 }),
       'candy'
     );
     expect(stale).toMatchObject({
       ok: false,
       status: 409,
-      body: { error: 'conflict' }
+      body: { error: 'conflict', current: { revision: 2, body: 'It *rises*.' } }
     });
-    // ...unless the writer chooses to overwrite it.
-    const forced = snapshot(
-      await store.saveChapter(
-        first.id,
-        {
-          title: 'Omun',
-          line: 'A resonance.',
-          body: 'It *rises*.',
-          planetId: ember.id,
-          baseRevision: 1,
-          force: true
-        },
+    // ...unless the writer chooses to publish over it.
+    lore = snapshot(
+      await store.publishChapter(
+        omun,
+        chapter({ body: 'It falls.', baseRevision: 1, force: true }),
         'candy'
       )
     );
-    const saved = forced.chapters.find((c) => c.id === first.id);
-    expect(saved).toMatchObject({ revision: 3, updatedBy: 'candy' });
-
-    // Publishing checks the text first, and the version.
-    expect(
-      await store.publishChapter(second.id, { revision: 1 }, 'mist')
-    ).toMatchObject({
-      ok: false,
-      status: 400
-    });
-    expect(
-      await store.publishChapter(first.id, { revision: 2 }, 'mist')
-    ).toMatchObject({
-      ok: false,
-      status: 409
-    });
-    const published = await store.publishChapter(
-      first.id,
-      { revision: 3 },
-      'mist'
-    );
-    expect(published).toMatchObject({ ok: true, siteChanged: true });
-    lore = snapshot(published);
-    expect(lore.live).toBe(true);
-    expect(
-      lore.chapters.find((c) => c.id === first.id)?.published
-    ).toMatchObject({
+    expect(lore.chapters.find((c) => c.id === omun)).toMatchObject({
       revision: 3,
-      planetRevision: 1,
-      publishedBy: 'mist'
+      body: 'It falls.',
+      publishedBy: 'candy'
     });
 
     // A published chapter keeps its address.
     expect(
-      await store.saveChapter(
-        first.id,
-        {
-          title: 'Omun',
-          slug: 'omun-renamed',
-          planetId: ember.id,
-          baseRevision: 3
-        },
+      await store.publishChapter(
+        omun,
+        chapter({ slug: 'omun-renamed', baseRevision: 3 }),
         'mist'
       )
     ).toMatchObject({ ok: false, status: 400 });
 
-    // Its planet can't be deleted while chapters use it.
-    expect(await store.deletePlanet(ember.id)).toMatchObject({
-      ok: false,
-      status: 409,
-      body: { error: 'in_use', chapters: ['Omun'] }
-    });
-
-    // The order: an out-of-date list is refused; a full one is kept, and
-    // reaches the site only when published.
-    expect(await store.reorderChapters({ ids: [second.id] })).toMatchObject({
+    // The order: an out-of-date list is refused; a full one goes live.
+    expect(await store.publishOrder({ ids: [nayara] })).toMatchObject({
       ok: false,
       status: 409,
       body: { error: 'out_of_date' }
     });
-    lore = snapshot(
-      await store.reorderChapters({ ids: [second.id, first.id] })
-    );
-    expect(lore.chapters.map((c) => c.id)).toEqual([second.id, first.id]);
-    expect(lore.chapters.find((c) => c.id === first.id)?.published?.order).toBe(
-      0
-    );
-    lore = snapshot(await store.publishOrder());
-    expect(lore.chapters.find((c) => c.id === first.id)?.published?.order).toBe(
-      1
-    );
+    lore = snapshot(await store.publishOrder({ ids: [nayara, omun] }));
+    expect(lore.chapters.map((c) => c.id)).toEqual([nayara, omun]);
 
-    // Unpublishing keeps the draft; deleting takes both.
-    const unpublished = await store.unpublishChapter(first.id);
+    // Taken down, it's gone from the site; a draft that started from it
+    // hears so rather than quietly putting it back.
+    const unpublished = await store.unpublishChapter(omun);
     expect(unpublished).toMatchObject({ ok: true, siteChanged: true });
+    expect(snapshot(unpublished).chapters.map((c) => c.id)).toEqual([nayara]);
     expect(
-      snapshot(unpublished).chapters.find((c) => c.id === first.id)?.published
-    ).toBeNull();
-    const deleted = await store.deleteChapter(first.id);
-    expect(deleted).toMatchObject({ ok: true, siteChanged: false });
-    expect(snapshot(deleted).chapters.map((c) => c.id)).toEqual([second.id]);
-
-    // With nothing using it, the planet can go.
-    lore = snapshot(await store.deletePlanet(ember.id));
-    expect(lore.planets).toEqual([]);
+      await store.publishChapter(omun, chapter({ baseRevision: 3 }), 'mist')
+    ).toMatchObject({
+      ok: false,
+      status: 409,
+      body: { error: 'conflict', current: null }
+    });
+    expect(await store.unpublishChapter(omun)).toMatchObject({
+      ok: true,
+      siteChanged: false
+    });
   });
 });

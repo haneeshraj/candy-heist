@@ -1,10 +1,9 @@
 import { loreRoute } from '@/lib/haven/loreRoutes';
-import { reorderChapters } from '@/lib/lore/store';
+import { publishOrder } from '@/lib/lore/store';
 
-// The drafts' order, as the full list of their ids. The site keeps its
-// order until it's published (./publish).
+// The published chapters' order, as the full list of their ids.
 export function PUT(request: Request) {
-  return loreRoute(request, (_uid, body) => reorderChapters(body), {
+  return loreRoute(request, (_uid, body) => publishOrder(body), {
     body: true
   });
 }

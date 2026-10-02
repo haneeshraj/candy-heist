@@ -1,17 +1,18 @@
 import { loreRoute, type IdContext } from '@/lib/haven/loreRoutes';
-import { deleteChapter, saveChapter } from '@/lib/lore/store';
+import { publishChapter, unpublishChapter } from '@/lib/lore/store';
 
-// One chapter's draft: PUT saves it (refused, with the newer version, if
-// someone else saved since), DELETE removes it everywhere, site included.
+// One chapter on the site: PUT publishes it as Haven sends it (refused,
+// with the newer version, if someone else published it since the draft
+// started from it); DELETE takes it off. Haven keeps the draft either way.
 
 export async function PUT(request: Request, { params }: IdContext) {
   const { id } = await params;
-  return loreRoute(request, (uid, body) => saveChapter(id, body, uid), {
+  return loreRoute(request, (uid, body) => publishChapter(id, body, uid), {
     body: true
   });
 }
 
 export async function DELETE(request: Request, { params }: IdContext) {
   const { id } = await params;
-  return loreRoute(request, () => deleteChapter(id));
+  return loreRoute(request, () => unpublishChapter(id));
 }

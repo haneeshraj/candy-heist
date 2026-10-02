@@ -16,11 +16,10 @@ export const COLLECTIONS = {
   deletions: 'deletions',
   /** Recent sends per visitor, for the hourly limit. */
   rateLimits: 'rate_limits',
-  /** The lore as Candy Haven is writing it: one draft per chapter. */
-  loreDrafts: 'lore_drafts',
-  /** The planets made in Haven's LORE editor (presets live in code). */
-  lorePlanets: 'lore_planets',
-  /** What the lore pages show: each chapter as it was last published. */
+  /**
+   * What the lore pages show: each chapter as Candy Haven last published
+   * it. Drafts and the planet library stay in Haven, on its own machine.
+   */
   lorePublished: 'lore_published',
   /** Whether Haven's lore has replaced the files: one document, `lore`. */
   loreMeta: 'lore_meta'
@@ -50,47 +49,24 @@ export interface DeletionDocument {
 /** Who last wrote something: a Firebase account id from Candy Haven. */
 type Uid = string;
 
-export interface LoreDraftDocument {
-  _id: ObjectId;
-  slug: string;
-  title: string;
-  line: string;
-  /** `preset:<look>` or a saved planet's id. */
-  planetId: string;
-  /** The text, in the lore's markdown. */
-  body: string;
-  order: number;
-  /** Goes up by one on every save, so two writers notice each other. */
-  revision: number;
-  createdAt: Date;
-  updatedAt: Date;
-  updatedBy: Uid;
-}
-
-export interface LorePlanetDocument {
-  _id: ObjectId;
-  name: string;
-  spec: PlanetSpec;
-  revision: number;
-  createdAt: Date;
-  updatedAt: Date;
-  updatedBy: Uid;
-}
-
-/** A chapter as published, keyed by its draft's id. Self-contained: the
+/**
+ * A chapter as published, keyed by the id Haven gave it. Self-contained: the
  * planet is copied in, so changing it in Haven changes nothing on the site
- * until the chapter is published again. */
+ * until the chapter is published again.
+ */
 export interface LorePublishedDocument {
   _id: ObjectId;
   slug: string;
   title: string;
   line: string;
+  /** The text, in the lore's markdown. */
   body: string;
   planet: PlanetSpec;
+  /** The planet's id in Haven (`preset:<look>` or one of its library's). */
   planetId: string;
-  planetRevision: number;
+  planetName: string;
   order: number;
-  /** The draft revision this is. */
+  /** Goes up by one on every publish, so two writers notice each other. */
   revision: number;
   publishedAt: Date;
   publishedBy: Uid;
@@ -141,10 +117,6 @@ export function ensureIndexes(db: Db): Promise<void> {
     db
       .collection(COLLECTIONS.rateLimits)
       .createIndex({ expireAt: 1 }, { expireAfterSeconds: 0 }),
-    db
-      .collection(COLLECTIONS.loreDrafts)
-      .createIndex({ slug: 1 }, { unique: true }),
-    db.collection(COLLECTIONS.loreDrafts).createIndex({ order: 1 }),
     db
       .collection(COLLECTIONS.lorePublished)
       .createIndex({ slug: 1 }, { unique: true }),
