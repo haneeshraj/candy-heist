@@ -37,6 +37,8 @@ export const contactPageSchema = z.object({
     sending: text,
     /** A toast, when the message fails to send. */
     failed: z.object({ title: text, text }),
+    /** A toast, when one visitor has sent too many in the hour. */
+    limited: z.object({ title: text, text }),
     errors: z.object({
       name: text,
       email: text,

@@ -1,9 +1,19 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
+  // `server-only` refuses to load outside a Next server build, by design;
+  // under test it's a no-op, and the server code it guards is mocked.
+  resolve: {
+    alias: {
+      'server-only': fileURLToPath(
+        new URL('./vitest.server-only.ts', import.meta.url)
+      )
+    }
+  },
   test: {
     environment: 'jsdom',
     setupFiles: './vitest.setup.ts',

@@ -20,6 +20,30 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Environment
+
+The contact form and the DJ enquiry form file what visitors send in a
+MongoDB Atlas database, which Candy Haven reads through the site's API
+(`/api/haven/*`). Copy `.env.example` to `.env.local` and fill it in; the
+same names go in Vercel's environment variables for the live site.
+
+| Name                  | What it is                                                         |
+| --------------------- | ------------------------------------------------------------------ |
+| `MONGODB_URI`         | Atlas connection string (`heist-dev` here, `heist-prod` live)      |
+| `MONGODB_DB`          | `candy_heist_dev` here, `candy_heist_prod` live                    |
+| `FIREBASE_PROJECT_ID` | The Firebase project Candy Haven signs in to                       |
+| `HAVEN_ALLOWED_UIDS`  | The two Firebase account ids allowed into the API, comma-separated |
+
+Without them the site still runs; the two forms say they couldn't send,
+and the API answers that it isn't configured.
+
+The store's database test is opt-in, against a server you don't mind a
+scratch database on (it drops it after):
+
+```bash
+TEST_MONGODB_URI=mongodb://127.0.0.1:27017 npx vitest run store.integration
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

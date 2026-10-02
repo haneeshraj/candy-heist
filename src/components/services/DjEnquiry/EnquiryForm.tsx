@@ -8,6 +8,7 @@ import {
   type InputHTMLAttributes
 } from 'react';
 import { Field } from '@/components/common/Field';
+import { FormTrap, type FormTrapHandle } from '@/components/common/FormTrap';
 import { SigilChip } from '@/components/common/SigilChip';
 import { ArrowIcon } from '@/components/icons';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
@@ -60,6 +61,7 @@ export default function EnquiryForm({
   onSent
 }: EnquiryFormProps) {
   const rootRef = useRef<HTMLFormElement | null>(null);
+  const trapRef = useRef<FormTrapHandle | null>(null);
   const baseId = useId();
   const [values, setValues] = useState<DjEnquiry>(emptyEnquiry);
   const [errors, setErrors] = useState<EnquiryErrors>({});
@@ -88,9 +90,13 @@ export default function EnquiryForm({
     }
     setSending(true);
     try {
-      onSent(await sendEnquiry(values));
-    } catch {
+      const result = await sendEnquiry(values, trapRef.current?.check());
+      if (result.ok) onSent(result.sent);
       // What was typed stays in the form.
+      else if (result.reason === 'limited')
+        notifyError(copy.limited.title, copy.limited.text);
+      else notifyError(copy.failed.title, copy.failed.text);
+    } catch {
       notifyError(copy.failed.title, copy.failed.text);
     } finally {
       setSending(false);
@@ -126,6 +132,7 @@ export default function EnquiryForm({
       onSubmit={submit}
       noValidate
     >
+      <FormTrap ref={trapRef} />
       <p className={styles.required} data-reveal>
         <span aria-hidden="true">* </span>
         {copy.required}

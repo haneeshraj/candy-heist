@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { flushSync } from 'react-dom';
 import { Field } from '@/components/common/Field';
+import { FormTrap, type FormTrapHandle } from '@/components/common/FormTrap';
 import { SigilChip } from '@/components/common/SigilChip';
 import { ArrowIcon } from '@/components/icons';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
@@ -60,6 +61,7 @@ export default function ContactForm({
   onSent
 }: ContactFormProps) {
   const rootRef = useRef<HTMLFormElement | null>(null);
+  const trapRef = useRef<FormTrapHandle | null>(null);
   const baseId = useId();
   const [values, setValues] = useState<ContactMessage>(emptyMessage);
   const [errors, setErrors] = useState<MessageErrors>({});
@@ -93,9 +95,13 @@ export default function ContactForm({
     }
     setSending(true);
     try {
-      onSent(await sendMessage(values));
-    } catch {
+      const result = await sendMessage(values, trapRef.current?.check());
+      if (result.ok) onSent(result.sent);
       // What was typed stays in the form.
+      else if (result.reason === 'limited')
+        notifyError(copy.limited.title, copy.limited.text);
+      else notifyError(copy.failed.title, copy.failed.text);
+    } catch {
       notifyError(copy.failed.title, copy.failed.text);
     } finally {
       setSending(false);
@@ -149,6 +155,7 @@ export default function ContactForm({
       onSubmit={submit}
       noValidate
     >
+      <FormTrap ref={trapRef} />
       <p className={styles.required} data-reveal>
         <span aria-hidden="true">* </span>
         {copy.required}

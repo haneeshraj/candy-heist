@@ -5,7 +5,8 @@ import { vi } from 'vitest';
 // it unconditionally on every render, so any test that mounts a component
 // using them needs at least a non-throwing default. Tests that care about a
 // specific match state override this themselves (see useMediaQuery.test.ts).
-if (!window.matchMedia) {
+// Server tests run in plain Node, with no window to give it to.
+if (typeof window !== 'undefined' && !window.matchMedia) {
   window.matchMedia = vi.fn().mockImplementation((query: string) => ({
     matches: false,
     media: query,

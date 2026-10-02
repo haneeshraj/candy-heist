@@ -50,6 +50,10 @@
     "failed": {
       "title": "Your enquiry didn’t send",
       "text": "Nothing was lost. Try again in a moment."
+    },
+    "limited": {
+      "title": "That’s a lot of enquiries",
+      "text": "Candy has the ones you sent. Try again in an hour, or email instead."
     }
   },
   "aside": {

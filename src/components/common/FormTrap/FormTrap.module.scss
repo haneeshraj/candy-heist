@@ -1,0 +1,9 @@
+// Off the page, not just hidden: a bot reading the markup still finds the
+// field, but nobody sees it, and it takes no room.
+.trap {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}

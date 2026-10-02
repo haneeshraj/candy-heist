@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { emptyMessage, MAX_LENGTH, type ContactMessage } from './message';
-import { IncompleteMessageError, sendMessage } from './sendMessage';
 import { validateMessage, type MessageErrorCopy } from './validation';
 
 const copy: MessageErrorCopy = {
@@ -59,20 +58,5 @@ describe('validateMessage', () => {
     expect(validateMessage(complete({ name: '   ' }), copy)).toEqual({
       name: 'name'
     });
-  });
-});
-
-describe('sendMessage', () => {
-  it('hands back who it is from, trimmed', async () => {
-    await expect(sendMessage(complete({ name: ' Alex ' }))).resolves.toEqual({
-      name: 'Alex',
-      email: 'alex@nightfall.events'
-    });
-  });
-
-  it('refuses an incomplete message', async () => {
-    await expect(sendMessage(complete({ message: '' }))).rejects.toBeInstanceOf(
-      IncompleteMessageError
-    );
   });
 });

@@ -47,7 +47,9 @@ export const djEnquirySchema = z.object({
     send: text,
     sending: text,
     /** A toast, when the enquiry fails to send. */
-    failed: z.object({ title: text, text })
+    failed: z.object({ title: text, text }),
+    /** A toast, when one visitor has sent too many in the hour. */
+    limited: z.object({ title: text, text })
   }),
   aside: z.object({
     photo: z.object({ src: text, alt: text }),

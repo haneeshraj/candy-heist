@@ -28,6 +28,17 @@ vi.mock('next/link', () => ({
   )
 }));
 
+// The real one files in the database; here it hands the enquiry back as
+// the server would, tidied.
+vi.mock('@/lib/enquiry/sendEnquiry', () => ({
+  sendEnquiry: vi.fn(async (raw: Record<string, string>) => ({
+    ok: true,
+    sent: Object.fromEntries(
+      Object.entries(raw).map(([field, value]) => [field, value.trim()])
+    )
+  }))
+}));
+
 vi.setConfig({ testTimeout: 30000 });
 const ALL = { hidden: true } as const;
 const { form, sent } = content;

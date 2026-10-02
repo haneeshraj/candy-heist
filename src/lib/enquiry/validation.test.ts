@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { emptyEnquiry, MAX_LENGTH, type DjEnquiry } from './enquiry';
-import { IncompleteEnquiryError, sendEnquiry } from './sendEnquiry';
 import { validateEnquiry, type EnquiryErrorCopy } from './validation';
 
 const copy: EnquiryErrorCopy = {
@@ -50,18 +49,5 @@ describe('validateEnquiry', () => {
     expect(validateEnquiry(complete({ eventName: long }), copy)).toEqual({
       eventName: `under ${MAX_LENGTH.eventName}`
     });
-  });
-});
-
-describe('sendEnquiry', () => {
-  it('hands back the enquiry, trimmed', async () => {
-    const sent = await sendEnquiry(complete({ name: '  Alex Martin ' }));
-    expect(sent.name).toBe('Alex Martin');
-  });
-
-  it('refuses one without what is needed', async () => {
-    await expect(sendEnquiry(emptyEnquiry())).rejects.toBeInstanceOf(
-      IncompleteEnquiryError
-    );
   });
 });

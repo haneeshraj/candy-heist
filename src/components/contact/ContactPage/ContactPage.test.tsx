@@ -19,6 +19,14 @@ vi.mock('next/link', () => ({
   )
 }));
 
+// The real one files in the database; here it answers as the server would.
+vi.mock('@/lib/contact/sendMessage', () => ({
+  sendMessage: vi.fn(async (raw: { name: string; email: string }) => ({
+    ok: true,
+    sent: { name: raw.name.trim(), email: raw.email.trim() }
+  }))
+}));
+
 const { form: copy } = contactPageContent;
 
 function setup() {

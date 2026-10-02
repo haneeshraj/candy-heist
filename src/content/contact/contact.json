@@ -39,6 +39,10 @@
       "title": "Your message didn’t send",
       "text": "Nothing was lost. Try again in a moment."
     },
+    "limited": {
+      "title": "That’s a lot of messages",
+      "text": "Candy has the ones you sent. Try again in an hour, or email instead."
+    },
     "errors": {
       "name": "Add your name.",
       "email": "Add an email address we can reach you at.",
