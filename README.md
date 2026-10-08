@@ -24,22 +24,33 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 The contact form and the DJ enquiry form file what visitors send in a
 MongoDB Atlas database, which Candy Haven reads through the site's API
-(`/api/haven/*`). Copy `.env.example` to `.env.local` and fill it in; the
-same names go in Vercel's environment variables for the live site.
+(`/api/haven/*`); bookings and their payments go there too (see Bookings
+and payments, below). Copy `.env.example` to `.env.local` and fill it in;
+the same names go in Vercel's environment variables for the live site.
 
-| Name                       | What it is                                                         |
-| -------------------------- | ------------------------------------------------------------------ |
-| `MONGODB_URI`              | Atlas connection string (`heist-dev` here, `heist-prod` live)      |
-| `MONGODB_DB`               | `candy_heist_dev` here, `candy_heist_prod` live                    |
-| `FIREBASE_PROJECT_ID`      | The Firebase project Candy Haven signs in to                       |
-| `HAVEN_ALLOWED_UIDS`       | The two Firebase account ids allowed into the API, comma-separated |
-| `NEXT_PUBLIC_SUPABASE_URL` | The Supabase project release covers are stored in                  |
-| `SUPABASE_SECRET_KEY`      | Its secret key (`sb_secret_...`), server only                      |
-| `SUPABASE_COVERS_BUCKET`   | `covers-dev` here, `covers` live (`covers-dev` when missing)       |
+| Name                                 | What it is                                                         |
+| ------------------------------------ | ------------------------------------------------------------------ |
+| `MONGODB_URI`                        | Atlas connection string (`heist-dev` here, `heist-prod` live)      |
+| `MONGODB_DB`                         | `candy_heist_dev` here, `candy_heist_prod` live                    |
+| `FIREBASE_PROJECT_ID`                | The Firebase project Candy Haven signs in to                       |
+| `HAVEN_ALLOWED_UIDS`                 | The two Firebase account ids allowed into the API, comma-separated |
+| `NEXT_PUBLIC_SUPABASE_URL`           | The Supabase project release covers are stored in                  |
+| `SUPABASE_SECRET_KEY`                | Its secret key (`sb_secret_...`), server only                      |
+| `SUPABASE_COVERS_BUCKET`             | `covers-dev` here, `covers` live (`covers-dev` when missing)       |
+| `STRIPE_SECRET_KEY`                  | Stripe's secret key: `sk_test_...` here, `sk_live_...` live        |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Its publishable key, `pk_test_...` / `pk_live_...`                 |
+| `STRIPE_WEBHOOK_SECRET`              | The webhook's signing secret, `whsec_...`                          |
+| `GOOGLE_CLIENT_ID`                   | The OAuth client Candy's Google account is connected through       |
+| `GOOGLE_CLIENT_SECRET`               | Its secret                                                         |
+| `GOOGLE_CONNECT_KEY`                 | A long random string, the key to `/api/google/connect`             |
+| `GOOGLE_TOKEN_KEY`                   | 32 random bytes, base64: seals Candy's sign-in in the database     |
+| `BOOKING_NOTIFY_EMAIL`               | Optional: where Candy's booking notes go (his Gmail when unset)    |
 
 Without them the site still runs; the two forms say they couldn't send,
 the API answers that it isn't configured, and every release shows the
-placeholder cover.
+placeholder cover. Without Stripe, the payment step says payment isn't
+open yet; without Google, open times come from Candy's hours and the
+bookings alone, and nothing is put on a calendar or emailed.
 
 The stores' database tests are opt-in, against a server you don't mind a
 scratch database on (each drops its own after):
@@ -113,6 +124,68 @@ browser. Haven sends each cover already brought down to about 750×750
 
 - `PUT /api/haven/releases/<id>/cover`: the image itself as the body (`Content-Type: image/png`, `image/jpeg` or `image/webp`, up to 8 MB, at least 300×300); answers with the snapshot, where each release's `cover` is its public URL or `null`.
 - `DELETE /api/haven/releases/<id>/cover`: back to the placeholder.
+
+## Bookings and payments
+
+"Book me as a music producer" (`/services/producer`) and "Pay an
+invoice" (`/services/pay`) take real payments, through Stripe, in CAD.
+
+- **Prices** are each service's `price` in
+  `src/content/services/catalogue.json`, in dollars. A service without one
+  can't be paid for online; its payment step says so.
+- **Open times** are Candy's start times per weekday, in his zone, in
+  `src/content/services/hours.json` (also: days off, the notice, how far
+  ahead, a buffer between sessions, and how long a time is held while
+  someone pays). Anything busy on his Google Calendar, and any session
+  booked or being paid for, shows as taken. Visitors see times in their
+  own time zone. `/api/booking/slots` serves them a month at a time.
+- **Paying** opens a Stripe payment on the server for what's due now (a
+  session in full, half a commission), Stripe's card fields take the
+  card, and the server checks with Stripe before booking it.
+- **Once paid**, a session goes on Candy's calendar with a Google Meet
+  link and the client invited, a commission gets its second-half invoice
+  (`CH-XXXXXX-2`, paid on `/services/pay`), and the client's receipt and
+  Candy's note go out from his Gmail. `/api/stripe/webhook` does the same
+  if the visitor's tab closes before the page finishes; each step is done
+  once.
+
+Stored in `bookings`, `invoices` and `google_account` (Candy's sign-in,
+sealed with `GOOGLE_TOKEN_KEY`).
+
+### Stripe
+
+1. In the Stripe dashboard, in test mode, copy the publishable and secret
+   keys into `.env.local`.
+2. Add a webhook endpoint for `https://<site>/api/stripe/webhook`, sending
+   `payment_intent.succeeded`, and copy its signing secret. Locally,
+   `stripe listen --forward-to localhost:3000/api/stripe/webhook` prints
+   one to use instead.
+3. Test with card `4242 4242 4242 4242`, any future expiry and any CVC;
+   `4000 0025 0000 3155` asks for 3-D Secure, `4000 0000 0000 9995` is
+   declined.
+
+Live keys go in only on the live site, once Candy's Stripe account is
+activated.
+
+### Candy's Google account
+
+1. In the Google Cloud console (the Firebase project works), enable the
+   Google Calendar API and the Gmail API.
+2. OAuth consent screen: External, then **Publish app** to put it in
+   production. Left in testing, the sign-in stops working after 7 days.
+   It isn't verified, so Google shows a warning on the sign-in page;
+   that's fine for one account (Advanced, then continue).
+3. Credentials: an OAuth client of type Web application, with these
+   redirect URIs: `http://localhost:3000/api/google/callback` and
+   `https://<site>/api/google/callback`. Copy its id and secret.
+4. Make the two keys and set all four variables:
+   `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`
+   once for `GOOGLE_TOKEN_KEY` and once for `GOOGLE_CONNECT_KEY`.
+5. Candy opens `https://<site>/api/google/connect?key=<GOOGLE_CONNECT_KEY>`,
+   signs in and allows everything asked for: seeing when he's free or
+   busy (not what his events are), adding events to his calendar, and
+   sending email as him. The page then says which account is connected.
+   Connecting again replaces it.
 
 ## Learn More
 
