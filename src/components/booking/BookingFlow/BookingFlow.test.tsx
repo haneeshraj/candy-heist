@@ -5,9 +5,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { catalogue } from '@/content/services/catalogue';
 import { producerFlowContent as content } from '@/content/services/flows';
 import { siteContact } from '@/content/site/contact';
-import { slotsFor } from '@/lib/booking/availability';
-import { addDays, todayIn, type DateKey } from '@/lib/booking/dates';
 import { DRAFT_KEY } from '@/lib/booking/persistence';
+import { dayIn, visitorTimeZone } from '@/lib/booking/zone';
 import BookingFlow from './BookingFlow';
 
 vi.mock('next/image', () => ({
@@ -32,6 +31,26 @@ vi.mock('next/link', () => ({
   )
 }));
 
+// The server and Stripe, as stand-ins: a payment opens, goes through, and
+// the booking comes back.
+const server = vi.hoisted(() => ({
+  startBookingPayment: vi.fn(),
+  finishBookingPayment: vi.fn()
+}));
+vi.mock('@/lib/booking/actions', () => server);
+const stripe = vi.hoisted(() => ({ confirmCardPayment: vi.fn() }));
+vi.mock('@stripe/react-stripe-js', () => ({
+  Elements: ({ children }: { children: ReactNode }) => children,
+  CardNumberElement: () => <div />,
+  CardExpiryElement: () => <div />,
+  CardCvcElement: () => <div />,
+  useStripe: () => stripe,
+  useElements: () => ({ getElement: () => ({}) })
+}));
+vi.mock('@/lib/payments/client', () => ({
+  getStripeJs: () => Promise.resolve({})
+}));
+
 // The whole flow renders hundreds of animated letter spans, and role
 // queries check every ancestor's styles to rule out hidden elements, which
 // is slow in jsdom. Nothing here is hidden (reduced motion is on), so the
@@ -50,21 +69,19 @@ function mockMatchMedia() {
   }));
 }
 
-// The first open time from tomorrow on, so a draft can resume past the
-// date step.
-function openSlot() {
-  const today = todayIn(content.timeZone);
-  for (let day = 1; day < 60; day++) {
-    const date: DateKey = addDays(today, day);
-    const slot = slotsFor(date, today).find((s) => s.open);
-    if (slot) return { date, time: slot.time };
-  }
-  throw new Error('No open time in the next 60 days');
+// A time a few days on, so a draft can resume past the date step.
+function laterSlot() {
+  const start = new Date(Date.now() + 3 * 86_400_000);
+  start.setUTCMinutes(0, 0, 0);
+  return { date: dayIn(start, visitorTimeZone()), start: start.toISOString() };
 }
+
+// Prices set, so the payment step can take the card.
+const priced = catalogue.map((item) => ({ ...item, price: 120 }));
 
 const renderFlow = () =>
   render(
-    <BookingFlow content={content} items={catalogue} contact={siteContact} />
+    <BookingFlow content={content} items={priced} contact={siteContact} />
   );
 
 const cards = () =>
@@ -77,6 +94,31 @@ describe('BookingFlow', () => {
     mockMatchMedia();
     window.sessionStorage.clear();
     window.history.replaceState(null, '', '/services/producer');
+    server.startBookingPayment
+      .mockReset()
+      .mockResolvedValue({
+        ok: true,
+        ref: 'CH-K3P2Q8',
+        clientSecret: 'pi_secret'
+      });
+    server.finishBookingPayment.mockReset().mockResolvedValue({
+      ok: true,
+      confirmation: {
+        reference: 'CH-K3P2Q8',
+        itemId: 'mixing',
+        kind: 'commission',
+        start: null,
+        end: null,
+        timeZone: 'America/Halifax',
+        meetOn: 'meet',
+        name: 'Alex Martin',
+        email: 'alex@example.com',
+        invoiceRef: 'CH-K3P2Q8-2'
+      }
+    });
+    stripe.confirmCardPayment
+      .mockReset()
+      .mockResolvedValue({ paymentIntent: { status: 'succeeded' } });
   });
 
   it('opens on the intro, every service a tagged card linking to its details', () => {
@@ -192,7 +234,7 @@ describe('BookingFlow', () => {
       DRAFT_KEY,
       JSON.stringify({
         itemId: 'dj-lessons',
-        ...openSlot(),
+        ...laterSlot(),
         details: {},
         detailsDone: false
       })
@@ -247,6 +289,10 @@ describe('BookingFlow', () => {
       await screen.findByText(commission.payment.panel)
     ).toBeInTheDocument();
     expect(screen.getByText(commission.summary.total)).toBeInTheDocument();
+    await user.type(
+      screen.getByLabelText(content.payment.card.name),
+      'Alex Martin'
+    );
     await user.click(
       screen.getByRole('checkbox', {
         ...ALL,
@@ -262,6 +308,17 @@ describe('BookingFlow', () => {
         name: commission.confirmation.heading
       })
     ).toBeInTheDocument();
+    expect(server.startBookingPayment).toHaveBeenCalledWith(
+      expect.objectContaining({ itemId: 'mixing', start: null })
+    );
+    expect(server.finishBookingPayment).toHaveBeenCalledWith(
+      'CH-K3P2Q8',
+      'pi_secret'
+    );
+    // The invoice for the rest is on the receipt.
+    expect(
+      screen.getAllByText('CH-K3P2Q8-2', { exact: false }).length
+    ).toBeGreaterThan(0);
     // How to reach Candy, each a click to copy.
     expect(
       screen.getByRole('button', { ...ALL, name: siteContact.email })

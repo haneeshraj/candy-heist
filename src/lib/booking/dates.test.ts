@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { slotsFor } from './availability';
 import { monthGrid } from './calendar';
 import {
   addMonths,
@@ -66,28 +65,5 @@ describe('monthGrid', () => {
       [30, false],
       [1, true]
     ]);
-  });
-});
-
-describe('availability', () => {
-  const today = '2026-09-28';
-
-  it('opens Tuesdays, Thursdays, Fridays and Saturdays, with a time or two taken', () => {
-    const thursday = slotsFor('2026-10-01', today);
-    expect(thursday).toHaveLength(6);
-    expect(thursday.some((slot) => !slot.open)).toBe(true);
-    expect(slotsFor('2026-10-05', today)).toEqual([]); // Monday
-  });
-
-  it('never offers today, the past, or beyond three months', () => {
-    expect(slotsFor(today, today)).toEqual([]);
-    expect(slotsFor('2026-09-01', today)).toEqual([]);
-    expect(slotsFor('2027-01-05', today)).toEqual([]);
-  });
-
-  it('shows the same times for the same day every time', () => {
-    expect(slotsFor('2026-10-08', today)).toEqual(
-      slotsFor('2026-10-08', today)
-    );
   });
 });

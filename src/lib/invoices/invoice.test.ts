@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { invoiceAmounts, isInvoiceId, normalizeInvoiceId } from './invoice';
-import { findInvoice, InvoiceNotFoundError } from './payInvoice';
 
 describe('invoice IDs', () => {
   it('tidies an ID as typed', () => {
@@ -11,17 +10,6 @@ describe('invoice IDs', () => {
     expect(isInvoiceId('CH-7Q4K2M9X')).toBe(true);
     expect(isInvoiceId('ab1')).toBe(false);
     expect(isInvoiceId('CH 7Q4K!')).toBe(false);
-  });
-});
-
-describe('findInvoice', () => {
-  it('finds an ID in the right shape, and refuses any other', async () => {
-    await expect(findInvoice(' ch-7q4k2m9x')).resolves.toMatchObject({
-      id: 'CH-7Q4K2M9X'
-    });
-    await expect(findInvoice('??')).rejects.toBeInstanceOf(
-      InvoiceNotFoundError
-    );
   });
 });
 

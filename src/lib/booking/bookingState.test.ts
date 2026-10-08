@@ -27,7 +27,11 @@ describe('booking steps', () => {
     ).toBe('date');
     expect(
       furthestStep(
-        draft({ itemId: 'dj-lessons', date: '2026-10-01', time: '10:00' }),
+        draft({
+          itemId: 'dj-lessons',
+          date: '2026-10-01',
+          start: '2026-10-01T13:00:00.000Z'
+        }),
         'session',
         false
       )
@@ -77,11 +81,16 @@ describe('bookingReducer', () => {
       type: 'selectDate',
       date: '2026-10-01'
     });
-    state = bookingReducer(state, { type: 'selectTime', time: '14:00' });
-    expect(state.draft.time).toBe('14:00');
+    state = bookingReducer(state, {
+      type: 'selectStart',
+      start: '2026-10-01T17:00:00.000Z'
+    });
+    expect(state.draft.start).toBe('2026-10-01T17:00:00.000Z');
 
+    state = bookingReducer(state, { type: 'selectDate', date: '2026-10-01' });
+    expect(state.draft.start).toBe('2026-10-01T17:00:00.000Z');
     state = bookingReducer(state, { type: 'selectDate', date: '2026-10-02' });
-    expect(state.draft.time).toBeNull();
+    expect(state.draft.start).toBeNull();
   });
 
   it('follows the picked item’s kind when clamping', () => {
@@ -121,21 +130,24 @@ describe('bookingReducer', () => {
 });
 
 describe('sanitizeDraft', () => {
-  it('keeps only a known item, a future bookable day and an open time', () => {
+  const NOW = Date.parse('2026-09-28T12:00:00Z');
+
+  it('keeps only a known item, a day from today on and a time still to come', () => {
     const clean = sanitizeDraft(
       {
         itemId: 'dj-lessons',
         date: '2026-10-01',
-        time: '99:99',
+        start: 'half past two',
         details: { name: 'Alex', email: 5, meetOn: 'discord', discord: 'alex' },
         detailsDone: true
       },
       KINDS,
-      TODAY
+      TODAY,
+      NOW
     );
     expect(clean.itemId).toBe('dj-lessons');
     expect(clean.date).toBe('2026-10-01');
-    expect(clean.time).toBeNull();
+    expect(clean.start).toBeNull();
     expect(clean.details).toEqual({
       ...EMPTY_DETAILS,
       name: 'Alex',
@@ -144,6 +156,18 @@ describe('sanitizeDraft', () => {
     });
     // Details can't count as done without a time.
     expect(clean.detailsDone).toBe(false);
+  });
+
+  it('keeps a time to come, and drops one gone by', () => {
+    const at = (start: string) =>
+      sanitizeDraft(
+        { itemId: 'dj-lessons', date: '2026-10-01', start },
+        KINDS,
+        TODAY,
+        NOW
+      ).start;
+    expect(at('2026-10-01T13:00:00Z')).toBe('2026-10-01T13:00:00.000Z');
+    expect(at('2026-09-20T13:00:00Z')).toBeNull();
   });
 
   it('lets a commission’s details count without a date', () => {

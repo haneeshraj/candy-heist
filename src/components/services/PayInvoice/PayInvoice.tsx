@@ -2,8 +2,7 @@
 
 import { useLenis } from 'lenis/react';
 import { useState, useSyncExternalStore } from 'react';
-import type { Invoice } from '@/lib/invoices/invoice';
-import type { PaidInvoice } from '@/lib/invoices/payInvoice';
+import type { Invoice, PaidInvoice } from '@/lib/invoices/invoice';
 import FindInvoice from './FindInvoice';
 import InvoicePaid from './InvoicePaid';
 import InvoicePayment from './InvoicePayment';
@@ -13,7 +12,8 @@ import type { PayInvoiceProps } from './PayInvoice.types';
 type Stage =
   | { name: 'find' }
   | { name: 'pay'; invoice: Invoice }
-  | { name: 'paid'; invoice: Invoice; paid: PaidInvoice };
+  /** `paid` is left out for an invoice that was paid before it was opened here. */
+  | { name: 'paid'; invoice: Invoice; paid?: PaidInvoice };
 
 export const INVOICE_PARAM = 'invoice';
 
@@ -48,7 +48,13 @@ export default function PayInvoice({ copy }: PayInvoiceProps) {
           key={linked ?? 'blank'}
           copy={copy.find}
           initialId={linked ?? ''}
-          onFound={(invoice) => go({ name: 'pay', invoice })}
+          onFound={(invoice) =>
+            go(
+              invoice.status === 'paid'
+                ? { name: 'paid', invoice }
+                : { name: 'pay', invoice }
+            )
+          }
         />
       ) : null}
       {stage.name === 'pay' ? (

@@ -1,6 +1,5 @@
 import type { InvoiceCopy } from '@/content/services/invoice';
-import type { Invoice } from '@/lib/invoices/invoice';
-import type { PaidInvoice } from '@/lib/invoices/payInvoice';
+import type { Invoice, PaidInvoice } from '@/lib/invoices/invoice';
 
 export interface PayInvoiceProps {
   copy: InvoiceCopy;

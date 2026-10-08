@@ -5,8 +5,12 @@ import { PaymentPanel } from '@/components/booking/PaymentPanel';
 import { StepHeading } from '@/components/booking/StepHeading';
 import { SigilChip } from '@/components/common/SigilChip';
 import { useEntrance } from '@/hooks/useEntrance';
+import {
+  finishInvoicePayment,
+  startInvoicePayment
+} from '@/lib/invoices/actions';
 import { invoiceAmounts } from '@/lib/invoices/invoice';
-import { payInvoice } from '@/lib/invoices/payInvoice';
+import type { CardPayer } from '@/lib/payments/client';
 import { fill } from '@/lib/text/fill';
 import { notifyError } from '@/lib/toast/notify';
 import styles from './PayInvoice.module.scss';
@@ -14,6 +18,8 @@ import type { InvoicePaymentProps } from './PayInvoice.types';
 
 // The invoice found: what's due, the card, and beside it the invoice
 // itself (the commission, its price, what was paid upfront, what's due).
+// Pay opens a payment for what's due, Stripe takes the card, and the
+// server checks it went through before calling it paid.
 export default function InvoicePayment({
   copy,
   placeholder,
@@ -27,13 +33,30 @@ export default function InvoicePayment({
   useEntrance(rootRef, { delay: 0.3 });
   const amounts = invoiceAmounts(invoice, placeholder);
 
-  async function pay() {
+  async function pay(payer: CardPayer) {
     if (paying) return;
     setPaying(true);
     try {
-      onPaid(await payInvoice(invoice));
+      const started = await startInvoicePayment(invoice.id);
+      if (!started.ok) {
+        if (started.reason === 'paid')
+          onPaid({ id: invoice.id, paidAt: new Date().toISOString() });
+        else notifyError(copy.unavailable.title, copy.unavailable.text);
+        return;
+      }
+      const confirmed = await payer.confirm(started.clientSecret, {});
+      if (!confirmed.ok) {
+        notifyError(copy.failed.title, confirmed.message ?? copy.failed.text);
+        return;
+      }
+      const finished = await finishInvoicePayment(
+        invoice.id,
+        started.clientSecret
+      );
+      if (finished.ok) onPaid(finished.paid);
+      else notifyError(copy.unavailable.title, copy.unavailable.text);
     } catch {
-      notifyError(copy.failed.title, copy.failed.text);
+      notifyError(copy.unavailable.title, copy.unavailable.text);
     } finally {
       setPaying(false);
     }
@@ -60,7 +83,8 @@ export default function InvoicePayment({
               copy={copy}
               amount={amounts.due}
               paying={paying}
-              onPay={() => void pay()}
+              open={invoice.dueCents !== undefined && invoice.dueCents > 0}
+              onPay={(payer) => void pay(payer)}
             />
           </div>
           <div className={styles.back} data-enter>
