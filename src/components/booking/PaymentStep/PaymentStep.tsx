@@ -18,6 +18,7 @@ export default function PaymentStep({
   summary,
   price,
   paying,
+  open,
   onPay,
   onBack
 }: PaymentStepProps) {
@@ -41,6 +42,7 @@ export default function PaymentStep({
               copy={copy}
               amount={price}
               paying={paying}
+              open={open}
               onPay={onPay}
             />
           </div>

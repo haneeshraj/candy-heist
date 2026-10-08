@@ -20,15 +20,21 @@ import {
   type BookingStep,
   type ItemKinds
 } from '@/lib/booking/bookingState';
-import { completeBooking } from '@/lib/booking/completeBooking';
+import {
+  finishBookingPayment,
+  startBookingPayment
+} from '@/lib/booking/actions';
 import { todayIn, type DateKey } from '@/lib/booking/dates';
 import { clearDraft, loadDraft, saveDraft } from '@/lib/booking/persistence';
+import { visitorTimeZone } from '@/lib/booking/zone';
+import type { CardPayer } from '@/lib/payments/client';
 
 // The flow's state, kept in step with the address bar: each step is its
 // own history entry (?step=date&service=dj-lessons, ?step=details&service=
 // mixing), so the browser's back and forward move through the flow, and a
 // link can open an item directly. The item step reads as ?step=service.
-// The draft is kept for the tab, so a reload resumes it.
+// The draft is kept for the tab, so a reload resumes it. Times are shown
+// in the visitor's own zone.
 
 export const STEP_PARAM = 'step';
 export const ITEM_PARAM = 'service';
@@ -67,7 +73,24 @@ function urlFor(step: BookingStep, itemId: string | null) {
 export const itemHref = (itemId: string) =>
   `?${STEP_PARAM}=${ITEM_STEP}&${ITEM_PARAM}=${itemId}`;
 
-export function useBookingFlow(items: ServiceItem[], timeZone: string) {
+/** How a press of Pay went, for the step to say so. */
+export type PayOutcome =
+  | { ok: true }
+  | {
+      ok: false;
+      reason: 'declined' | 'taken' | 'unpriced' | 'unavailable' | 'invalid';
+      /** The bank's or Stripe's own words, for a declined card. */
+      message?: string | null;
+    };
+
+/** A payment opened for the draft as it stood: kept while the card is retried. */
+interface OpenPayment {
+  key: string;
+  ref: string;
+  clientSecret: string;
+}
+
+export function useBookingFlow(items: ServiceItem[]) {
   const kinds = useMemo<ItemKinds>(
     () => Object.fromEntries(items.map((item) => [item.id, item.kind])),
     [items]
@@ -78,10 +101,16 @@ export function useBookingFlow(items: ServiceItem[], timeZone: string) {
     initialBookingState
   );
   const [paying, setPaying] = useState(false);
-  // Today in the sessions' zone; only known on the client.
+  const openPayment = useRef<OpenPayment | null>(null);
+  // The visitor's zone, and today in it; only known on the client.
+  const timeZone = useSyncExternalStore<string | null>(
+    noSubscribe,
+    visitorTimeZone,
+    () => null
+  );
   const today = useSyncExternalStore<DateKey | null>(
     noSubscribe,
-    () => todayIn(timeZone),
+    () => (timeZone ? todayIn(timeZone) : null),
     () => null
   );
   // The step the address bar was last set to; null means "replace, don't
@@ -149,19 +178,68 @@ export function useBookingFlow(items: ServiceItem[], timeZone: string) {
     else saveDraft(state.draft);
   }, [state.restored, state.draft, state.confirmation]);
 
-  /** Pays; false when it didn't go through (and the flow went back). */
-  async function pay() {
-    if (paying) return true;
+  /**
+   * Pays with the card on the panel: the server opens a payment for what's
+   * due (holding a session's time), Stripe takes the card, the server checks
+   * it went through and books it. A card that's declined keeps the payment
+   * open, so trying another card doesn't start over.
+   */
+  async function pay(payer: CardPayer): Promise<PayOutcome> {
+    if (paying || !timeZone) return { ok: false, reason: 'unavailable' };
     setPaying(true);
-    const kind = draftKind(state.draft, kinds);
+    const { draft } = state;
+    const kind = draftKind(draft, kinds);
     try {
-      const confirmation = await completeBooking(state.draft, kind);
-      dispatch({ type: 'confirm', confirmation });
-      return true;
+      if (!draft.itemId || !kind) return { ok: false, reason: 'invalid' };
+      const key = JSON.stringify([draft.itemId, draft.start, draft.details]);
+      let open = openPayment.current;
+      if (!open || open.key !== key) {
+        const started = await startBookingPayment({
+          itemId: draft.itemId,
+          start: kind === 'session' ? draft.start : null,
+          timeZone,
+          details: draft.details,
+          replaces: open
+            ? { ref: open.ref, clientSecret: open.clientSecret }
+            : null
+        });
+        if (!started.ok) {
+          openPayment.current = null;
+          if (started.reason === 'taken') {
+            dispatch({ type: 'selectStart', start: null });
+            dispatch({ type: 'goTo', step: 'date' });
+            return { ok: false, reason: 'taken' };
+          }
+          if (started.reason === 'invalid') {
+            dispatch({ type: 'goTo', step: furthestStep(draft, kind, false) });
+            return { ok: false, reason: 'invalid' };
+          }
+          return {
+            ok: false,
+            reason: started.reason === 'unpriced' ? 'unpriced' : 'unavailable'
+          };
+        }
+        open = { key, ref: started.ref, clientSecret: started.clientSecret };
+        openPayment.current = open;
+      }
+
+      const confirmed = await payer.confirm(open.clientSecret, {
+        email: draft.details.email
+      });
+      if (!confirmed.ok)
+        return { ok: false, reason: 'declined', message: confirmed.message };
+
+      const finished = await finishBookingPayment(open.ref, open.clientSecret);
+      if (!finished.ok)
+        return {
+          ok: false,
+          reason: finished.reason === 'unpaid' ? 'declined' : 'unavailable'
+        };
+      openPayment.current = null;
+      dispatch({ type: 'confirm', confirmation: finished.confirmation });
+      return { ok: true };
     } catch {
-      // Something was missing after all: go back to where it is.
-      dispatch({ type: 'goTo', step: furthestStep(state.draft, kind, false) });
-      return false;
+      return { ok: false, reason: 'unavailable' };
     } finally {
       setPaying(false);
     }
@@ -170,6 +248,7 @@ export function useBookingFlow(items: ServiceItem[], timeZone: string) {
   return {
     state,
     today,
+    timeZone,
     paying,
     instantSwapRef,
     /** Opens an item's details, from its card. */
@@ -179,7 +258,8 @@ export function useBookingFlow(items: ServiceItem[], timeZone: string) {
     },
     goTo: (step: BookingStep) => dispatch({ type: 'goTo', step }),
     selectDate: (date: DateKey) => dispatch({ type: 'selectDate', date }),
-    selectTime: (time: string) => dispatch({ type: 'selectTime', time }),
+    selectStart: (start: string | null) =>
+      dispatch({ type: 'selectStart', start }),
     editDetails: (details: BookingDetails) =>
       dispatch({ type: 'setDetails', details, done: false }),
     submitDetails: (details: BookingDetails) => {

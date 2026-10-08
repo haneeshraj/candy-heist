@@ -1,6 +1,7 @@
 import { randomInt } from 'node:crypto';
 
-// The short code a message or an enquiry is filed under: MSG-7KQ2FD.
+// The short code a message, an enquiry or a booking is filed under:
+// MSG-7KQ2FD, DJ-H3XN8P, CH-K3P2Q8.
 // Six characters from an alphabet without the ones that read alike (0 and
 // O, 1 and I and L), so it can be read out over the phone. That's about a
 // billion codes; the database refuses a repeat and the store draws again.
@@ -8,7 +9,7 @@ import { randomInt } from 'node:crypto';
 const ALPHABET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
 const LENGTH = 6;
 
-export type RefPrefix = 'MSG' | 'DJ';
+export type RefPrefix = 'MSG' | 'DJ' | 'CH';
 
 export function newRef(prefix: RefPrefix): string {
   let code = '';

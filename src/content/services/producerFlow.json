@@ -2,8 +2,6 @@
   "title": "Book Candy Heist as a music producer",
   "stepsLabel": "Booking steps",
   "price": "$ –",
-  "timeZone": "America/Halifax",
-  "timeZoneLabel": "Halifax time",
   "intro": {
     "video": {
       "src": null,
@@ -70,9 +68,10 @@
   "date": {
     "label": "Date & time",
     "heading": "When works for you?",
-    "sub": "Only free days can be picked. A gilt dot means there’s time open; times are in Halifax time.",
+    "sub": "Only free days can be picked. A gilt dot means there’s time open. Times are in your own time zone.",
     "openTimes": "open times",
-    "zone": "Halifax (AT)",
+    "loading": "Finding open times…",
+    "unavailable": "Open times can’t be shown right now. Try again in a moment, or write to Candy.",
     "pickDay": "Pick a day to see its open times.",
     "previousMonth": "Previous month",
     "nextMonth": "Next month",
@@ -107,7 +106,8 @@
       "number": "Card number",
       "expiry": "Expiry",
       "cvc": "CVC",
-      "name": "Name on card"
+      "name": "Name on card",
+      "nameMissing": "Add the name on the card."
     },
     "secure": "Handled securely by Stripe. Your card details never touch this site.",
     "terms": {
@@ -122,6 +122,15 @@
     "failed": {
       "title": "The payment didn’t go through",
       "text": "Nothing was charged. Check your details and try again."
+    },
+    "notOpen": "Online payment isn’t open yet. Write to Candy to book.",
+    "taken": {
+      "title": "That time has just gone",
+      "text": "Someone booked it a moment ago. Nothing was charged; pick another time."
+    },
+    "unavailable": {
+      "title": "Payments aren’t open right now",
+      "text": "Nothing was charged. Try again in a moment, or write to Candy."
     }
   },
   "summary": {
@@ -141,10 +150,13 @@
     "home": "Back to home",
     "receipt": {
       "reference": "Reference",
-      "paid": "Paid"
+      "paid": "Paid",
+      "invoice": "Invoice for the rest"
     },
     "email": {
       "sent": "Just sent",
+      "greeting": "Hi {name},",
+      "reply": "Questions, or anything to add? Reply to this email.",
       "signature": "Candy Heist · Halifax, Nova Scotia"
     }
   },
@@ -191,7 +203,7 @@
         },
         "email": {
           "subject": "Your commission is in",
-          "body": "Thanks for your commission. Candy will contact you through email, Instagram or Discord, so stay tuned and get your files ready. When it’s done, he’ll email you an invoice for the other half, to pay on this site."
+          "body": "Thanks for your commission. Candy will contact you through email, Instagram or Discord, so stay tuned and get your files ready. When it’s done, pay the other half on this site with invoice {invoice}."
         }
       }
     },
@@ -246,8 +258,8 @@
         },
         "email": {
           "subject": "You’re booked.",
-          "body": "{date}, {time} Halifax time, on Google Meet. Send anything you want to go through before the day.",
-          "bodyDiscord": "{date}, {time} Halifax time. Candy will add you on Discord and message you before the day. If anything goes wrong there, join on Google Meet instead.",
+          "body": "{date}, {time} ({zone}), on Google Meet. Send anything you want to go through before the day.",
+          "bodyDiscord": "{date}, {time} ({zone}). Candy will add you on Discord and message you before the day. If anything goes wrong there, join on Google Meet instead.",
           "cta": "Join the call",
           "ctaDiscord": "Join on Google Meet"
         }

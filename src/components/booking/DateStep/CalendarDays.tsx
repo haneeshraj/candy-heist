@@ -2,7 +2,6 @@
 
 import { useRef } from 'react';
 import { useEntrance } from '@/hooks/useEntrance';
-import { slotsFor } from '@/lib/booking/availability';
 import { monthGrid, WEEKDAYS } from '@/lib/booking/calendar';
 import { formatDayLong, type DateKey } from '@/lib/booking/dates';
 import styles from './DateStep.module.scss';
@@ -11,6 +10,8 @@ interface CalendarDaysProps {
   year: number;
   month: number;
   today: DateKey;
+  /** How many times are open on each day, as the visitor's calendar has it. */
+  openByDay: ReadonlyMap<DateKey, number>;
   selected: DateKey | null;
   onSelect: (date: DateKey) => void;
   openTimesLabel: string;
@@ -22,6 +23,7 @@ export default function CalendarDays({
   year,
   month,
   today,
+  openByDay,
   selected,
   onSelect,
   openTimesLabel
@@ -38,9 +40,7 @@ export default function CalendarDays({
         </span>
       ))}
       {weeks.flat().map((cell) => {
-        const open = cell.inMonth
-          ? slotsFor(cell.key, today).filter((slot) => slot.open).length
-          : 0;
+        const open = cell.inMonth ? (openByDay.get(cell.key) ?? 0) : 0;
         const isToday = cell.key === today;
         const isSelected = cell.key === selected;
 

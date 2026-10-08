@@ -1,5 +1,4 @@
 import type { ServiceKind } from '@/content/services/catalogue';
-import { isOpenSlot } from './availability';
 import { isDateKey, type DateKey } from './dates';
 
 // The booking flow as a reducer: the step on screen plus the draft built
@@ -61,9 +60,10 @@ export interface BookingDetails {
 
 export interface BookingDraft {
   itemId: string | null;
-  /** Sessions only. */
+  /** Sessions only: the day picked, as the visitor's calendar shows it. */
   date: DateKey | null;
-  time: string | null;
+  /** Sessions only: the time picked, as the instant it starts (ISO). */
+  start: string | null;
   details: BookingDetails;
   /** True once the details step has validated them. */
   detailsDone: boolean;
@@ -73,12 +73,16 @@ export interface BookingConfirmation {
   reference: string;
   itemId: string;
   kind: FlowKind;
-  /** A session's; null for a commission. */
-  date: DateKey | null;
-  time: string | null;
+  /** A session's, as ISO instants; null for a commission. */
+  start: string | null;
+  end: string | null;
+  /** The visitor's zone, which the page and their email read times in. */
+  timeZone: string;
   meetOn: MeetOn;
   name: string;
   email: string;
+  /** A commission's invoice for its other half. */
+  invoiceRef: string | null;
 }
 
 export interface BookingState {
@@ -112,7 +116,7 @@ const TEXT_FIELDS = [
 export const EMPTY_DRAFT: BookingDraft = {
   itemId: null,
   date: null,
-  time: null,
+  start: null,
   details: EMPTY_DETAILS,
   detailsDone: false
 };
@@ -132,7 +136,7 @@ export const draftKind = (draft: BookingDraft, kinds: ItemKinds) =>
 export type BookingAction =
   | { type: 'selectItem'; itemId: string }
   | { type: 'selectDate'; date: DateKey }
-  | { type: 'selectTime'; time: string }
+  | { type: 'selectStart'; start: string | null }
   | { type: 'setDetails'; details: BookingDetails; done: boolean }
   | { type: 'goTo'; step: BookingStep }
   | { type: 'restore'; draft: BookingDraft; step: BookingStep }
@@ -146,7 +150,7 @@ export function furthestStep(
 ): BookingStep {
   if (confirmed) return 'confirmed';
   if (!draft.itemId || !kind) return 'intro';
-  if (kind === 'session' && (!draft.date || !draft.time)) return 'date';
+  if (kind === 'session' && (!draft.date || !draft.start)) return 'date';
   if (!draft.detailsDone) return 'details';
   return 'payment';
 }
@@ -192,11 +196,11 @@ export function bookingReducer(
         draft: {
           ...state.draft,
           date: action.date,
-          time: action.date === state.draft.date ? state.draft.time : null
+          start: action.date === state.draft.date ? state.draft.start : null
         }
       };
-    case 'selectTime':
-      return { ...state, draft: { ...state.draft, time: action.time } };
+    case 'selectStart':
+      return { ...state, draft: { ...state.draft, start: action.start } };
     case 'setDetails':
       return {
         ...state,
@@ -232,11 +236,14 @@ export function bookingReducer(
   }
 }
 
-// Checks a draft read back from storage or a URL before trusting it.
+// Checks a draft read back from storage or a URL before trusting it. A
+// time that's kept is checked again against what's open when the date
+// step shows it, and once more when it's paid for.
 export function sanitizeDraft(
   value: unknown,
   kinds: ItemKinds,
-  today: DateKey
+  today: DateKey,
+  now: number = Date.now()
 ): BookingDraft {
   if (!value || typeof value !== 'object') return EMPTY_DRAFT;
   const raw = value as Partial<Record<keyof BookingDraft, unknown>>;
@@ -249,10 +256,13 @@ export function sanitizeDraft(
   // A date and time are kept whatever the item, so they survive a look at
   // a commission on the way back to a session.
   const date =
-    isDateKey(raw.date) && raw.date > today ? (raw.date as DateKey) : null;
-  const time =
-    date && typeof raw.time === 'string' && isOpenSlot(date, raw.time, today)
-      ? raw.time
+    isDateKey(raw.date) && raw.date >= today ? (raw.date as DateKey) : null;
+  const start =
+    date &&
+    typeof raw.start === 'string' &&
+    raw.start.length <= 40 &&
+    Date.parse(raw.start) > now
+      ? new Date(raw.start).toISOString()
       : null;
 
   const details = { ...EMPTY_DETAILS };
@@ -266,12 +276,12 @@ export function sanitizeDraft(
   }
 
   const ready = Boolean(
-    kind && (kind === 'commission' || (date !== null && time !== null))
+    kind && (kind === 'commission' || (date !== null && start !== null))
   );
   return {
     itemId,
     date,
-    time,
+    start,
     details,
     detailsDone: raw.detailsDone === true && ready
   };

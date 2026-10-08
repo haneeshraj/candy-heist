@@ -1,7 +1,18 @@
+import type { CardPayer } from '@/lib/payments/client';
+
 export interface PaymentPanelCopy {
   /** Over the amount: "Paid in full", "Half upfront · 50%". */
   panel: string;
-  card: { number: string; expiry: string; cvc: string; name: string };
+  card: {
+    number: string;
+    expiry: string;
+    cvc: string;
+    name: string;
+    /** When Pay is pressed with no name on the card. */
+    nameMissing: string;
+  };
+  /** Instead of the card, while payments can't be taken. */
+  notOpen: string;
   secure: string;
   /** "Pay {price} now". */
   cta: string;
@@ -24,6 +35,9 @@ export interface PaymentPanelProps {
   amount: string;
   /** True while the payment is going through. */
   paying: boolean;
-  onPay: () => void;
+  /** False while this can't be paid for online (no price yet). */
+  open: boolean;
+  /** Pressed with the terms accepted: pay with the card on the panel. */
+  onPay: (payer: CardPayer) => void;
   className?: string;
 }

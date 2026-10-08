@@ -7,7 +7,6 @@ export interface ConfirmedStepProps {
   copy: FlowCopy['confirmation'];
   item: ServiceItem;
   confirmation: BookingConfirmation;
-  timeZone: string;
   /** What it cost, what was paid and what's left, or the placeholder. */
   amounts: Amounts;
   /** Candy's own email and Discord, for questions. */

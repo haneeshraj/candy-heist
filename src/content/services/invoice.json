@@ -7,7 +7,7 @@
   "find": {
     "label": "Pay an invoice",
     "heading": "The other half",
-    "sub": "When your commission is ready, Candy emails you an invoice for the rest. Enter its ID to pay it.",
+    "sub": "Your commission’s receipt has the invoice ID for the rest. When Candy says it’s ready, enter it here to pay.",
     "field": {
       "label": "Invoice ID",
       "placeholder": "As it appears in the email"
@@ -17,7 +17,8 @@
     "errors": {
       "missing": "Add the invoice ID from your email.",
       "invalid": "That doesn’t look like an invoice ID. Check it against the email.",
-      "notFound": "There’s no invoice with that ID. Check it against the email, or write to Candy."
+      "notFound": "There’s no invoice with that ID. Check it against the email, or write to Candy.",
+      "unavailable": "Invoices can’t be looked up right now. Try again in a moment."
     }
   },
   "pay": {
@@ -37,7 +38,8 @@
       "number": "Card number",
       "expiry": "Expiry",
       "cvc": "CVC",
-      "name": "Name on card"
+      "name": "Name on card",
+      "nameMissing": "Add the name on the card."
     },
     "secure": "Handled securely by Stripe. Your card details never touch this site.",
     "terms": {
@@ -52,7 +54,12 @@
       "title": "The payment didn’t go through",
       "text": "Nothing was charged. Check the card and try again."
     },
-    "back": "A different invoice"
+    "back": "A different invoice",
+    "notOpen": "Online payment isn’t open yet. Write to Candy to pay.",
+    "unavailable": {
+      "title": "Payments aren’t open right now",
+      "text": "Nothing was charged. Try again in a moment, or write to Candy."
+    }
   },
   "paid": {
     "heading": "Paid.",
@@ -62,6 +69,13 @@
       "paid": "Paid"
     },
     "services": "See all services",
-    "home": "Back to home"
+    "home": "Back to home",
+    "email": {
+      "subject": "Paid: the rest of your commission",
+      "greeting": "Hi {name},",
+      "body": "That’s the rest of your {item} settled. Thank you.",
+      "reply": "Questions? Reply to this email.",
+      "signature": "Candy Heist · Halifax, Nova Scotia"
+    }
   }
 }

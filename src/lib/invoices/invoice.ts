@@ -1,9 +1,9 @@
 import { formatAmount } from '@/lib/booking/price';
 
-// An invoice for a commission's other half: Candy sends one when the work
-// is ready, and it's paid on /services/pay with its ID. The amounts are in
-// cents; they're unknown (undefined) until the database holds them, and
-// the page shows its placeholder.
+// An invoice for a commission's other half: made when the first half is
+// paid, its ID on the receipt, and paid on /services/pay once Candy says
+// the work is ready. The amounts are in cents; left out, the page shows its
+// placeholder.
 
 export interface Invoice {
   id: string;
@@ -12,6 +12,14 @@ export interface Invoice {
   totalCents?: number;
   paidCents?: number;
   dueCents?: number;
+  /** Paid already: the page goes straight to saying so. */
+  status?: 'open' | 'paid';
+}
+
+/** What paying it hands back, for the page that says it's paid. */
+export interface PaidInvoice {
+  id: string;
+  paidAt: string;
 }
 
 export interface InvoiceAmounts {

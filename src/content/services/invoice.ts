@@ -2,8 +2,9 @@ import { z } from 'zod';
 import invoiceData from './invoice.json';
 
 // "Pay an invoice" (/services/pay): a commission's other half, paid with
-// the invoice ID Candy emails when the work is ready. Find it, pay it, and
-// the page says it's done. Strings with {braces} are templates.
+// the invoice ID from its receipt once Candy says the work is ready. Find
+// it, pay it, and the page says it's done (and the receipt is emailed).
+// Strings with {braces} are templates.
 
 const text = z.string().trim().min(1);
 
@@ -18,7 +19,13 @@ export const invoiceCopySchema = z.object({
     field: z.object({ label: text, placeholder: text }),
     cta: text,
     finding: text,
-    errors: z.object({ missing: text, invalid: text, notFound: text })
+    errors: z.object({
+      missing: text,
+      invalid: text,
+      notFound: text,
+      /** The lookup couldn't be made. */
+      unavailable: text
+    })
   }),
   pay: z.object({
     label: text,
@@ -34,7 +41,13 @@ export const invoiceCopySchema = z.object({
       due: text
     }),
     panel: text,
-    card: z.object({ number: text, expiry: text, cvc: text, name: text }),
+    card: z.object({
+      number: text,
+      expiry: text,
+      cvc: text,
+      name: text,
+      nameMissing: text
+    }),
     secure: text,
     /** A box to tick before paying: the terms, read and accepted. */
     terms: z.object({
@@ -49,14 +62,26 @@ export const invoiceCopySchema = z.object({
     paying: text,
     /** A toast, when the payment fails. */
     failed: z.object({ title: text, text }),
-    back: text
+    back: text,
+    /** In the panel, while payments can't be taken. */
+    notOpen: text,
+    /** A toast, when the payment couldn't be started at all. */
+    unavailable: z.object({ title: text, text })
   }),
   paid: z.object({
     heading: text,
     body: text,
     receipt: z.object({ invoice: text, paid: text }),
     services: text,
-    home: text
+    home: text,
+    /** The receipt emailed once it's paid. */
+    email: z.object({
+      subject: text,
+      greeting: text,
+      body: text,
+      reply: text,
+      signature: text
+    })
   })
 });
 

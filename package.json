@@ -32,6 +32,8 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.12.0",
+    "@stripe/react-stripe-js": "^7.0.0",
+    "@stripe/stripe-js": "^10.0.0",
     "@supabase/supabase-js": "^2.117.2",
     "gsap": "^3.15.0",
     "jose": "^6.2.12",
@@ -47,6 +49,7 @@
     "server-only": "^0.0.1",
     "sharp": "^0.35.4",
     "sonner": "^2.0.8",
+    "stripe": "^23.0.0",
     "three": "^0.186.1",
     "use-scramble": "^2.2.15",
     "yaml": "^2.9.1",

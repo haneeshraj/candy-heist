@@ -5,6 +5,7 @@ import { flowCopy } from '@/content/services/flows';
 import { STEPPER_STEPS, type StepperStep } from '@/lib/booking/bookingState';
 import { formatDayMedium } from '@/lib/booking/dates';
 import { amountsFor } from '@/lib/booking/price';
+import { clockIn, zoneName } from '@/lib/booking/zone';
 import { DEFAULT_BROWSE, type ServiceBrowse } from '@/lib/services/browse';
 import { notifyError } from '@/lib/toast/notify';
 import BookingStepper from '../BookingStepper/BookingStepper';
@@ -24,14 +25,15 @@ import { useStepTransition } from './useStepTransition';
 // and every service, one service's details, then for a 1-1 session a date
 // and time, your details, payment (a commission's half, a session's whole
 // price) and the confirmation. The picked item's kind sets the steps and
-// the copy. The items come from the catalogue, so any number works.
+// the copy. The items come from the catalogue, so any number works. Times
+// are shown in the visitor's own zone.
 export default function BookingFlow({
   content,
   items,
   contact
 }: BookingFlowProps) {
-  const flow = useBookingFlow(items, content.timeZone);
-  const { state, today } = flow;
+  const flow = useBookingFlow(items);
+  const { state, today, timeZone } = flow;
   const stageRef = useRef<HTMLDivElement | null>(null);
   const shown = useStepTransition(state.step, stageRef, flow.instantSwapRef);
   // The search, filter and sort on the intro, kept while an item is open.
@@ -59,9 +61,10 @@ export default function BookingFlow({
       },
       {
         label: summaryCopy.time,
-        value: draft.time
-          ? `${draft.time} ${content.timeZoneLabel}`
-          : summaryCopy.empty
+        value:
+          draft.start && timeZone
+            ? `${clockIn(new Date(draft.start), timeZone)} ${zoneName(timeZone, new Date(draft.start))}`
+            : summaryCopy.empty
       }
     );
   if (item.facts[0]) rows.push(item.facts[0]);
@@ -124,15 +127,17 @@ export default function BookingFlow({
           />
         ) : null}
 
-        {shown === 'date' && today ? (
+        {shown === 'date' && today && timeZone ? (
           <DateStep
             copy={content.date}
             summary={summary}
+            itemId={item.id}
             date={draft.date}
-            time={draft.time}
+            start={draft.start}
             today={today}
+            timeZone={timeZone}
             onDate={flow.selectDate}
-            onTime={flow.selectTime}
+            onStart={flow.selectStart}
             onBack={() => flow.goTo('item')}
             onNext={() => flow.goTo('details')}
           />
@@ -155,12 +160,25 @@ export default function BookingFlow({
             summary={summary}
             price={amounts.now}
             paying={flow.paying}
-            onPay={() =>
-              void flow.pay().then((paid) => {
-                if (!paid)
+            open={item.price !== undefined}
+            onPay={(payer) =>
+              void flow.pay(payer).then((outcome) => {
+                if (outcome.ok) return;
+                const { payment } = copy;
+                if (outcome.reason === 'taken')
+                  notifyError(payment.taken.title, payment.taken.text);
+                else if (
+                  outcome.reason === 'unavailable' ||
+                  outcome.reason === 'unpriced'
+                )
                   notifyError(
-                    copy.payment.failed.title,
-                    copy.payment.failed.text
+                    payment.unavailable.title,
+                    payment.unavailable.text
+                  );
+                else
+                  notifyError(
+                    payment.failed.title,
+                    outcome.message ?? payment.failed.text
                   );
               })
             }
@@ -173,7 +191,6 @@ export default function BookingFlow({
             copy={flowCopy(content, state.confirmation.kind).confirmation}
             item={confirmed}
             confirmation={state.confirmation}
-            timeZone={content.timeZone}
             amounts={amountsFor(
               state.confirmation.kind,
               confirmed.price,

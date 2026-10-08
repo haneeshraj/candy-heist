@@ -65,9 +65,6 @@ export const producerFlowSchema = z.object({
   stepsLabel: text,
   /** Shown wherever a price goes, until prices are set. */
   price: text,
-  /** IANA zone sessions run in; every time on the page is in it. */
-  timeZone: text,
-  timeZoneLabel: text,
   intro: z.object({
     video: z.object({
       /** null until the intro is filmed: the player then shows its poster. */
@@ -136,7 +133,10 @@ export const producerFlowSchema = z.object({
     heading: text,
     sub: text,
     openTimes: text,
-    zone: text,
+    /** While a month's times are on their way. */
+    loading: text,
+    /** When they couldn't be read (Candy's calendar didn't answer). */
+    unavailable: text,
     pickDay: text,
     previousMonth: text,
     nextMonth: text,
@@ -167,7 +167,13 @@ export const producerFlowSchema = z.object({
   }),
   payment: z.object({
     label: text,
-    card: z.object({ number: text, expiry: text, cvc: text, name: text }),
+    card: z.object({
+      number: text,
+      expiry: text,
+      cvc: text,
+      name: text,
+      nameMissing: text
+    }),
     secure: text,
     /** A box to tick before paying: the terms, read and accepted. */
     terms: z.object({
@@ -182,7 +188,13 @@ export const producerFlowSchema = z.object({
     cta: text,
     paying: text,
     /** A toast, when the payment fails. */
-    failed: z.object({ title: text, text })
+    failed: z.object({ title: text, text }),
+    /** In the panel, while payments can't be taken (no price, or no Stripe yet). */
+    notOpen: text,
+    /** A toast, when the time was booked by someone else at the last moment. */
+    taken: z.object({ title: text, text }),
+    /** A toast, when the payment couldn't be started at all. */
+    unavailable: z.object({ title: text, text })
   }),
   summary: z.object({
     date: text,
@@ -204,8 +216,20 @@ export const producerFlowSchema = z.object({
     /** Commissions: back to the services. */
     services: text,
     home: text,
-    receipt: z.object({ reference: text, paid: text }),
-    email: z.object({ sent: text, signature: text })
+    receipt: z.object({
+      reference: text,
+      paid: text,
+      /** A commission's invoice for its other half. */
+      invoice: text
+    }),
+    email: z.object({
+      sent: text,
+      /** "Hi {name},", over the email's words. */
+      greeting: text,
+      /** Under them: replies go straight to Candy. */
+      reply: text,
+      signature: text
+    })
   }),
   kinds: z.object({ commission: kindSchema, session: kindSchema })
 });

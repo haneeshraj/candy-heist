@@ -7,8 +7,9 @@ import { SigilChip } from '@/components/common/SigilChip';
 import { WordReveal } from '@/components/common/WordReveal';
 import { ArrowIcon, ExternalIcon, SigilIcon } from '@/components/icons';
 import { useEntrance } from '@/hooks/useEntrance';
-import { formatDayLong, zonedTimeToUtc } from '@/lib/booking/dates';
+import { formatDayLong } from '@/lib/booking/dates';
 import { fill } from '@/lib/booking/format';
+import { clockIn, dayIn, zoneName } from '@/lib/booking/zone';
 import { copyText } from '@/lib/clipboard/copyText';
 import { notifySuccess } from '@/lib/toast/notify';
 import { buildIcs, downloadIcs } from '@/lib/booking/ics';
@@ -22,13 +23,13 @@ const MARK_VIEWBOX = '0 0 414.64 298.37';
 // The page says what happens next and how to reach Candy (his email and
 // his Discord copy on a click), with the way on (a session into the
 // calendar, a commission back to the services); the email carries the
-// receipt (a commission's half now and half on delivery) and, for a
-// session, the call link. Each fact is said once.
+// receipt (a commission's half now, and the invoice for the rest) and, for
+// a session, the call link. Each fact is said once. Times are in the zone
+// the visitor booked from.
 export default function ConfirmedStep({
   copy,
   item,
   confirmation,
-  timeZone,
   amounts,
   contact
 }: ConfirmedStepProps) {
@@ -36,9 +37,17 @@ export default function ConfirmedStep({
   const headingId = useId();
   useEntrance(rootRef, { delay: 0.2, stagger: 0.09 });
 
-  const { date, time, email, meetOn, reference } = confirmation;
-  const session = confirmation.kind === 'session' && date && time;
+  const { start, end, timeZone, email, meetOn, reference, invoiceRef } =
+    confirmation;
+  const session = confirmation.kind === 'session' && start && end;
   const onDiscord = meetOn === 'discord';
+  const when = start
+    ? {
+        date: formatDayLong(dayIn(new Date(start), timeZone)),
+        time: clockIn(new Date(start), timeZone),
+        zone: zoneName(timeZone, new Date(start))
+      }
+    : null;
 
   const body =
     onDiscord && copy.bodyDiscord
@@ -48,7 +57,7 @@ export default function ConfirmedStep({
     onDiscord && copy.email.bodyDiscord
       ? copy.email.bodyDiscord
       : copy.email.body,
-    session ? { date: formatDayLong(date), time } : {}
+    { ...(when ?? {}), invoice: invoiceRef ?? '' }
   );
   const emailCta =
     onDiscord && copy.email.ctaDiscord ? copy.email.ctaDiscord : copy.email.cta;
@@ -63,21 +72,18 @@ export default function ConfirmedStep({
         now: amounts.now,
         later: amounts.later ?? ''
       })
-    }
+    },
+    ...(invoiceRef ? [{ label: copy.receipt.invoice, value: invoiceRef }] : [])
   ];
 
   function addToCalendar() {
     if (!session) return;
-    const start = zonedTimeToUtc(date, time, timeZone);
-    const end = new Date(
-      start.getTime() + (item.durationMinutes ?? 60) * 60000
-    );
     downloadIcs(
       `candy-heist-${item.id}.ics`,
       buildIcs({
         uid: `${reference}@candyheist.com`,
-        start,
-        end,
+        start: new Date(start),
+        end: new Date(end),
         title: `${item.name} with Candy Heist`,
         description: `${item.name}. Booking ${reference}.`
       })

@@ -1,4 +1,5 @@
 import type { Db, ObjectId } from 'mongodb';
+import type { BookingDetails, FlowKind } from '@/lib/booking/bookingState';
 import type { ContactMessage } from '@/lib/contact/message';
 import type { DjEnquiry } from '@/lib/enquiry/enquiry';
 import type { PlanetSpec } from '@/lib/planets/engine';
@@ -34,7 +35,17 @@ export const COLLECTIONS = {
    */
   releasesPublished: 'releases_published',
   /** Whether Haven's releases have replaced the site's own, and the shelf: one document, `releases`. */
-  releasesMeta: 'releases_meta'
+  releasesMeta: 'releases_meta',
+  /**
+   * "Book me as a music producer": each booking, its payment and what was
+   * done once it was paid (the calendar event, the emails). Unlike the
+   * inbox, these change as they go: held, paid, followed up.
+   */
+  bookings: 'bookings',
+  /** The other half of each commission, paid on /services/pay. */
+  invoices: 'invoices',
+  /** Candy's Google sign-in, sealed: one document, `candy`. */
+  googleAccount: 'google_account'
 } as const;
 
 interface Filed {
@@ -142,6 +153,86 @@ export interface ReleasesMetaDocument {
   shelf: ObjectId[];
 }
 
+/** Awaiting payment while the card is being taken; paid for good. */
+export type BookingStatus = 'awaiting-payment' | 'paid';
+
+/** Amounts in cents. */
+export interface BookingAmounts {
+  totalCents: number;
+  /** Paid at booking: a session's whole price, half a commission's. */
+  nowCents: number;
+  /** A commission's other half, invoiced; 0 for a session. */
+  laterCents: number;
+  currency: 'cad';
+}
+
+/** What was done once it was paid, each recorded so it's done only once. */
+export interface BookingEffects {
+  calendarEventId?: string;
+  meetLink?: string | null;
+  invoiceRef?: string;
+  clientEmailAt?: Date;
+  candyEmailAt?: Date;
+}
+
+export interface BookingDocument {
+  _id: ObjectId;
+  /** The reference people see: CH-7KQ2FD. */
+  ref: string;
+  kind: FlowKind;
+  itemId: string;
+  itemName: string;
+  /** A session's time; a commission has none. */
+  start?: Date;
+  end?: Date;
+  /** Where the visitor booked from, so their email reads in their time. */
+  visitorTimeZone: string;
+  details: BookingDetails;
+  amounts: BookingAmounts;
+  status: BookingStatus;
+  paymentIntentId: string;
+  /** A session's time is held for whoever is paying, until then. */
+  holdUntil?: Date;
+  createdAt: Date;
+  paidAt?: Date;
+  /** Set until it's paid: an abandoned booking is deleted after it. */
+  expireAt?: Date;
+  /** Whoever is following it up holds this, so two never do it at once. */
+  lease?: Date;
+  effects: BookingEffects;
+}
+
+export interface InvoiceDocument {
+  _id: ObjectId;
+  /** The invoice ID people type in: the booking's reference, then -2. */
+  ref: string;
+  bookingRef: string;
+  itemName: string;
+  name: string;
+  email: string;
+  totalCents: number;
+  /** Paid upfront, at booking. */
+  paidCents: number;
+  /** What this invoice is for. */
+  dueCents: number;
+  currency: 'cad';
+  status: 'open' | 'paid';
+  paymentIntentId?: string;
+  createdAt: Date;
+  paidAt?: Date;
+  lease?: Date;
+  effects: { clientEmailAt?: Date; candyEmailAt?: Date };
+}
+
+export interface GoogleAccountDocument {
+  _id: 'candy';
+  email: string;
+  /** Sealed with GOOGLE_TOKEN_KEY (lib/google/tokens.ts). */
+  refreshToken: string;
+  scope: string;
+  connectedAt: Date;
+}
+
 export interface RateLimitDocument {
   /** A hash of the visitor's address and what they used it for. */
   key: string;
@@ -189,7 +280,23 @@ export function ensureIndexes(db: Db): Promise<void> {
       .createIndex({ slug: 1 }, { unique: true }),
     db.collection(COLLECTIONS.releasesPublished).createIndex({ upc: 1 }),
     db.collection(COLLECTIONS.releasesPublished).createIndex({ spotifyId: 1 }),
-    db.collection(COLLECTIONS.releasesPublished).createIndex({ titleKey: 1 })
+    db.collection(COLLECTIONS.releasesPublished).createIndex({ titleKey: 1 }),
+    db
+      .collection(COLLECTIONS.bookings)
+      .createIndex({ ref: 1 }, { unique: true }),
+    db.collection(COLLECTIONS.bookings).createIndex({ paymentIntentId: 1 }),
+    db
+      .collection(COLLECTIONS.bookings)
+      .createIndex({ kind: 1, status: 1, start: 1 }),
+    db
+      .collection(COLLECTIONS.bookings)
+      .createIndex({ expireAt: 1 }, { expireAfterSeconds: 0 }),
+    db
+      .collection(COLLECTIONS.invoices)
+      .createIndex({ ref: 1 }, { unique: true }),
+    db
+      .collection(COLLECTIONS.invoices)
+      .createIndex({ bookingRef: 1 }, { unique: true })
   ]).then(() => undefined);
   indexed.catch(() => {
     indexed = null;

@@ -70,6 +70,58 @@
   font-size: 1.5rem;
   color: rgb(138 128 113 / 80%);
   background-color: var(--color-obsidian);
+  transition: border-color 0.3s t.$ease-signature;
+
+  // Stripe's frame, inside: as wide as the box.
+  > * {
+    flex: 1;
+  }
+}
+
+// Stripe sets these on a field's box as it's used.
+.focused {
+  border-color: rgb(210 169 97 / 70%);
+}
+
+.invalidField {
+  border-color: rgb(196 69 58 / 90%);
+}
+
+.nameInput {
+  width: 100%;
+  border-radius: 0;
+  outline: none;
+  color: var(--color-cream);
+
+  &:focus {
+    border-color: rgb(210 169 97 / 70%);
+  }
+
+  &[aria-invalid='true'] {
+    border-color: rgb(196 69 58 / 90%);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+// What Stripe or the bank said about the card, under the fields.
+.cardError {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-family: var(--font-archivo), sans-serif;
+  font-size: 1.3rem;
+  line-height: 1.4;
+  color: var(--color-crimson-light);
+}
+
+// Instead of the card, while payments can't be taken here yet.
+.notOpen {
+  @include b.body(1.4rem, var(--color-cream));
+
+  align-self: stretch;
+  margin: -1.6rem 0 2.8rem;
 }
 
 // The terms: a box to tick before paying, its words linking to them, and

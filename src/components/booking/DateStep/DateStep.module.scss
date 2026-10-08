@@ -211,6 +211,15 @@
   padding-top: 1.2rem;
 }
 
+// Under the month while its times are on their way, or couldn't be read.
+.monthNote {
+  @include b.mono(1rem, 0.4em);
+
+  margin-top: 1.6rem;
+  line-height: 1.4;
+  color: var(--color-concrete-light);
+}
+
 .slots {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
