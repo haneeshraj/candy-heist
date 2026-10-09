@@ -125,20 +125,40 @@ browser. Haven sends each cover already brought down to about 750×750
 - `PUT /api/haven/releases/<id>/cover`: the image itself as the body (`Content-Type: image/png`, `image/jpeg` or `image/webp`, up to 8 MB, at least 300×300); answers with the snapshot, where each release's `cover` is its public URL or `null`.
 - `DELETE /api/haven/releases/<id>/cover`: back to the placeholder.
 
+## Services from Candy Haven
+
+What "Book me as a music producer" offers, and when sessions can be
+booked, come from Candy Haven's SERVICES department through the same API
+(`/api/haven/services*`). Haven keeps its list on the machine it's edited
+on and publishes all of it at once, with the hours; the database here
+keeps the last publish (`services_published`, one document). Until Haven
+publishes, the site offers its own `src/content/services/catalogue.json`
+and `hours.json`; from then on, only Haven's, refreshed on each publish
+rather than read per visit (`getServices`). The home page's Sessions list
+stays in `src/content/home/sessions.json`, by each service's address: a
+service that's no longer offered drops off it, and off its testimonials.
+
+- `GET /api/haven/services`: what the site offers now, with its revision (0 before the first publish).
+- `PUT /api/haven/services`: `{ items, hours, baseRevision, force }`, the whole list in order and the hours. A publish over a newer revision answers 409 with what's there, unless `force`.
+- `PUT /api/haven/services/photo`: one image as the body (PNG, JPEG or WebP, at least 1200×800); the site cuts the card (700×1000) and the banner (1600×609) from it, around what draws the eye, and answers with both addresses. They're kept in the covers bucket, under `services/`. A service may only show those, or the site's own photos under `/img/`.
+
+How long a time is held while someone pays stays the site's
+(`hours.json`'s `holdMinutes`).
+
 ## Bookings and payments
 
 "Book me as a music producer" (`/services/producer`) and "Pay an
 invoice" (`/services/pay`) take real payments, through Stripe, in CAD.
 
-- **Prices** are each service's `price` in
-  `src/content/services/catalogue.json`, in dollars. A service without one
-  can't be paid for online; its payment step says so.
-- **Open times** are Candy's start times per weekday, in his zone, in
-  `src/content/services/hours.json` (also: days off, the notice, how far
-  ahead, a buffer between sessions, and how long a time is held while
-  someone pays). Anything busy on his Google Calendar, and any session
-  booked or being paid for, shows as taken. Visitors see times in their
-  own time zone. `/api/booking/slots` serves them a month at a time.
+- **Prices** are each service's price, set in Haven (before its first
+  publish, `price` in `src/content/services/catalogue.json`), in dollars.
+  A service without one can't be paid for online; its payment step says so.
+- **Open times** are Candy's start times per weekday, in his zone, set in
+  Haven with his days off, the notice, how far ahead, and a break between
+  sessions (before its first publish, `src/content/services/hours.json`).
+  Anything busy on his Google Calendar, and any session booked or being
+  paid for, shows as taken. Visitors see times in their own time zone.
+  `/api/booking/slots` serves them a month at a time.
 - **Paying** opens a Stripe payment on the server for what's due now (a
   session in full, half a commission), Stripe's card fields take the
   card, and the server checks with Stripe before booking it.
@@ -151,6 +171,16 @@ invoice" (`/services/pay`) take real payments, through Stripe, in CAD.
 
 Stored in `bookings`, `invoices` and `google_account` (Candy's sign-in,
 sealed with `GOOGLE_TOKEN_KEY`).
+
+Candy Haven's SERVICES shows every paid booking (its PRODUCER tab), and
+can move or cancel a session:
+
+- `GET /api/haven/bookings?since=`: every paid or cancelled booking changed since then, each with its invoice, Meet link and payment in Stripe, by `updatedAt`; pass back the answer's `cursor`.
+- `POST /api/haven/bookings/<ref>/move`: `{ start, force }`. Never onto another booking; onto something on Candy's calendar only with `force`. The old time opens up, the event moves (Google sends the client the updated invitation), and the client gets an email with the new time and the old.
+- `POST /api/haven/bookings/<ref>/cancel`: `{ note }`, for a session still to come. Its time opens up, its event comes off the calendar, and the client gets an email with the note. Any refund is made in Stripe, by hand.
+
+Without Google connected, both still change the booking, and say that
+nobody was told.
 
 ### Stripe
 
