@@ -160,6 +160,18 @@
       "signature": "Candy Heist · Halifax, Nova Scotia"
     }
   },
+  "changes": {
+    "moved": {
+      "subject": "Your session has moved",
+      "body": "It’s now {date}, {time} ({zone}). Your calendar invitation has the new time, and the call link stays the same.",
+      "was": "Was",
+      "cta": "Join the call"
+    },
+    "cancelled": {
+      "subject": "Your session is cancelled",
+      "body": "Your session on {date}, {time} ({zone}) won’t go ahead, and it’s off your calendar."
+    }
+  },
   "kinds": {
     "commission": {
       "tag": "Commission",

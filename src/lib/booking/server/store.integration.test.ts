@@ -141,4 +141,74 @@ describe.skipIf(!uri)('bookings, against a real database', () => {
       (await invoices.markInvoicePaid(invoice.ref, 'pi_rest'))?.status
     ).toBe('paid');
   });
+
+  it('hands Haven what changed, and moves or cancels a session once', async () => {
+    const store = await import('./store');
+    const since = new Date();
+    const booking = await store.fileBooking(
+      sessionFields('2027-03-02T15:00:00Z', '2027-03-02T16:00:00Z')
+    );
+    await store.setPayment(booking.ref, 'pi_move');
+
+    // Unpaid, it isn't Haven's yet.
+    expect(
+      (await store.bookingsChangedSince(since, 50)).map((b) => b.ref)
+    ).not.toContain(booking.ref);
+    await store.markPaid(booking.ref, 'pi_move');
+    const changed = await store.bookingsChangedSince(since, 50);
+    expect(changed.map((b) => b.ref)).toContain(booking.ref);
+
+    // Another session wants its time: it's taken, a free one isn't.
+    const rival = (start: string, end: string) =>
+      store.rivalSession('CH-OTHER2', at(start), at(end), 0);
+    expect(
+      (await rival('2027-03-02T15:30:00Z', '2027-03-02T16:30:00Z'))?.ref
+    ).toBe(booking.ref);
+    expect(
+      await rival('2027-03-02T16:00:00Z', '2027-03-02T17:00:00Z')
+    ).toBeNull();
+
+    // Moved once, from where it was; a second move from the old time misses.
+    const to = {
+      start: at('2027-03-04T18:00:00Z'),
+      end: at('2027-03-04T19:00:00Z')
+    };
+    const moved = await store.moveSession(
+      booking.ref,
+      at('2027-03-02T15:00:00Z'),
+      to,
+      'candy'
+    );
+    expect(moved?.start).toEqual(to.start);
+    expect(moved?.moves).toEqual([
+      expect.objectContaining({
+        from: at('2027-03-02T15:00:00Z'),
+        to: to.start,
+        by: 'candy'
+      })
+    ]);
+    expect(
+      await store.moveSession(booking.ref, at('2027-03-02T15:00:00Z'), to, 'x')
+    ).toBeNull();
+    // Its old time is free, its new one taken.
+    expect(
+      await rival('2027-03-02T15:00:00Z', '2027-03-02T16:00:00Z')
+    ).toBeNull();
+
+    // Cancelled once; then its time is open again.
+    const cancelled = await store.cancelSession(booking.ref, 'candy', 'Ill.');
+    expect(cancelled).toMatchObject({
+      status: 'cancelled',
+      cancelNote: 'Ill.'
+    });
+    expect(await store.cancelSession(booking.ref, 'candy', '')).toBeNull();
+    expect(
+      await rival('2027-03-04T18:00:00Z', '2027-03-04T19:00:00Z')
+    ).toBeNull();
+    expect(
+      (await store.bookingsChangedSince(cancelled!.updatedAt, 50)).map(
+        (b) => b.status
+      )
+    ).toContain('cancelled');
+  });
 });

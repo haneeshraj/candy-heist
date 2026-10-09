@@ -15,10 +15,17 @@ import {
   releaseInvoiceLease,
   takeInvoiceLease
 } from '@/lib/invoices/store';
-import { dashboardLink } from '@/lib/payments/stripe';
+import { paymentDashboardLink } from '@/lib/payments/stripe';
 import { forgetCalendar } from './busy';
+import { sessionEventFor } from './sessionEvent';
 import { candyBookingEmail, clientBookingEmail } from './emails';
-import { markPaid, recordEffects, releaseLease, takeLease } from './store';
+import {
+  markPaid,
+  recordEffects,
+  releaseLease,
+  takeLease,
+  touchBooking
+} from './store';
 
 // What happens once a payment has gone through, run by whichever gets
 // there first: the page finishing the payment, or Stripe's webhook. It's
@@ -31,12 +38,6 @@ import { markPaid, recordEffects, releaseLease, takeLease } from './store';
 async function candyAddress(): Promise<string> {
   return process.env.BOOKING_NOTIFY_EMAIL?.trim() || senderAddress();
 }
-
-const paymentLink = (id: string) =>
-  dashboardLink({
-    id,
-    livemode: (process.env.STRIPE_SECRET_KEY ?? '').startsWith('sk_live_')
-  });
 
 export async function finalizeBooking(
   ref: string,
@@ -72,26 +73,12 @@ export async function finalizeBooking(
       leased.end &&
       !effects.calendarEventId
     ) {
-      const { details } = leased;
-      const event = await placeSessionEvent({
-        reference: ref,
-        summary: `${leased.itemName} · ${details.name}`,
-        description: [
-          `${leased.itemName}, booked on the site. Reference ${ref}.`,
-          details.meetOn === 'discord'
-            ? `They'd like to meet on Discord: ${details.discord}. The Meet link is the fallback.`
-            : 'On Google Meet.',
-          details.instagram ? `Instagram: ${details.instagram}` : '',
-          details.phone ? `Phone: ${details.phone}` : '',
-          details.note ? `Their note: ${details.note}` : ''
-        ]
-          .filter(Boolean)
-          .join('\n'),
-        start: leased.start,
-        end: leased.end,
-        attendee: { email: details.email, name: details.name },
-        timeZone
-      });
+      const event = await placeSessionEvent(
+        sessionEventFor(
+          { ...leased, start: leased.start, end: leased.end },
+          timeZone
+        )
+      );
       effects = await recordEffects(ref, {
         calendarEventId: event.id,
         meetLink: event.meetLink
@@ -108,7 +95,7 @@ export async function finalizeBooking(
           leased,
           effects,
           await candyAddress(),
-          paymentLink(paymentIntentId),
+          paymentDashboardLink(paymentIntentId),
           timeZone
         )
       );
@@ -123,6 +110,8 @@ export async function finalizeBooking(
 export async function finalizeInvoice(ref: string, paymentIntentId: string) {
   const invoice = await markInvoicePaid(ref, paymentIntentId);
   if (!invoice || invoice.status !== 'paid') return invoice;
+  // So Haven sees the booking paid in full.
+  await touchBooking(invoice.bookingRef);
   const leased = await takeInvoiceLease(ref);
   if (!leased) return invoice;
   try {
@@ -141,7 +130,7 @@ export async function finalizeInvoice(ref: string, paymentIntentId: string) {
         candyInvoicePaidEmail(
           leased,
           await candyAddress(),
-          paymentLink(paymentIntentId)
+          paymentDashboardLink(paymentIntentId)
         )
       );
       await recordInvoiceEffect(ref, 'candyEmailAt');

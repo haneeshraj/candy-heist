@@ -178,8 +178,19 @@ export interface ServicesDocument {
   publishedBy: Uid;
 }
 
-/** Awaiting payment while the card is being taken; paid for good. */
-export type BookingStatus = 'awaiting-payment' | 'paid';
+/**
+ * Awaiting payment while the card is being taken; paid for good; a paid
+ * session Candy cancelled from Haven, its time open again.
+ */
+export type BookingStatus = 'awaiting-payment' | 'paid' | 'cancelled';
+
+/** A session moved to another time from Haven. */
+export interface BookingMove {
+  from: Date;
+  to: Date;
+  at: Date;
+  by: Uid;
+}
 
 /** Amounts in cents. */
 export interface BookingAmounts {
@@ -220,11 +231,23 @@ export interface BookingDocument {
   holdUntil?: Date;
   createdAt: Date;
   paidAt?: Date;
+  /**
+   * Whenever anything Haven shows changes (paid, followed up, moved,
+   * cancelled, its invoice paid): how Haven finds what's new since it
+   * last looked.
+   */
+  updatedAt: Date;
   /** Set until it's paid: an abandoned booking is deleted after it. */
   expireAt?: Date;
   /** Whoever is following it up holds this, so two never do it at once. */
   lease?: Date;
   effects: BookingEffects;
+  /** Each time it was moved from Haven, oldest first. */
+  moves?: BookingMove[];
+  cancelledAt?: Date;
+  cancelledBy?: Uid;
+  /** What Candy told the client when he cancelled it, if anything. */
+  cancelNote?: string;
 }
 
 export interface InvoiceDocument {
@@ -245,6 +268,7 @@ export interface InvoiceDocument {
   paymentIntentId?: string;
   createdAt: Date;
   paidAt?: Date;
+  updatedAt: Date;
   lease?: Date;
   effects: { clientEmailAt?: Date; candyEmailAt?: Date };
 }
@@ -316,6 +340,9 @@ export function ensureIndexes(db: Db): Promise<void> {
     db
       .collection(COLLECTIONS.bookings)
       .createIndex({ expireAt: 1 }, { expireAfterSeconds: 0 }),
+    db
+      .collection(COLLECTIONS.bookings)
+      .createIndex({ status: 1, updatedAt: 1 }),
     db
       .collection(COLLECTIONS.invoices)
       .createIndex({ ref: 1 }, { unique: true }),

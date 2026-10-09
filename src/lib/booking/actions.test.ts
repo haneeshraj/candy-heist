@@ -94,6 +94,7 @@ describe('startBookingPayment', () => {
         ref: 'CH-K3P2Q8',
         status: 'awaiting-payment',
         createdAt: new Date(),
+        updatedAt: new Date(),
         effects: {}
       }));
     vi.mocked(createCardPayment)

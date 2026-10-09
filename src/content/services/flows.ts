@@ -231,6 +231,25 @@ export const producerFlowSchema = z.object({
       signature: text
     })
   }),
+  /**
+   * The client's email when Candy moves or cancels a session from Candy
+   * Haven, said the same way as the confirmation's.
+   */
+  changes: z.object({
+    moved: z.object({
+      subject: text,
+      /** "{date}, {time} ({zone})": the new time, in the client's zone. */
+      body: text,
+      /** Beside the old time, among the details. */
+      was: text,
+      cta: text
+    }),
+    cancelled: z.object({
+      subject: text,
+      /** The time it was, in the client's zone. */
+      body: text
+    })
+  }),
   kinds: z.object({ commission: kindSchema, session: kindSchema })
 });
 

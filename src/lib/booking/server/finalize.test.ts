@@ -12,7 +12,8 @@ vi.mock('./store', () => ({
   markPaid: vi.fn(),
   takeLease: vi.fn(),
   releaseLease: vi.fn(),
-  recordEffects: vi.fn()
+  recordEffects: vi.fn(),
+  touchBooking: vi.fn()
 }));
 vi.mock('./busy', () => ({ forgetCalendar: vi.fn() }));
 vi.mock('@/lib/google/calendar', () => ({ placeSessionEvent: vi.fn() }));
@@ -60,6 +61,7 @@ const session = (): BookingDocument => ({
   status: 'paid',
   paymentIntentId: 'pi_1',
   createdAt: new Date(),
+  updatedAt: new Date(),
   effects: {}
 });
 

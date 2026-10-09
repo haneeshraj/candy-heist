@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { isOpenStart, slotsBetween, type SlotRules } from './availability';
+import {
+  isOpenStart,
+  slotsBetween,
+  withoutInterval,
+  type SlotRules
+} from './availability';
 import { lastBookableDay, offeredStarts, type Hours } from './hours';
 import { slotsByDay, zoneName } from './zone';
 
@@ -144,5 +149,20 @@ describe('slots', () => {
     expect(zoneName('Europe/London', at('2026-10-09T01:30:00Z'))).toMatch(
       /United Kingdom|British/
     );
+  });
+});
+
+describe('withoutInterval', () => {
+  const at = (hour: number) => new Date(Date.UTC(2027, 2, 2, hour));
+  it('cuts one stretch out of the busy times, whatever it overlaps', () => {
+    const own = { start: at(15), end: at(16) };
+    expect(withoutInterval([{ start: at(15), end: at(16) }], own)).toEqual([]);
+    expect(withoutInterval([{ start: at(14), end: at(17) }], own)).toEqual([
+      { start: at(14), end: at(15) },
+      { start: at(16), end: at(17) }
+    ]);
+    expect(withoutInterval([{ start: at(10), end: at(11) }], own)).toEqual([
+      { start: at(10), end: at(11) }
+    ]);
   });
 });

@@ -26,7 +26,7 @@ async function bookings(): Promise<Collection<BookingDocument>> {
 
 export type NewBooking = Omit<
   BookingDocument,
-  '_id' | 'ref' | 'status' | 'createdAt' | 'expireAt' | 'effects'
+  '_id' | 'ref' | 'status' | 'createdAt' | 'updatedAt' | 'expireAt' | 'effects'
 >;
 
 const isDuplicate = (error: unknown) =>
@@ -44,6 +44,7 @@ export async function fileBooking(
       ref: newRef('CH'),
       status: 'awaiting-payment' as const,
       createdAt: now,
+      updatedAt: now,
       expireAt: new Date(now.getTime() + ABANDON_AFTER_MS),
       effects: {}
     };
@@ -155,7 +156,7 @@ export async function markPaid(
   const updated = await collection.findOneAndUpdate(
     { ref, paymentIntentId, status: 'awaiting-payment' },
     {
-      $set: { status: 'paid', paidAt: now },
+      $set: { status: 'paid', paidAt: now, updatedAt: now },
       $unset: { holdUntil: '', expireAt: '' }
     },
     { returnDocument: 'after' }
@@ -190,6 +191,102 @@ export async function recordEffects(
   );
   const updated = await (
     await bookings()
-  ).findOneAndUpdate({ ref }, { $set: set }, { returnDocument: 'after' });
+  ).findOneAndUpdate(
+    { ref },
+    { $set: { ...set, updatedAt: new Date() } },
+    { returnDocument: 'after' }
+  );
   return updated?.effects ?? {};
+}
+
+/** Marks it changed for Haven: its invoice was paid. */
+export async function touchBooking(ref: string, now = new Date()) {
+  await (await bookings()).updateOne({ ref }, { $set: { updatedAt: now } });
+}
+
+// ------------------------------------------------------- for Candy Haven
+
+/**
+ * The paid and cancelled bookings changed at or after `since`, oldest
+ * change first, at most `limit` of them. At or after, not after: two
+ * changes can share a millisecond, and Haven files by reference, so
+ * seeing one twice changes nothing.
+ */
+export async function bookingsChangedSince(since: Date, limit: number) {
+  return (await bookings())
+    .find({
+      status: { $in: ['paid', 'cancelled'] },
+      updatedAt: { $gte: since }
+    })
+    .sort({ updatedAt: 1 })
+    .limit(limit)
+    .toArray();
+}
+
+/**
+ * Another session that holds [start, end), with `bufferMinutes` either
+ * side: paid, or held for someone paying. Null when the time is free of
+ * bookings.
+ */
+export async function rivalSession(
+  ref: string,
+  start: Date,
+  end: Date,
+  bufferMinutes: number,
+  now = new Date()
+) {
+  const gap = bufferMinutes * 60_000;
+  return (await bookings()).findOne({
+    kind: 'session',
+    ref: { $ne: ref },
+    start: { $lt: new Date(end.getTime() + gap) },
+    end: { $gt: new Date(start.getTime() - gap) },
+    ...holding(now)
+  });
+}
+
+/**
+ * Moves a paid session from `from` to [start, end), if it's still paid
+ * and still at `from`: null when it was moved or cancelled in between.
+ */
+export async function moveSession(
+  ref: string,
+  from: Date,
+  to: { start: Date; end: Date },
+  by: string,
+  now = new Date()
+) {
+  return (await bookings()).findOneAndUpdate(
+    { ref, kind: 'session', status: 'paid', start: from },
+    {
+      $set: { start: to.start, end: to.end, updatedAt: now },
+      $push: { moves: { from, to: to.start, at: now, by } }
+    },
+    { returnDocument: 'after' }
+  );
+}
+
+/**
+ * Cancels a paid session, so its time is open again: null when it's not
+ * a paid session (cancelled already, or never paid).
+ */
+export async function cancelSession(
+  ref: string,
+  by: string,
+  note: string,
+  now = new Date()
+) {
+  return (await bookings()).findOneAndUpdate(
+    { ref, kind: 'session', status: 'paid' },
+    {
+      $set: {
+        status: 'cancelled',
+        cancelledAt: now,
+        cancelledBy: by,
+        cancelNote: note,
+        updatedAt: now
+      }
+    },
+    { returnDocument: 'after' }
+  );
 }

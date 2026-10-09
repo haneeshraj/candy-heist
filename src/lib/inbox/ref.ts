@@ -18,3 +18,6 @@ export function newRef(prefix: RefPrefix): string {
 }
 
 export const REF_PATTERN = /^(MSG|DJ)-[2-9A-HJKMNP-Z]{6}$/;
+
+/** A booking's reference: CH-K3P2Q8. */
+export const BOOKING_REF_PATTERN = /^CH-[2-9A-HJKMNP-Z]{6}$/;

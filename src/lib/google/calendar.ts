@@ -142,3 +142,44 @@ export async function placeSessionEvent(
   }
   return placed(event);
 }
+
+/**
+ * Moves a session's event to its new time, the Meet link kept; Google
+ * sends the client the updated invitation. An event deleted by hand comes
+ * back. Null when there's no such event at all (it was never made).
+ */
+export async function moveSessionEvent(
+  id: string,
+  start: Date,
+  end: Date,
+  timeZone: string
+): Promise<PlacedEvent | null> {
+  const response = await googleFetch(
+    `${API}/calendars/primary/events/${id}?conferenceDataVersion=1&sendUpdates=all`,
+    {
+      method: 'PATCH',
+      body: JSON.stringify({
+        start: { dateTime: start.toISOString(), timeZone },
+        end: { dateTime: end.toISOString(), timeZone },
+        status: 'confirmed'
+      })
+    }
+  );
+  if (response.status === 404) return null;
+  if (!response.ok)
+    throw new GoogleRequestError(response.status, await response.text());
+  return placed((await response.json()) as GoogleEvent);
+}
+
+/**
+ * Takes a session's event off Candy's calendar; Google tells the client.
+ * One that's gone already is fine.
+ */
+export async function removeSessionEvent(id: string): Promise<void> {
+  const response = await googleFetch(
+    `${API}/calendars/primary/events/${id}?sendUpdates=all`,
+    { method: 'DELETE' }
+  );
+  if (response.ok || response.status === 404 || response.status === 410) return;
+  throw new GoogleRequestError(response.status, await response.text());
+}

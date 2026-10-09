@@ -173,6 +173,77 @@ export function candyBookingEmail(
   };
 }
 
+/** A session with its time. */
+type Timed = BookingDocument & { start: Date };
+
+/**
+ * The client's email when Candy moves their session from Candy Haven:
+ * the new time and the old, in their zone, and the call link (kept).
+ */
+export function clientMovedEmail(
+  booking: Timed,
+  previous: Date
+): OutgoingEmail {
+  const flow = flowCopy(producerFlowContent, 'session').confirmation;
+  const copy = producerFlowContent.changes.moved;
+  const was = whenIn(previous, booking.visitorTimeZone);
+  const { meetLink } = booking.effects;
+  const { html, text } = renderEmail({
+    title: copy.subject,
+    greeting: fill(flow.email.greeting, { name: booking.details.name }),
+    paragraphs: [
+      fill(copy.body, whenIn(booking.start, booking.visitorTimeZone))
+    ],
+    rows: [
+      { label: flow.receipt.item, value: booking.itemName },
+      { label: flow.receipt.reference, value: booking.ref },
+      { label: copy.was, value: `${was.date}, ${was.time} (${was.zone})` }
+    ],
+    button: meetLink ? { label: copy.cta, href: meetLink } : undefined,
+    after: [flow.email.reply],
+    signature: flow.email.signature
+  });
+  return {
+    to: { name: booking.details.name, address: booking.details.email },
+    subject: copy.subject,
+    html,
+    text
+  };
+}
+
+/**
+ * The client's email when Candy cancels their session from Candy Haven:
+ * which one, and whatever Candy wrote to go with it.
+ */
+export function clientCancelledEmail(
+  booking: Timed,
+  note: string
+): OutgoingEmail {
+  const flow = flowCopy(producerFlowContent, 'session').confirmation;
+  const copy = producerFlowContent.changes.cancelled;
+  const paragraphs = [
+    fill(copy.body, whenIn(booking.start, booking.visitorTimeZone))
+  ];
+  if (note.trim()) paragraphs.push(note.trim());
+  const { html, text } = renderEmail({
+    title: copy.subject,
+    greeting: fill(flow.email.greeting, { name: booking.details.name }),
+    paragraphs,
+    rows: [
+      { label: flow.receipt.item, value: booking.itemName },
+      { label: flow.receipt.reference, value: booking.ref }
+    ],
+    after: [flow.email.reply],
+    signature: flow.email.signature
+  });
+  return {
+    to: { name: booking.details.name, address: booking.details.email },
+    subject: copy.subject,
+    html,
+    text
+  };
+}
+
 export function clientInvoicePaidEmail(
   invoice: InvoiceDocument
 ): OutgoingEmail {

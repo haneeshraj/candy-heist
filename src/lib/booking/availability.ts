@@ -45,6 +45,24 @@ export function clashes(
 }
 
 /**
+ * The busy times with `own` cut out of them: what's busy apart from one
+ * thing already in them (a session's own event, when it's being moved).
+ */
+export function withoutInterval(
+  busy: readonly Interval[],
+  own: Interval
+): Interval[] {
+  return busy.flatMap((taken) => {
+    if (taken.end <= own.start || taken.start >= own.end) return [taken];
+    const left: Interval[] = [];
+    if (taken.start < own.start)
+      left.push({ start: taken.start, end: own.start });
+    if (taken.end > own.end) left.push({ start: own.end, end: taken.end });
+    return left;
+  });
+}
+
+/**
  * Every offered time starting in [from, to) that can still be booked
  * (past the notice, within the horizon), open or taken, soonest first.
  * Taken ones are kept, so the page can list them struck through.

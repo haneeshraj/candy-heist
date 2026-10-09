@@ -39,6 +39,7 @@ export async function openInvoice(
     currency: booking.amounts.currency,
     status: 'open' as const,
     createdAt: now,
+    updatedAt: now,
     effects: {}
   };
   try {
@@ -53,6 +54,14 @@ export async function openInvoice(
     if (!existing) throw error;
     return existing;
   }
+}
+
+/** The invoices of these bookings, by their references. */
+export async function invoicesFor(bookingRefs: string[]) {
+  if (!bookingRefs.length) return [];
+  return (await invoices())
+    .find({ bookingRef: { $in: bookingRefs } })
+    .toArray();
 }
 
 /** By the invoice's ID, or the booking's reference. */
@@ -73,7 +82,7 @@ export async function markInvoicePaid(
   const collection = await invoices();
   const updated = await collection.findOneAndUpdate(
     { ref, paymentIntentId, status: 'open' },
-    { $set: { status: 'paid', paidAt: now } },
+    { $set: { status: 'paid', paidAt: now, updatedAt: now } },
     { returnDocument: 'after' }
   );
   return updated ?? collection.findOne({ ref, paymentIntentId });

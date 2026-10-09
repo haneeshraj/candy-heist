@@ -68,3 +68,10 @@ export const retrievePayment = (id: string) =>
 /** Where Candy finds a payment in his Stripe dashboard. */
 export const dashboardLink = (payment: { id: string; livemode: boolean }) =>
   `https://dashboard.stripe.com/${payment.livemode ? '' : 'test/'}payments/${payment.id}`;
+
+/** A payment's page in Stripe's dashboard, live or test as the keys here are. */
+export const paymentDashboardLink = (id: string) =>
+  dashboardLink({
+    id,
+    livemode: (process.env.STRIPE_SECRET_KEY ?? '').startsWith('sk_live_')
+  });
