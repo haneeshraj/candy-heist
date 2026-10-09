@@ -42,7 +42,7 @@ the same names go in Vercel's environment variables for the live site.
 | `STRIPE_WEBHOOK_SECRET`              | The webhook's signing secret, `whsec_...`                          |
 | `GOOGLE_CLIENT_ID`                   | The OAuth client Candy's Google account is connected through       |
 | `GOOGLE_CLIENT_SECRET`               | Its secret                                                         |
-| `GOOGLE_CONNECT_KEY`                 | A long random string, the key to `/api/google/connect`             |
+| `GOOGLE_CONNECT_KEY`                 | 32 random bytes, hex: the key to `/api/google/connect`             |
 | `GOOGLE_TOKEN_KEY`                   | 32 random bytes, base64: seals Candy's sign-in in the database     |
 | `BOOKING_NOTIFY_EMAIL`               | Optional: where Candy's booking notes go (his Gmail when unset)    |
 
@@ -180,7 +180,10 @@ activated.
    `https://<site>/api/google/callback`. Copy its id and secret.
 4. Make the two keys and set all four variables:
    `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`
-   once for `GOOGLE_TOKEN_KEY` and once for `GOOGLE_CONNECT_KEY`.
+   for `GOOGLE_TOKEN_KEY`, and
+   `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+   for `GOOGLE_CONNECT_KEY`. That one goes in a link, where base64's `+`
+   and `/` don't come through whole, so it's hex.
 5. Candy opens `https://<site>/api/google/connect?key=<GOOGLE_CONNECT_KEY>`,
    signs in and allows everything asked for: seeing when he's free or
    busy (not what his events are), adding events to his calendar, and
