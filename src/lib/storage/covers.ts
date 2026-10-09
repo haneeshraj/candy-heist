@@ -152,7 +152,7 @@ export async function uploadCover(
   releaseId: string,
   data: Buffer
 ): Promise<UploadedCover> {
-  return put(releaseId, '', data);
+  return storeWebp(releaseId, '', data);
 }
 
 /**
@@ -163,16 +163,21 @@ export async function uploadTape(
   releaseId: string,
   data: Buffer
 ): Promise<UploadedCover> {
-  return put(releaseId, 'tape-', data);
+  return storeWebp(releaseId, 'tape-', data);
 }
 
-async function put(
-  releaseId: string,
+/**
+ * Puts a WebP in the bucket, in `folder`, under `prefix` and a name made
+ * from its bytes, and hands back where it is. The services' photos are
+ * kept this way too (servicePhotos.ts), in their own folder.
+ */
+export async function storeWebp(
+  folder: string,
   prefix: string,
   data: Buffer
 ): Promise<UploadedCover> {
   const hash = createHash('sha256').update(data).digest('hex');
-  const path = `${releaseId}/${prefix}${hash.slice(0, 16)}.webp`;
+  const path = `${folder}/${prefix}${hash.slice(0, 16)}.webp`;
   const covers = bucket();
   const { error } = await covers.upload(path, data, {
     upsert: true,
@@ -182,6 +187,11 @@ async function put(
   });
   if (error) throw error;
   return { path, url: covers.getPublicUrl(path).data.publicUrl };
+}
+
+/** The public address a path in the bucket is served from. */
+export function storedUrl(path: string): string {
+  return bucket().getPublicUrl(path).data.publicUrl;
 }
 
 /**
