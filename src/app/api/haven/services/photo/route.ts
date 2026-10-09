@@ -8,9 +8,10 @@ import {
 } from '@/lib/storage/servicePhotos';
 
 // A service's photo. PUT: the image itself as the body, a PNG, JPEG or
-// WebP Candy Haven has brought down to about 2000 pixels on its long
-// side; the site cuts the card and the banner from it, stores both, and
-// answers with their addresses for Haven to publish with the service.
+// WebP as picked in Candy Haven (one over 4 MB is turned upright and
+// brought down to 2400 pixels on its long side there first); the site
+// cuts the card and the banner from it, stores both, and answers with
+// their addresses for Haven to publish with the service.
 
 /** Haven's are well under this; a host may refuse sooner (Vercel takes about 4.5 MB). */
 const PHOTO_BODY: BytesBody = {

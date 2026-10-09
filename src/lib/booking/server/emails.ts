@@ -86,8 +86,8 @@ export function clientBookingEmail(
 }
 
 /**
- * Candy's own note of a booking: who, what, when (in `candyZone`, his
- * hours' zone), and what's been done.
+ * Candy's own note of a booking: who, what, when (in `candyZone`, the
+ * zone of Candy's hours), and what's been done.
  */
 export function candyBookingEmail(
   booking: BookingDocument,

@@ -246,7 +246,7 @@ export interface BookingDocument {
   moves?: BookingMove[];
   cancelledAt?: Date;
   cancelledBy?: Uid;
-  /** What Candy told the client when he cancelled it, if anything. */
+  /** What Candy told the client on cancelling it, if anything. */
   cancelNote?: string;
 }
 

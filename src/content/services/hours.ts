@@ -6,7 +6,7 @@ import hoursData from './hours.json';
 // either way: it's the site's setting, not Candy's.
 //
 // PLACEHOLDER HOURS: Tuesday, Thursday, Friday and Saturday at six times,
-// as the booking page showed before it was connected. Candy sets his own
-// in Haven.
+// as the booking page showed before it was connected. Candy sets the real
+// ones in Haven.
 
 export const fileHours: Hours = hoursSchema.parse(hoursData);

@@ -64,7 +64,7 @@ export async function finalizeBooking(
       );
       return { ...leased, effects };
     }
-    // Candy's own zone, for his calendar and his note.
+    // Candy's own zone, for Candy's calendar and note.
     const { timeZone } = (await getServices()).hours;
 
     if (

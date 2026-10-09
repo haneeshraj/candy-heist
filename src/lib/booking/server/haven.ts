@@ -38,7 +38,7 @@ import {
 // in Haven. Moving or cancelling is the site's to do, because the site
 // keeps the open times: a moved session frees its old time and takes its
 // new one, a cancelled one frees its time, and either way Candy's
-// calendar and the client hear about it, from his Google account.
+// calendar and the client hear about it, from Candy's Google account.
 
 /** How many bookings one check-in hands over before asking for the rest. */
 export const PAGE_SIZE = 200;
@@ -77,7 +77,7 @@ export interface BookingForHaven {
   /** Each time it was moved, oldest first. */
   moves: Array<{ from: string; to: string; at: string }>;
   cancelledAt: string | null;
-  /** What Candy told the client when he cancelled, if anything. */
+  /** What Candy told the client on cancelling, if anything. */
   cancelNote: string;
 }
 

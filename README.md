@@ -153,10 +153,10 @@ invoice" (`/services/pay`) take real payments, through Stripe, in CAD.
 - **Prices** are each service's price, set in Haven (before its first
   publish, `price` in `src/content/services/catalogue.json`), in dollars.
   A service without one can't be paid for online; its payment step says so.
-- **Open times** are Candy's start times per weekday, in his zone, set in
-  Haven with his days off, the notice, how far ahead, and a break between
+- **Open times** are Candy's start times per weekday, in Candy's zone, set
+  in Haven with the days off, the notice, how far ahead, and a break between
   sessions (before its first publish, `src/content/services/hours.json`).
-  Anything busy on his Google Calendar, and any session booked or being
+  Anything busy on Candy's Google Calendar, and any session booked or being
   paid for, shows as taken. Visitors see times in their own time zone.
   `/api/booking/slots` serves them a month at a time.
 - **Paying** opens a Stripe payment on the server for what's due now (a
