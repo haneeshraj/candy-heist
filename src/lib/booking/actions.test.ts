@@ -3,7 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { withinHourlyLimit } from '@/lib/forms/limits';
 import { createCardPayment, retrievePayment } from '@/lib/payments/stripe';
 import { finishBookingPayment, startBookingPayment } from './actions';
-import { HOURS, offeredStarts } from './hours';
+import { fileHours } from '@/content/services/hours';
+import { offeredStarts } from './hours';
 import { busyBetween } from './server/busy';
 import { finalizeBooking } from './server/finalize';
 import {
@@ -36,19 +37,25 @@ vi.mock('@/lib/payments/stripe', () => ({
   getStripe: vi.fn(),
   PaymentsUnavailableError: class extends Error {}
 }));
-vi.mock('@/content/services/catalogue', () => ({
-  catalogue: [
-    { id: 'mixing', kind: 'commission', name: 'Mixing', price: 120.01 },
-    {
-      id: 'dj-lessons',
-      kind: 'session',
-      name: 'DJ Lessons',
-      price: 90,
-      durationMinutes: 60
-    },
-    { id: 'beats', kind: 'commission', name: 'Beats' }
-  ]
-}));
+vi.mock('@/content/services/getServices', async () => {
+  const { fileHours } = await import('@/content/services/hours');
+  return {
+    getServices: vi.fn(async () => ({
+      items: [
+        { id: 'mixing', kind: 'commission', name: 'Mixing', price: 120.01 },
+        {
+          id: 'dj-lessons',
+          kind: 'session',
+          name: 'DJ Lessons',
+          price: 90,
+          durationMinutes: 60
+        },
+        { id: 'beats', kind: 'commission', name: 'Beats' }
+      ],
+      hours: fileHours
+    }))
+  };
+});
 
 const details = {
   name: ' Alex Martin ',
@@ -69,7 +76,7 @@ const input = (overrides = {}) => ({
 // One of Candy's times, a few days on.
 const aStart = () =>
   offeredStarts(
-    HOURS,
+    fileHours,
     new Date(Date.now() + 3 * 86_400_000),
     new Date(Date.now() + 14 * 86_400_000)
   )[0];

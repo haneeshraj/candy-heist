@@ -8,6 +8,7 @@ import type {
   ReleaseFields,
   ReleaseStatus
 } from '@/lib/releases/model';
+import type { PublishedHours, ServiceItemInput } from '@/lib/services/model';
 
 // The collections the site writes, and what each document holds.
 //
@@ -36,6 +37,11 @@ export const COLLECTIONS = {
   releasesPublished: 'releases_published',
   /** Whether Haven's releases have replaced the site's own, and the shelf: one document, `releases`. */
   releasesMeta: 'releases_meta',
+  /**
+   * What "Book me as a music producer" offers, and when sessions can be
+   * booked, as Candy Haven last published them: one document, `services`.
+   */
+  services: 'services_published',
   /**
    * "Book me as a music producer": each booking, its payment and what was
    * done once it was paid (the calendar event, the emails). Unlike the
@@ -151,6 +157,25 @@ export interface ReleasesMetaDocument {
   liveSince?: Date;
   /** The home page shelf, in order. */
   shelf: ObjectId[];
+}
+
+/**
+ * The services and the hours, whole, as Haven last published them. Haven
+ * keeps its drafts on the machine they're written on and sends the full
+ * list each time, so this is always one list that was meant together.
+ */
+export interface ServicesDocument {
+  _id: 'services';
+  /** Set by the first publish, never unset: from then on, only Haven's services show. */
+  live: true;
+  liveSince: Date;
+  /** Goes up by one on every publish, so two copies of Haven notice each other. */
+  revision: number;
+  /** In their order on the site. */
+  items: ServiceItemInput[];
+  hours: PublishedHours;
+  publishedAt: Date;
+  publishedBy: Uid;
 }
 
 /** Awaiting payment while the card is being taken; paid for good. */

@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { catalogue } from '@/content/services/catalogue';
 import { producerFlowContent as content } from '@/content/services/flows';
+import { fileHours } from '@/content/services/hours';
 import { siteContact } from '@/content/site/contact';
 import { DRAFT_KEY } from '@/lib/booking/persistence';
 import { dayIn, visitorTimeZone } from '@/lib/booking/zone';
@@ -81,7 +82,12 @@ const priced = catalogue.map((item) => ({ ...item, price: 120 }));
 
 const renderFlow = () =>
   render(
-    <BookingFlow content={content} items={priced} contact={siteContact} />
+    <BookingFlow
+      content={content}
+      items={priced}
+      hours={fileHours}
+      contact={siteContact}
+    />
   );
 
 const cards = () =>
@@ -94,13 +100,11 @@ describe('BookingFlow', () => {
     mockMatchMedia();
     window.sessionStorage.clear();
     window.history.replaceState(null, '', '/services/producer');
-    server.startBookingPayment
-      .mockReset()
-      .mockResolvedValue({
-        ok: true,
-        ref: 'CH-K3P2Q8',
-        clientSecret: 'pi_secret'
-      });
+    server.startBookingPayment.mockReset().mockResolvedValue({
+      ok: true,
+      ref: 'CH-K3P2Q8',
+      clientSecret: 'pi_secret'
+    });
     server.finishBookingPayment.mockReset().mockResolvedValue({
       ok: true,
       confirmation: {

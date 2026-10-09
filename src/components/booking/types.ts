@@ -1,4 +1,4 @@
-import type { ServiceItem } from '@/content/services/catalogue';
+import type { ServiceItem } from '@/lib/services/model';
 import type { FlowCopy } from '@/content/services/flows';
 
 /** A line of the running summary: "Date · Thu 8 October". */

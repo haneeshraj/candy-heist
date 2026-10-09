@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import catalogueData from './catalogue.json';
-import { catalogue, catalogueSchema, findItem } from './catalogue';
+import { catalogue, catalogueSchema, fileServices } from './catalogue';
 
-describe('services catalogue', () => {
+const find = (id: string) => catalogue.find((item) => item.id === id);
+
+describe('the site’s own services', () => {
   it('keeps one list, each item a commission or a 1-1 session', () => {
     expect(catalogue.map((item) => `${item.id}:${item.kind}`)).toEqual([
       'mixing:commission',
@@ -15,13 +17,20 @@ describe('services catalogue', () => {
   });
 
   it('reads each write-up from markdown into blocks', () => {
-    const blocks = findItem('production-session')!.blocks;
+    const blocks = find('production-session')!.blocks;
     expect(blocks[0]).toMatchObject({ kind: 'paragraph' });
     expect(blocks).toContainEqual({ kind: 'heading', text: 'What’s included' });
     // "**0′**: Listen through…" items read as a term and its text.
     expect(blocks.find((block) => block.kind === 'entries')).toMatchObject({
       items: expect.arrayContaining([expect.objectContaining({ term: '0′' })])
     });
+  });
+
+  it('keeps the markdown as written too, for Candy Haven to copy in', () => {
+    expect(fileServices.map((item) => item.id)).toEqual(
+      catalogue.map((item) => item.id)
+    );
+    expect(fileServices[0].body).toContain('\n');
   });
 
   it('gives every session a length for its calendar invite', () => {
@@ -39,11 +48,5 @@ describe('services catalogue', () => {
     const [first, second] = catalogueData.items;
     const broken = { items: [first, { ...second, id: first.id }] };
     expect(catalogueSchema.safeParse(broken).success).toBe(false);
-  });
-
-  it('finds an item by id, and nothing for an unknown one', () => {
-    expect(findItem('dj-lessons')?.name).toBe('DJ Lessons');
-    expect(findItem('trumpet')).toBeUndefined();
-    expect(findItem(null)).toBeUndefined();
   });
 });

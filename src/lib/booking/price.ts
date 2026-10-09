@@ -1,4 +1,4 @@
-import type { ServiceKind } from '@/content/services/catalogue';
+import type { ServiceKind } from '@/lib/services/kinds';
 
 // What's paid when. A commission starts with half its price upfront and
 // the rest is due on delivery; a 1-1 session is paid in full when it's

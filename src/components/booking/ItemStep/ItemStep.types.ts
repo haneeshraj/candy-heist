@@ -1,4 +1,4 @@
-import type { ServiceItem } from '@/content/services/catalogue';
+import type { ServiceItem } from '@/lib/services/model';
 import type { KindCopy, ProducerFlowContent } from '@/content/services/flows';
 
 export interface ItemStepProps {

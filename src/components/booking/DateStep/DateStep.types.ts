@@ -1,5 +1,6 @@
 import type { ProducerFlowContent } from '@/content/services/flows';
 import type { DateKey } from '@/lib/booking/dates';
+import type { Hours } from '@/lib/booking/hours';
 import type { SummaryProps } from '../types';
 
 export interface DateStepProps {
@@ -7,6 +8,8 @@ export interface DateStepProps {
   summary: SummaryProps;
   /** The session whose times are shown. */
   itemId: string;
+  /** Candy's hours: how many months ahead the calendar goes. */
+  hours: Hours;
   /** The day picked, in the visitor's zone. */
   date: DateKey | null;
   /** The time picked, as the instant it starts (ISO). */

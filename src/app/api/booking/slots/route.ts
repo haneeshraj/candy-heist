@@ -1,7 +1,7 @@
 import type { NextRequest } from 'next/server';
-import { catalogue } from '@/content/services/catalogue';
+import { getServices } from '@/content/services/getServices';
 import { slotsBetween } from '@/lib/booking/availability';
-import { bookableWindow, HOURS } from '@/lib/booking/hours';
+import { bookableWindow } from '@/lib/booking/hours';
 import {
   AvailabilityUnavailableError,
   busyBetween
@@ -20,13 +20,9 @@ const noStore = { 'cache-control': 'no-store' };
 
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
-  const item = catalogue.find(
-    (entry) => entry.id === params.get('service') && entry.kind === 'session'
-  );
   const from = new Date(params.get('from') ?? '');
   const to = new Date(params.get('to') ?? '');
   if (
-    !item ||
     Number.isNaN(from.getTime()) ||
     Number.isNaN(to.getTime()) ||
     to <= from ||
@@ -38,23 +34,29 @@ export async function GET(request: NextRequest) {
     );
 
   const now = new Date();
-  const durationMinutes = item.durationMinutes ?? 60;
-  // Busy times either side, so a session near the edge still sees them.
-  const margin = (durationMinutes + HOURS.bufferMinutes) * 60_000;
   try {
+    const { items, hours } = await getServices();
+    const item = items.find(
+      (entry) => entry.id === params.get('service') && entry.kind === 'session'
+    );
+    if (!item)
+      return Response.json(
+        { error: 'invalid' },
+        { status: 400, headers: noStore }
+      );
+
+    const durationMinutes = item.durationMinutes ?? 60;
+    // Busy times either side, so a session near the edge still sees them.
+    const margin = (durationMinutes + hours.bufferMinutes) * 60_000;
     const busy = await busyBetween(
       new Date(from.getTime() - margin),
       new Date(to.getTime() + margin),
       now
     );
-    const { earliest, latest } = bookableWindow(HOURS, now);
+    const { earliest, latest } = bookableWindow(hours, now);
     return Response.json(
       {
-        slots: slotsBetween(
-          { hours: HOURS, durationMinutes, busy, now },
-          from,
-          to
-        ),
+        slots: slotsBetween({ hours, durationMinutes, busy, now }, from, to),
         earliest: earliest.toISOString(),
         latest: latest.toISOString()
       },

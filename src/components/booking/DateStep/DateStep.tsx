@@ -7,7 +7,7 @@ import { WordReveal } from '@/components/common/WordReveal';
 import { ArrowIcon } from '@/components/icons';
 import { useEntrance } from '@/hooks/useEntrance';
 import { formatDayLong, formatMonth, parseDateKey } from '@/lib/booking/dates';
-import { bookableWindow, HOURS } from '@/lib/booking/hours';
+import { bookableWindow } from '@/lib/booking/hours';
 import { dayIn, slotsByDay, zoneName } from '@/lib/booking/zone';
 import BookingSummary from '../BookingSummary/BookingSummary';
 import StepHeading from '../StepHeading/StepHeading';
@@ -28,6 +28,7 @@ export default function DateStep({
   copy,
   summary,
   itemId,
+  hours,
   date,
   start,
   today,
@@ -44,7 +45,7 @@ export default function DateStep({
   const firstMonth = parseDateKey(today);
   // The last day Candy takes bookings to, as the visitor's calendar has it.
   const [lastMonth] = useState(() => {
-    const { latest } = bookableWindow(HOURS, new Date());
+    const { latest } = bookableWindow(hours, new Date());
     return parseDateKey(dayIn(new Date(latest.getTime() - 1), timeZone));
   });
   const [view, setView] = useState<{ year: number; month: number }>(() =>

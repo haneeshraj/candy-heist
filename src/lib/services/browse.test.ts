@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { catalogue, type ServiceItem } from '@/content/services/catalogue';
+import { catalogue } from '@/content/services/catalogue';
+import type { ServiceItem } from './model';
 import { browseItems, DEFAULT_BROWSE, type ServiceBrowse } from './browse';
 
 const LABELS = { commission: 'Commission', session: '1-1 session' };

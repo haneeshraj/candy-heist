@@ -1,11 +1,14 @@
 import { z } from 'zod';
-import { findItem, type ServiceIcon } from '@/content/services/catalogue';
+import type { ServiceIcon } from '@/lib/services/kinds';
+import type { ServiceItem } from '@/lib/services/model';
 import testimonialsData from './testimonials.json';
 
 // The home page Testimonials section: its copy, and what people said, each
-// quote tied to the service it's about (by the booking catalogue's id), so
-// the section can name the service beside who said it. Plain JSON checked against
-// this schema, so a server-side loader can hand over the same shape later.
+// quote tied to the service it's about (by the service's address), so the
+// section can name the service beside who said it. Plain JSON checked
+// against this schema. The services come from Candy Haven (or the site's
+// own list); a quote about one that's no longer offered keeps its words
+// and its credit, without the service.
 //
 // PLACEHOLDERS: every quote and name here is made up to lay the section
 // out. Swap in real testimonials, with permission, before this goes live.
@@ -18,10 +21,8 @@ export const testimonialSchema = z.object({
   name: text,
   /** What they do: "Artist", "DJ", "Producer". */
   role: text,
-  /** The booking catalogue's id for the service the quote is about. */
-  service: text.refine((id) => Boolean(findItem(id)), {
-    message: 'Not a service in content/services/catalogue.json'
-  })
+  /** The address of the service the quote is about. */
+  service: text
 });
 
 export const testimonialsCopySchema = z.object({
@@ -46,11 +47,12 @@ export interface Testimonial {
   quote: string;
   name: string;
   role: string;
+  /** Null once the service it's about is no longer offered. */
   service: {
     id: string;
     name: string;
     icon: ServiceIcon;
-  };
+  } | null;
 }
 
 export type TestimonialsContent = Omit<
@@ -60,17 +62,20 @@ export type TestimonialsContent = Omit<
 
 const copy = testimonialsCopySchema.parse(testimonialsData);
 
-export const testimonialsContent: TestimonialsContent = {
-  ...copy,
-  testimonials: copy.testimonials.map((t) => {
-    const service = findItem(t.service)!;
-    return {
-      ...t,
-      service: {
-        id: service.id,
-        name: service.name,
-        icon: service.icon
-      }
-    };
-  })
-};
+/** The section, each quote with its service while that's on offer. */
+export function testimonialsContentFor(
+  items: ServiceItem[]
+): TestimonialsContent {
+  return {
+    ...copy,
+    testimonials: copy.testimonials.map((t) => {
+      const service = items.find((item) => item.id === t.service);
+      return {
+        ...t,
+        service: service
+          ? { id: service.id, name: service.name, icon: service.icon }
+          : null
+      };
+    })
+  };
+}

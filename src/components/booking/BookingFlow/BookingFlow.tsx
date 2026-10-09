@@ -30,6 +30,7 @@ import { useStepTransition } from './useStepTransition';
 export default function BookingFlow({
   content,
   items,
+  hours,
   contact
 }: BookingFlowProps) {
   const flow = useBookingFlow(items);
@@ -132,6 +133,7 @@ export default function BookingFlow({
             copy={content.date}
             summary={summary}
             itemId={item.id}
+            hours={hours}
             date={draft.date}
             start={draft.start}
             today={today}

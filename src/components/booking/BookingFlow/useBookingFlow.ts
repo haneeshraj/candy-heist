@@ -8,7 +8,7 @@ import {
   useState,
   useSyncExternalStore
 } from 'react';
-import type { ServiceItem } from '@/content/services/catalogue';
+import type { ServiceItem } from '@/lib/services/model';
 import {
   bookingReducer,
   draftKind,

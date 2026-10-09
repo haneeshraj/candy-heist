@@ -15,7 +15,7 @@ import {
   SigilIcon,
   type IconProps
 } from '@/components/icons';
-import type { ServiceIcon } from '@/content/services/catalogue';
+import type { ServiceIcon } from '@/lib/services/kinds';
 import { fill } from '@/lib/text/fill';
 import QuoteDots from './QuoteDots';
 import styles from './TestimonialsSection.module.scss';
@@ -157,10 +157,10 @@ export default function TestimonialsSection({
             >
               {testimonials.map((t, i) => {
                 const on = i === rotation.active;
-                const Glyph = GLYPHS[t.service.icon];
+                const Glyph = t.service ? GLYPHS[t.service.icon] : null;
                 return (
                   <figure
-                    key={t.name + t.service.id}
+                    key={`${t.name}-${i}`}
                     ref={(node) => {
                       slidesRef.current[i] = node;
                     }}
@@ -189,16 +189,20 @@ export default function TestimonialsSection({
                     <figcaption className={styles.credit} data-motion="credit">
                       <span className={styles.creditName}>{t.name}</span>
                       <span className={styles.creditRole}>{t.role}</span>
-                      <span className={styles.creditSep} aria-hidden="true">
-                        ·
-                      </span>
-                      <span className={styles.creditService}>
-                        <Glyph
-                          className={styles.creditGlyph}
-                          aria-hidden="true"
-                        />
-                        {t.service.name}
-                      </span>
+                      {t.service && Glyph ? (
+                        <>
+                          <span className={styles.creditSep} aria-hidden="true">
+                            ·
+                          </span>
+                          <span className={styles.creditService}>
+                            <Glyph
+                              className={styles.creditGlyph}
+                              aria-hidden="true"
+                            />
+                            {t.service.name}
+                          </span>
+                        </>
+                      ) : null}
                     </figcaption>
                   </figure>
                 );

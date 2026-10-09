@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { BookingFlow } from '@/components/booking/BookingFlow';
-import { catalogue } from '@/content/services/catalogue';
 import { producerFlowContent } from '@/content/services/flows';
+import { getServices } from '@/content/services/getServices';
 import { siteContact } from '@/content/site/contact';
 
 export const metadata: Metadata = {
@@ -11,15 +11,17 @@ export const metadata: Metadata = {
 };
 
 // "Book me as a music producer": commissions and 1-1 sessions in one list.
-// Everything happens client-side in BookingFlow; the copy and the items
-// are handed over from here, so a server-side loader (Candy Haven's
-// catalogue) can replace them later.
-export default function ProducerRoute() {
+// Everything happens client-side in BookingFlow; the copy, the services and
+// the hours are handed over from here, Candy Haven's once it has published
+// (getServices), so a publish shows on the next visit.
+export default async function ProducerRoute() {
+  const { items, hours } = await getServices();
   return (
     <main>
       <BookingFlow
         content={producerFlowContent}
-        items={catalogue}
+        items={items}
+        hours={hours}
         contact={siteContact}
       />
     </main>

@@ -21,6 +21,12 @@ vi.mock('@/lib/google/gmail', () => ({
   senderAddress: vi.fn(async () => 'candy@example.com')
 }));
 vi.mock('@/lib/google/oauth', () => ({ googleConnected: vi.fn() }));
+vi.mock('@/content/services/getServices', () => ({
+  getServices: vi.fn(async () => ({
+    items: [],
+    hours: { timeZone: 'America/Halifax' }
+  }))
+}));
 vi.mock('@/lib/invoices/store', () => ({
   invoiceRefFor: (ref: string) => `${ref}-2`,
   openInvoice: vi.fn(async (booking: { ref: string }) => ({
@@ -76,13 +82,11 @@ describe('finalizeBooking', () => {
         return effects;
       });
     vi.mocked(releaseLease).mockReset();
-    vi.mocked(placeSessionEvent)
-      .mockReset()
-      .mockResolvedValue({
-        id: 'ev1',
-        meetLink: 'https://meet.google.com/abc-defg-hij',
-        htmlLink: null
-      });
+    vi.mocked(placeSessionEvent).mockReset().mockResolvedValue({
+      id: 'ev1',
+      meetLink: 'https://meet.google.com/abc-defg-hij',
+      htmlLink: null
+    });
     vi.mocked(sendEmail).mockReset();
     vi.mocked(openInvoice).mockClear();
   });

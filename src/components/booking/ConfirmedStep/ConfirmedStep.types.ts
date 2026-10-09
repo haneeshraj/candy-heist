@@ -1,4 +1,4 @@
-import type { ServiceItem } from '@/content/services/catalogue';
+import type { ServiceItem } from '@/lib/services/model';
 import type { FlowCopy } from '@/content/services/flows';
 import type { BookingConfirmation } from '@/lib/booking/bookingState';
 import type { Amounts } from '@/lib/booking/price';

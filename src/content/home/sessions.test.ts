@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
+import { catalogue } from '@/content/services/catalogue';
 import sessionsData from './sessions.json';
-import { sessionsContent, sessionsCopySchema } from './sessions';
+import { sessionsContentFor, sessionsCopySchema } from './sessions';
 
 describe('home sessions content', () => {
-  it('lists the featured services from the shared catalogue, in order', () => {
-    expect(sessionsContent.services.map((service) => service.id)).toEqual(
+  it('lists the featured services, in order', () => {
+    const content = sessionsContentFor(catalogue);
+    expect(content.services.map((service) => service.id)).toEqual(
       sessionsData.featured
     );
-    expect(sessionsContent.services[0]).toEqual({
+    expect(content.services[0]).toEqual({
       id: 'production-session',
       name: 'Production Session',
       summary: 'Fix the track you’re stuck on.',
@@ -15,9 +17,25 @@ describe('home sessions content', () => {
     });
   });
 
-  it('rejects a featured service the catalogue does not have', () => {
-    const broken = { ...sessionsData, featured: ['trumpet-lessons'] };
-    expect(sessionsCopySchema.safeParse(broken).success).toBe(false);
+  it('drops a featured service that’s no longer offered, keeping the rest', () => {
+    const offered = catalogue.filter((item) => item.id !== 'dj-lessons');
+    const ids = sessionsContentFor(offered).services.map((s) => s.id);
+    expect(ids).toEqual(
+      sessionsData.featured.filter((id) => id !== 'dj-lessons')
+    );
+  });
+
+  it('takes a service’s name and line as they are now', () => {
+    const renamed = catalogue.map((item) =>
+      item.id === 'production-session'
+        ? { ...item, name: 'Studio Session', summary: 'One new line.' }
+        : item
+    );
+    expect(sessionsContentFor(renamed).services[0]).toMatchObject({
+      id: 'production-session',
+      name: 'Studio Session',
+      summary: 'One new line.'
+    });
   });
 
   it('rejects section copy with a missing action', () => {

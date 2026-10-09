@@ -1,4 +1,5 @@
 import 'server-only';
+import { getServices } from '@/content/services/getServices';
 import type { BookingDocument } from '@/lib/db/collections';
 import { placeSessionEvent } from '@/lib/google/calendar';
 import { senderAddress, sendEmail } from '@/lib/google/gmail';
@@ -15,7 +16,6 @@ import {
   takeInvoiceLease
 } from '@/lib/invoices/store';
 import { dashboardLink } from '@/lib/payments/stripe';
-import { HOURS } from '../hours';
 import { forgetCalendar } from './busy';
 import { candyBookingEmail, clientBookingEmail } from './emails';
 import { markPaid, recordEffects, releaseLease, takeLease } from './store';
@@ -63,6 +63,8 @@ export async function finalizeBooking(
       );
       return { ...leased, effects };
     }
+    // Candy's own zone, for his calendar and his note.
+    const { timeZone } = (await getServices()).hours;
 
     if (
       leased.kind === 'session' &&
@@ -88,7 +90,7 @@ export async function finalizeBooking(
         start: leased.start,
         end: leased.end,
         attendee: { email: details.email, name: details.name },
-        timeZone: HOURS.timeZone
+        timeZone
       });
       effects = await recordEffects(ref, {
         calendarEventId: event.id,
@@ -106,7 +108,8 @@ export async function finalizeBooking(
           leased,
           effects,
           await candyAddress(),
-          paymentLink(paymentIntentId)
+          paymentLink(paymentIntentId),
+          timeZone
         )
       );
       effects = await recordEffects(ref, { candyEmailAt: new Date() });

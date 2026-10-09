@@ -1,7 +1,7 @@
 'use server';
 
 import { z } from 'zod';
-import { catalogue } from '@/content/services/catalogue';
+import { getServices } from '@/content/services/getServices';
 import { DatabaseUnavailableError } from '@/lib/db/client';
 import { withinHourlyLimit } from '@/lib/forms/limits';
 import { invoiceRefFor } from '@/lib/invoices/store';
@@ -13,7 +13,6 @@ import {
 } from '@/lib/payments/stripe';
 import { isOpenStart, slotEnd } from './availability';
 import type { BookingConfirmation, BookingDetails } from './bookingState';
-import { HOURS } from './hours';
 import { chargeFor } from './price';
 import { AvailabilityUnavailableError, busyBetween } from './server/busy';
 import { finalizeBooking } from './server/finalize';
@@ -108,7 +107,15 @@ export async function startBookingPayment(
   if (!parsed.success) return { ok: false, reason: 'invalid' };
   const input = parsed.data;
 
-  const item = catalogue.find((entry) => entry.id === input.itemId);
+  let services;
+  try {
+    services = await getServices();
+  } catch (error) {
+    console.error('The services could not be read for a booking.', error);
+    return { ok: false, reason: 'unavailable' };
+  }
+  const { hours } = services;
+  const item = services.items.find((entry) => entry.id === input.itemId);
   if (!item || !isTimeZone(input.timeZone))
     return { ok: false, reason: 'invalid' };
   if (item.price === undefined) return { ok: false, reason: 'unpriced' };
@@ -136,13 +143,13 @@ export async function startBookingPayment(
       const durationMinutes = item.durationMinutes ?? 60;
       end = slotEnd(start, durationMinutes);
       const margin =
-        (durationMinutes + HOURS.bufferMinutes) * 60_000 + 86_400_000;
+        (durationMinutes + hours.bufferMinutes) * 60_000 + 86_400_000;
       const busy = await busyBetween(
         new Date(start.getTime() - margin),
         new Date(start.getTime() + margin),
         now
       );
-      if (!isOpenStart({ hours: HOURS, durationMinutes, busy, now }, start))
+      if (!isOpenStart({ hours, durationMinutes, busy, now }, start))
         return { ok: false, reason: 'taken' };
     }
 
@@ -155,7 +162,7 @@ export async function startBookingPayment(
         ? {
             start,
             end,
-            holdUntil: new Date(now.getTime() + HOURS.holdMinutes * 60_000)
+            holdUntil: new Date(now.getTime() + hours.holdMinutes * 60_000)
           }
         : {}),
       visitorTimeZone: input.timeZone,
@@ -169,7 +176,7 @@ export async function startBookingPayment(
       paymentIntentId: ''
     });
 
-    if (!(await keepsItsTime(booking, HOURS.bufferMinutes))) {
+    if (!(await keepsItsTime(booking, hours.bufferMinutes))) {
       await dropUnpaid(booking.ref);
       return { ok: false, reason: 'taken' };
     }

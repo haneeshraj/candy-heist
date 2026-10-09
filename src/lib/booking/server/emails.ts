@@ -12,7 +12,6 @@ import { invoiceRefFor } from '@/lib/invoices/store';
 import { absolute } from '@/lib/site/url';
 import { fill } from '@/lib/text/fill';
 import { formatDayLong } from '../dates';
-import { HOURS } from '../hours';
 import { formatAmount } from '../price';
 import { clockIn, dayIn, zoneName } from '../zone';
 
@@ -86,12 +85,16 @@ export function clientBookingEmail(
   };
 }
 
-/** Candy's own note of a booking: who, what, when, and what's been done. */
+/**
+ * Candy's own note of a booking: who, what, when (in `candyZone`, his
+ * hours' zone), and what's been done.
+ */
 export function candyBookingEmail(
   booking: BookingDocument,
   effects: BookingEffects,
   to: string,
-  paymentLink: string
+  paymentLink: string,
+  candyZone: string
 ): OutgoingEmail {
   const { details, amounts } = booking;
   const session = booking.kind === 'session';
@@ -100,7 +103,7 @@ export function candyBookingEmail(
     { label: 'Reference', value: booking.ref }
   ];
   if (booking.start) {
-    const his = whenIn(booking.start, HOURS.timeZone);
+    const his = whenIn(booking.start, candyZone);
     const theirs = whenIn(booking.start, booking.visitorTimeZone);
     rows.push({
       label: 'When',

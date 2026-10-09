@@ -1,4 +1,4 @@
-import type { ServiceKind } from '@/content/services/catalogue';
+import type { ServiceKind } from '@/lib/services/kinds';
 import { isDateKey, type DateKey } from './dates';
 
 // The booking flow as a reducer: the step on screen plus the draft built

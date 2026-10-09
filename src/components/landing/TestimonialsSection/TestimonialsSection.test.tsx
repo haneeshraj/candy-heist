@@ -1,8 +1,11 @@
 import type { ReactNode } from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { testimonialsContent } from '@/content/home/testimonials';
+import { testimonialsContentFor } from '@/content/home/testimonials';
+import { catalogue } from '@/content/services/catalogue';
 import TestimonialsSection from './TestimonialsSection';
+
+const testimonialsContent = testimonialsContentFor(catalogue);
 
 // Its letter-by-letter reveals are slow to render in jsdom, more so with
 // the whole suite running alongside, so it gets a longer timeout.
@@ -49,7 +52,7 @@ describe('TestimonialsSection', () => {
     const [first] = testimonials;
     expect(within(slide).getByText(first.quote)).toBeInTheDocument();
     expect(within(slide).getByText(first.name)).toBeInTheDocument();
-    expect(within(slide).getByText(first.service.name)).toBeInTheDocument();
+    expect(within(slide).getByText(first.service!.name)).toBeInTheDocument();
     // The rest are out of sight and out of reach.
     const hidden = screen
       .getAllByRole('group', { hidden: true })
@@ -73,7 +76,9 @@ describe('TestimonialsSection', () => {
     });
     fireEvent.click(dot);
     expect(within(showing()).getByText(third.quote)).toBeInTheDocument();
-    expect(within(showing()).getByText(third.service.name)).toBeInTheDocument();
+    expect(
+      within(showing()).getByText(third.service!.name)
+    ).toBeInTheDocument();
     expect(dot).toHaveAttribute('aria-current', 'true');
   });
 

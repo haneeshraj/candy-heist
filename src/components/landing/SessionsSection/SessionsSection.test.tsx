@@ -1,8 +1,11 @@
 import type { ReactNode } from 'react';
 import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { sessionsContent } from '@/content/home/sessions';
+import { sessionsContentFor } from '@/content/home/sessions';
+import { catalogue } from '@/content/services/catalogue';
 import SessionsSection from './SessionsSection';
+
+const sessionsContent = sessionsContentFor(catalogue);
 
 // Its letter-by-letter reveals are slow to render in jsdom, more so with
 // the whole suite running alongside, so it gets a longer timeout.

@@ -1,4 +1,5 @@
-import type { ServiceItem, ServiceKind } from '@/content/services/catalogue';
+import type { ServiceKind } from './kinds';
+import type { ServiceItem } from './model';
 import { blocksText } from '@/lib/markdown/blocks';
 import { matchesSearch, searchTerms } from '@/lib/text/search';
 

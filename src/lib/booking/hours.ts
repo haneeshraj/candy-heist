@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import hoursData from '@/content/services/hours.json';
 import {
   addDays,
   addMonths,
@@ -14,10 +13,10 @@ import {
 // When Candy takes 1-1 sessions: the start times he offers on each day of
 // the week, in his own time zone, and the days he's away. A visitor sees
 // these converted to their own zone; what's already on his calendar, or
-// booked, shows as taken (see availability.ts).
-//
-// PLACEHOLDER HOURS: Tuesday, Thursday, Friday and Saturday at six times,
-// as the booking page showed before it was connected. Candy sets his own.
+// booked, shows as taken (see availability.ts). The hours themselves come
+// from Candy Haven, or the site's own file until Haven publishes (see
+// content/services/getServices.ts); this is what they are and how they're
+// read, so the browser can use it too.
 
 const time = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'A time is HH:MM');
 const times = z.array(time);
@@ -65,8 +64,6 @@ export const hoursSchema = z.object({
 });
 
 export type Hours = z.infer<typeof hoursSchema>;
-
-export const HOURS: Hours = hoursSchema.parse(hoursData);
 
 /** The last day sessions can be booked on, in Candy's zone. */
 export function lastBookableDay(hours: Hours, now: Date): DateKey {

@@ -7,7 +7,7 @@ import {
   FilterTray
 } from '@/components/common/Filters';
 import { SearchToggle } from '@/components/common/SearchToggle';
-import { SERVICE_KINDS, type ServiceKind } from '@/content/services/catalogue';
+import { SERVICE_KINDS, type ServiceKind } from '@/lib/services/kinds';
 import { fill } from '@/lib/booking/format';
 import {
   browseFilterCount,

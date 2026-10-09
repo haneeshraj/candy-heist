@@ -1,13 +1,16 @@
 import { z } from 'zod';
-import { findItem, type ServiceIcon } from '@/content/services/catalogue';
+import type { ServiceIcon } from '@/lib/services/kinds';
+import type { ServiceItem } from '@/lib/services/model';
 import sessionsData from './sessions.json';
 
 // The home page Sessions section: a few of the services, one line each.
 // Durations, formats and prices belong to the services pages. The section
 // copy is plain JSON checked against this schema, and it names which
-// services to feature by their catalogue ids, so the list stays four long
-// however many the catalogue holds (Candy Haven can change those any
-// time). Draft copy until the client confirms it.
+// services to feature by their addresses, so the list stays four long
+// however many there are. The services themselves come from Candy Haven
+// (or the site's own list): one that's no longer offered drops off the
+// list here rather than breaking the page. Draft copy until the client
+// confirms it.
 
 const text = z.string().trim().min(1);
 
@@ -22,10 +25,8 @@ export const sessionsCopySchema = z.object({
   cta: z.object({ label: text, href: text }),
   /** Beside it, outlined: booking a session or a commission. */
   secondary: z.object({ label: text, href: text }),
-  /** The services listed, by catalogue id, in order. */
-  featured: z
-    .array(text.refine((id) => Boolean(findItem(id)), 'Not in the catalogue'))
-    .min(1),
+  /** The services listed, by their addresses, in order. */
+  featured: z.array(text).min(1),
   photo: z.object({ src: text, alt: text })
 });
 
@@ -33,7 +34,7 @@ export interface SessionService {
   /** Stable key, and the slug the booking page uses to preselect it. */
   id: string;
   name: string;
-  /** Its one line from the catalogue. */
+  /** Its one line from the services. */
   summary: string;
   icon: ServiceIcon;
 }
@@ -49,10 +50,15 @@ export type SessionsContent = Omit<
 
 const { featured, ...copy } = sessionsCopySchema.parse(sessionsData);
 
-export const sessionsContent: SessionsContent = {
-  ...copy,
-  services: featured.map((id) => {
-    const { name, summary, icon } = findItem(id)!;
-    return { id, name, summary, icon };
-  })
-};
+/** The section, with the featured services that are on offer. */
+export function sessionsContentFor(items: ServiceItem[]): SessionsContent {
+  return {
+    ...copy,
+    services: featured.flatMap((id) => {
+      const item = items.find((entry) => entry.id === id);
+      return item
+        ? [{ id, name: item.name, summary: item.summary, icon: item.icon }]
+        : [];
+    })
+  };
+}

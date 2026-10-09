@@ -8,20 +8,24 @@ import { aboutContent } from '@/content/home/about';
 import { contactContent } from '@/content/home/contact';
 import { getCatalogue } from '@/content/discography/getCatalogue';
 import { discographyContentFor } from '@/content/home/discography';
-import { sessionsContent } from '@/content/home/sessions';
-import { testimonialsContent } from '@/content/home/testimonials';
+import { sessionsContentFor } from '@/content/home/sessions';
+import { testimonialsContentFor } from '@/content/home/testimonials';
+import { getServices } from '@/content/services/getServices';
 import styles from './page.module.scss';
 
 export default async function Home() {
-  const { shelf } = await getCatalogue();
+  const [{ shelf }, { items }] = await Promise.all([
+    getCatalogue(),
+    getServices()
+  ]);
   return (
     <div className={styles.page}>
       <main className={styles.main}>
         <LandingHero />
         <AboutSection content={aboutContent} />
-        <SessionsSection content={sessionsContent} />
+        <SessionsSection content={sessionsContentFor(items)} />
         <DiscographySection content={discographyContentFor(shelf)} />
-        <TestimonialsSection content={testimonialsContent} />
+        <TestimonialsSection content={testimonialsContentFor(items)} />
         <ContactSection content={contactContent} />
       </main>
     </div>
