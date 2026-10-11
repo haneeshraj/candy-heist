@@ -159,12 +159,16 @@ it. There's no account, and producers never see each other's feedback.
 
 The track is kept in the site's Vercel Blob store, a public one: create it
 in the Vercel project (Storage, then Blob, access Public) and connect it to
-Production, Preview and Development, which adds `BLOB_READ_WRITE_TOKEN`
-(`vercel env pull` brings it to `.env.local`). Haven never holds a key to
-it. It asks for a pass that uploads one named file, of one type and size,
-within the hour (`src/lib/consult/blob.ts`), uploads straight to the store,
-then opens the link with the track's address; the page plays it from
-there. The live site keeps its tracks under `consultation/`, every other
+Production, Preview and Development, which adds `BLOB_READ_WRITE_TOKEN`.
+Copy it into `.env.local` from the store's Quickstart: `vercel env pull`
+would replace the whole file with the project's Development variables.
+Haven never holds a key to the store. It asks for a pass that uploads one
+named file, of one type, within the hour (`src/lib/consult/blob.ts`),
+uploads straight to the store, then opens the link with the track's
+address; the page plays it from there. The pass names a size too, but
+Vercel doesn't hold a file sent in pieces to it, so the site measures the
+track before the link opens, and deletes one over 200 MB or past the room
+left. The live site keeps its tracks under `consultation/`, every other
 copy under `consultation-dev/`. The free Hobby plan includes 1 GB of Blob
 storage and 10 GB of downloads a month; past either, Vercel pauses the
 store for 30 days rather than charging, so the site refuses an upload that

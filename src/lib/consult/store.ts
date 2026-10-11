@@ -14,13 +14,15 @@ import {
   blobConfigured,
   deleteTrack,
   issueUploadToken,
-  listTracks
+  listTracks,
+  trackSize
 } from './blob';
 import { decodeWaveform, type Feedback } from './engine';
 import {
   ChangeConsultationSchema,
   DAY,
   DiscardUploadSchema,
+  MAX_AUDIO_BYTES,
   MAX_DAYS,
   OpenConsultationSchema,
   STORE_LIMIT_BYTES,
@@ -81,6 +83,14 @@ const size = (bytes: number) =>
     ? `${(bytes / 1024 ** 3).toFixed(1)} GB`
     : `${bytes > 0 ? Math.max(1, Math.round(bytes / 1024 ** 2)) : 0} MB`;
 
+/** Refused for want of room, with what's left and what the track needs. */
+const noRoom = (free: number, limitBytes: number, bytes: number) =>
+  refuse(
+    409,
+    'no_room',
+    `There isn’t room for this track: ${size(free)} of the free ${size(limitBytes)} is left, and it is ${size(bytes)}.`
+  );
+
 async function collections() {
   const db = await getDb();
   return {
@@ -140,9 +150,11 @@ async function usage(
 
 /**
  * The pass for one upload: a name in this copy's folder, and a token that
- * lets exactly that file, of that type and size, into the store within the
- * hour. Refused when there's no store, or no room for it: the count here
- * is of every track not yet deleted, shared from either copy of Haven.
+ * lets exactly that file, of that type, into the store within the hour.
+ * Refused when there's no store, or no room for it: the count here is of
+ * every track not yet deleted, shared from either copy of Haven. The pass
+ * names a size too, but Vercel doesn't hold a file sent in pieces to it,
+ * so the track is measured again before its link opens.
  */
 export async function prepareUpload(
   raw: unknown,
@@ -162,12 +174,7 @@ export async function prepareUpload(
   const { usedBytes, limitBytes } = await usage(consultations);
   const free = Math.max(0, limitBytes - usedBytes);
   const { extension, contentType, bytes } = parsed.data;
-  if (bytes > free)
-    return refuse(
-      409,
-      'no_room',
-      `There isn’t room for this track: ${size(free)} of the free ${size(limitBytes)} is left, and it is ${size(bytes)}.`
-    );
+  if (bytes > free) return noRoom(free, limitBytes, bytes);
 
   const pathname = `${trackFolder()}${randomUUID()}.${extension}`;
   const pass = await issueUploadToken(pathname, contentType, bytes, now);
@@ -202,7 +209,10 @@ export async function discardUpload(
   return { ok: true, body: null };
 }
 
-/** Opens a link for a track Haven has uploaded: its record, and the way in. */
+/**
+ * Opens a link for a track Haven has uploaded, once the store shows it's
+ * there and fits: its record, and the way in.
+ */
 export async function openConsultation(
   raw: unknown,
   uid: string,
@@ -215,7 +225,30 @@ export async function openConsultation(
   if (!decodeWaveform(body.waveform))
     return refuse(400, 'invalid', 'The waveform could not be read.');
 
+  // The size kept is the store's, not Haven's word or the pass's: a file
+  // sent in pieces isn't held to its pass, so one that came out bigger
+  // than a track may be, or than there's room for, is deleted here.
+  const bytes = await trackSize(body.audio.url);
+  if (bytes === null)
+    return refuse(
+      409,
+      'not_uploaded',
+      'The track isn’t in the store, so there is nothing for the link to play.'
+    );
   const { consultations, access } = await collections();
+  const { usedBytes, limitBytes } = await usage(consultations);
+  const free = Math.max(0, limitBytes - usedBytes);
+  if (bytes > MAX_AUDIO_BYTES || bytes > free) {
+    await deleteTrack(body.audio.url);
+    return bytes > MAX_AUDIO_BYTES
+      ? refuse(
+          409,
+          'too_big',
+          `That track is ${size(bytes)}, and a link plays ${size(MAX_AUDIO_BYTES)} at most.`
+        )
+      : noRoom(free, limitBytes, bytes);
+  }
+
   const _id = new ObjectId();
   const expiresAt = new Date(now.getTime() + body.days * DAY);
   const doc: ConsultationDocument = {
@@ -227,7 +260,7 @@ export async function openConsultation(
     audio: {
       path: body.audio.path,
       url: body.audio.url,
-      bytes: body.audio.bytes,
+      bytes,
       contentType: body.audio.contentType
     },
     createdAt: now,

@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { randomUUID } from 'node:crypto';
 import { MongoClient } from 'mongodb';
-import { del, list } from '@vercel/blob';
+import { del, head, list } from '@vercel/blob';
 import { generateClientTokenFromReadWriteToken } from '@vercel/blob/client';
 import {
   afterAll,
@@ -28,11 +28,22 @@ import { compactPeaks, emptyChain, encodeWaveform, newBand } from './engine';
 vi.mock('next/headers', () => ({
   headers: async () => new Headers({ 'x-forwarded-for': '203.0.113.9' })
 }));
-vi.mock('@vercel/blob', () => ({
-  BlobNotFoundError: class BlobNotFoundError extends Error {},
-  del: vi.fn(async () => undefined),
-  list: vi.fn(async () => ({ blobs: [], hasMore: false }))
-}));
+/** What the stand-in store holds: each track's address, and its size. */
+const uploaded = vi.hoisted(() => new Map<string, number>());
+
+vi.mock('@vercel/blob', () => {
+  class BlobNotFoundError extends Error {}
+  return {
+    BlobNotFoundError,
+    del: vi.fn(async () => undefined),
+    head: vi.fn(async (url: string) => {
+      const size = uploaded.get(url);
+      if (size === undefined) throw new BlobNotFoundError();
+      return { size };
+    }),
+    list: vi.fn(async () => ({ blobs: [], hasMore: false }))
+  };
+});
 vi.mock('@vercel/blob/client', () => ({
   generateClientTokenFromReadWriteToken: vi.fn(
     async () => 'vercel_blob_client_test'
@@ -47,13 +58,20 @@ const DAY = 24 * HOUR;
 const MB = 1024 * 1024;
 const STORE = 'https://store1.public.blob.vercel-storage.com';
 
-/** A track's audio as Haven sends it, in this copy's folder. */
-const track = (file: string, bytes = 50 * MB) => ({
-  path: `consultation-dev/${file}`,
-  url: `${STORE}/consultation-dev/${file}`,
-  bytes,
-  contentType: 'audio/wav'
-});
+/**
+ * A track's audio as Haven sends it, in this copy's folder, and in the
+ * stand-in store at that size.
+ */
+const track = (file: string, bytes = 50 * MB) => {
+  const url = `${STORE}/consultation-dev/${file}`;
+  uploaded.set(url, bytes);
+  return {
+    path: `consultation-dev/${file}`,
+    url,
+    bytes,
+    contentType: 'audio/wav'
+  };
+};
 
 const opening = {
   title: 'Menace',
@@ -251,6 +269,86 @@ describe.skipIf(!uri)('the consultation store, against a real database', () => {
         now
       )
     ).toMatchObject({ ok: false, status: 409, body: { error: 'no_store' } });
+  });
+
+  it('opens a link on the track the store has, at its own size, and deletes one that doesn’t fit', async () => {
+    const store = await import('./store');
+    const now = new Date('2026-10-10T12:00:00Z');
+
+    // Never arrived: nothing to play, and nothing to delete.
+    const never = track('never.wav');
+    uploaded.delete(never.url);
+    expect(
+      await store.openConsultation(
+        { ...opening, audio: never },
+        'candy-uid',
+        now
+      )
+    ).toMatchObject({
+      ok: false,
+      status: 409,
+      body: { error: 'not_uploaded' }
+    });
+    expect(del).not.toHaveBeenCalled();
+
+    // Sent in pieces past its pass: kept at the size the store measured.
+    const grown = track('grown.wav', 10 * MB);
+    uploaded.set(grown.url, 12 * MB);
+    const opened = await store.openConsultation(
+      { ...opening, audio: grown },
+      'candy-uid',
+      now
+    );
+    expect(opened).toMatchObject({
+      ok: true,
+      body: { audio: { bytes: 12 * MB } }
+    });
+    expect(head).toHaveBeenCalledWith(grown.url);
+    expect((await store.listConsultations(now)).storage.usedBytes).toBe(
+      12 * MB
+    );
+
+    // Over the most a track may be: deleted, and no link.
+    const huge = track('huge.wav', 100 * MB);
+    uploaded.set(huge.url, 300 * MB);
+    const tooBig = await store.openConsultation(
+      { ...opening, audio: huge },
+      'candy-uid',
+      now
+    );
+    expect(tooBig).toMatchObject({
+      ok: false,
+      status: 409,
+      body: { error: 'too_big' }
+    });
+    expect(tooBig.ok ? '' : tooBig.body.message).toContain('200 MB');
+    expect(del).toHaveBeenCalledWith(huge.url);
+
+    // More than the room left once it arrived: deleted, and no link.
+    // Five at the limit, with the 12 MB, leave 12 MB of the gigabyte.
+    for (const file of ['1.wav', '2.wav', '3.wav', '4.wav', '5.wav'])
+      await store.openConsultation(
+        { ...opening, audio: track(file, 200 * MB) },
+        'candy-uid',
+        now
+      );
+    const crowding = track('crowding.wav', 10 * MB);
+    uploaded.set(crowding.url, 50 * MB);
+    const crowded = await store.openConsultation(
+      { ...opening, audio: crowding },
+      'candy-uid',
+      now
+    );
+    expect(crowded).toMatchObject({
+      ok: false,
+      status: 409,
+      body: { error: 'no_room' }
+    });
+    expect(crowded.ok ? '' : crowded.body.message).toContain('12 MB');
+    expect(del).toHaveBeenCalledWith(crowding.url);
+    const listed = await store.listConsultations(now);
+    expect(listed.consultations).toHaveLength(6);
+    expect(listed.storage.usedBytes).toBe(1012 * MB);
   });
 
   it('sweeps closed links’ tracks, and uploads whose link never opened', async () => {
