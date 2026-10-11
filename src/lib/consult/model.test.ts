@@ -1,8 +1,16 @@
 // @vitest-environment node
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { closingSoon, formatLeft } from './left';
-import { OpenConsultationSchema, isOpen } from './model';
+import {
+  OpenConsultationSchema,
+  UploadRequestSchema,
+  isOpen,
+  trackFolder
+} from './model';
 
+// As a copy that isn't the live site, so tracks are in consultation-dev/.
+beforeAll(() => vi.stubEnv('VERCEL_ENV', 'development'));
+afterAll(() => vi.unstubAllEnvs());
 const opening = {
   title: 'Menace',
   message: 'Is the drop too dark?',
@@ -10,13 +18,19 @@ const opening = {
   bpm: 124,
   days: 7,
   audio: {
-    path: 'consultation/abc.wav',
-    url: 'https://firebasestorage.googleapis.com/v0/b/candy/o/consultation%2Fabc.wav?alt=media&token=t',
+    path: 'consultation-dev/abc.wav',
+    url: 'https://store1.public.blob.vercel-storage.com/consultation-dev/abc.wav',
     bytes: 50_000_000,
     contentType: 'audio/wav'
   },
   waveform: 'AAAA'
 };
+
+const opens = (audio: Partial<typeof opening.audio>) =>
+  OpenConsultationSchema.safeParse({
+    ...opening,
+    audio: { ...opening.audio, ...audio }
+  }).success;
 
 describe('what Haven sends to open a link', () => {
   it('takes a week at most', () => {
@@ -29,30 +43,65 @@ describe('what Haven sends to open a link', () => {
     ).toBe(false);
   });
 
-  it('plays only from Firebase Storage, and only from its own folder', () => {
-    const elsewhere = { ...opening.audio, url: 'https://evil.example/a.wav' };
+  it('plays only from a Blob store, the track it names, in its own folder', () => {
     expect(
-      OpenConsultationSchema.safeParse({ ...opening, audio: elsewhere }).success
+      opens({ url: 'https://evil.example/consultation-dev/abc.wav' })
     ).toBe(false);
-    const outside = { ...opening.audio, path: 'covers/a.wav' };
     expect(
-      OpenConsultationSchema.safeParse({ ...opening, audio: outside }).success
+      opens({
+        url: 'https://public.blob.vercel-storage.com/consultation-dev/abc.wav'
+      })
     ).toBe(false);
-    const climbing = { ...opening.audio, path: 'consultation/../covers/a.wav' };
     expect(
-      OpenConsultationSchema.safeParse({ ...opening, audio: climbing }).success
+      opens({
+        url: 'https://store1.public.blob.vercel-storage.com/consultation-dev/other.wav'
+      })
     ).toBe(false);
+    expect(
+      opens({
+        url: 'https://store1.public.blob.vercel-storage.com/consultation-dev/abc.wav?x=1'
+      })
+    ).toBe(false);
+    // The live site's folder isn't this copy's, nor is anywhere else.
+    expect(
+      opens({
+        path: 'consultation/abc.wav',
+        url: 'https://store1.public.blob.vercel-storage.com/consultation/abc.wav'
+      })
+    ).toBe(false);
+    expect(opens({ path: 'covers/a.wav' })).toBe(false);
+    expect(opens({ path: 'consultation-dev/../covers/a.wav' })).toBe(false);
   });
 
   it('refuses a file over the limit, or one that isn’t audio', () => {
-    const big = { ...opening.audio, bytes: 300 * 1024 * 1024 };
+    expect(opens({ bytes: 300 * 1024 * 1024 })).toBe(false);
+    expect(opens({ contentType: 'image/png' })).toBe(false);
+  });
+});
+
+describe('asking for an upload pass', () => {
+  it('takes an audio format Haven shares, up to the limit', () => {
+    const ask = { extension: 'wav', contentType: 'audio/wav', bytes: 1000 };
+    expect(UploadRequestSchema.safeParse(ask).success).toBe(true);
     expect(
-      OpenConsultationSchema.safeParse({ ...opening, audio: big }).success
+      UploadRequestSchema.safeParse({ ...ask, extension: 'exe' }).success
     ).toBe(false);
-    const image = { ...opening.audio, contentType: 'image/png' };
     expect(
-      OpenConsultationSchema.safeParse({ ...opening, audio: image }).success
+      UploadRequestSchema.safeParse({ ...ask, contentType: 'text/html' })
+        .success
     ).toBe(false);
+    expect(
+      UploadRequestSchema.safeParse({ ...ask, bytes: 201 * 1024 * 1024 })
+        .success
+    ).toBe(false);
+  });
+});
+
+describe('where this copy of the site keeps its tracks', () => {
+  it('keeps the live site’s apart from every other copy’s', () => {
+    expect(trackFolder({ VERCEL_ENV: 'production' })).toBe('consultation/');
+    expect(trackFolder({ VERCEL_ENV: 'preview' })).toBe('consultation-dev/');
+    expect(trackFolder({})).toBe('consultation-dev/');
   });
 });
 

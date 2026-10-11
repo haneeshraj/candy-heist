@@ -3,16 +3,22 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { verifyHavenToken } from '@/lib/haven/auth';
 import {
   changeConsultation,
+  discardUpload,
   endConsultation,
   feedbackSince,
   listConsultations,
   openConsultation,
-  removeConsultation
+  prepareUpload,
+  removeConsultation,
+  sweepConsultations
 } from '@/lib/consult/store';
 import { DELETE, PATCH } from './[id]/route';
 import { POST as END } from './[id]/end/route';
+import { POST as DISCARD } from './discard/route';
 import { GET as FEEDBACK } from './feedback/route';
 import { GET, POST } from './route';
+import { POST as SWEEP } from './sweep/route';
+import { POST as UPLOAD } from './upload/route';
 
 // The consultation routes as Haven meets them, with the store and Google's
 // keys stood in for, as haven.test.ts does for the inbox: who gets in, and
@@ -32,8 +38,13 @@ vi.mock('@/lib/consult/store', () => ({
   changeConsultation: vi.fn(),
   endConsultation: vi.fn(),
   removeConsultation: vi.fn(),
-  feedbackSince: vi.fn()
+  feedbackSince: vi.fn(),
+  prepareUpload: vi.fn(),
+  discardUpload: vi.fn(),
+  sweepConsultations: vi.fn()
 }));
+
+const storage = { configured: true, usedBytes: 0, limitBytes: 1024 ** 3 };
 
 const id = '0123456789abcdef01234567';
 const context = { params: Promise.resolve({ id }) };
@@ -71,10 +82,16 @@ describe('Candy Haven’s consultation routes', () => {
       401
     );
     expect((await FEEDBACK(request('/x'))).status).toBe(401);
+    expect((await UPLOAD(request('/x', json('POST', {})))).status).toBe(401);
+    expect((await DISCARD(request('/x', json('POST', {})))).status).toBe(401);
+    expect((await SWEEP(request('/x', { method: 'POST' }))).status).toBe(401);
     expect(listConsultations).not.toHaveBeenCalled();
     expect(openConsultation).not.toHaveBeenCalled();
     expect(endConsultation).not.toHaveBeenCalled();
     expect(feedbackSince).not.toHaveBeenCalled();
+    expect(prepareUpload).not.toHaveBeenCalled();
+    expect(discardUpload).not.toHaveBeenCalled();
+    expect(sweepConsultations).not.toHaveBeenCalled();
   });
 
   it('turns away any account but the two', async () => {
@@ -82,12 +99,68 @@ describe('Candy Haven’s consultation routes', () => {
     expect((await GET(request('/api/haven/consultations'))).status).toBe(403);
   });
 
-  it('lists every consultation, uncached', async () => {
-    vi.mocked(listConsultations).mockResolvedValue({ consultations: [] });
+  it('lists every consultation, and the room left, uncached', async () => {
+    vi.mocked(listConsultations).mockResolvedValue({
+      consultations: [],
+      storage
+    });
     const response = await GET(request('/api/haven/consultations'));
     expect(response.status).toBe(200);
     expect(response.headers.get('cache-control')).toBe('no-store');
-    expect(await response.json()).toEqual({ consultations: [] });
+    expect(await response.json()).toEqual({ consultations: [], storage });
+  });
+
+  it('gives a pass for an upload, or says why not', async () => {
+    const ask = { extension: 'wav', contentType: 'audio/wav', bytes: 1000 };
+    vi.mocked(prepareUpload).mockResolvedValue({
+      ok: true,
+      body: {
+        pathname: 'consultation-dev/a.wav',
+        token: 'vercel_blob_client_test',
+        validUntil: '2026-10-10T13:00:00.000Z'
+      }
+    });
+    const given = await UPLOAD(request('/x', json('POST', ask)));
+    expect(given.status).toBe(200);
+    expect(prepareUpload).toHaveBeenCalledWith(ask);
+    expect(await given.json()).toMatchObject({
+      token: 'vercel_blob_client_test'
+    });
+
+    vi.mocked(prepareUpload).mockResolvedValue({
+      ok: false,
+      status: 409,
+      body: { error: 'no_room', message: 'There isn’t room for this track.' }
+    });
+    const full = await UPLOAD(request('/x', json('POST', ask)));
+    expect(full.status).toBe(409);
+    expect(await full.json()).toEqual({
+      error: 'no_room',
+      message: 'There isn’t room for this track.'
+    });
+  });
+
+  it('discards an upload whose link never opened', async () => {
+    vi.mocked(discardUpload).mockResolvedValue({ ok: true, body: null });
+    const response = await DISCARD(
+      request('/x', json('POST', { pathname: 'consultation-dev/a.wav' }))
+    );
+    expect(response.status).toBe(204);
+    expect(discardUpload).toHaveBeenCalledWith({
+      pathname: 'consultation-dev/a.wav'
+    });
+  });
+
+  it('sweeps on request, then answers with the list as it stands', async () => {
+    vi.mocked(sweepConsultations).mockResolvedValue({ deleted: 1, orphans: 0 });
+    vi.mocked(listConsultations).mockResolvedValue({
+      consultations: [],
+      storage
+    });
+    const response = await SWEEP(request('/x', { method: 'POST' }));
+    expect(response.status).toBe(200);
+    expect(sweepConsultations).toHaveBeenCalledOnce();
+    expect(await response.json()).toEqual({ consultations: [], storage });
   });
 
   it('opens a link with the body Haven sent, as the account that sent it', async () => {

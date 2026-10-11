@@ -21,7 +21,7 @@ const room: Room = {
   durationMs: 200_000,
   bpm: 124,
   audioUrl:
-    'https://firebasestorage.googleapis.com/v0/b/x/o/consultation%2Fa.wav',
+    'https://store1.public.blob.vercel-storage.com/consultation-dev/a.wav',
   waveform: 'AAAA',
   expiresAt: '2026-10-17T00:00:00.000Z'
 };

@@ -1,9 +1,8 @@
 import { changeConsultation, removeConsultation } from '@/lib/consult/store';
 import { consultRoute, type IdContext } from '@/lib/haven/consultRoutes';
 
-// One shared track. PATCH: { expiresAt } moves when its link closes;
-// { audioDeletedAt } records that Haven deleted the track from storage.
-// DELETE: forgets it altogether, the record of it included.
+// One shared track. PATCH: { expiresAt } moves when its link closes.
+// DELETE: forgets it altogether, the record of it and its track included.
 
 export async function PATCH(request: Request, { params }: IdContext) {
   const { id } = await params;

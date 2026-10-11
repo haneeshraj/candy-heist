@@ -304,15 +304,18 @@ export interface ConsultationDocument {
   message: string;
   durationMs: number;
   bpm: number | null;
-  /** Where the track is in storage, for Haven to delete it and count it. */
-  audio: { path: string; bytes: number; contentType: string };
+  /**
+   * The track in the Blob store: its name and address, kept here so the
+   * site can delete it and count it after the page's way in has gone.
+   */
+  audio: { path: string; url: string; bytes: number; contentType: string };
   createdAt: Date;
   createdBy: Uid;
   /** When the link closes: moved from Haven, never past a week from createdAt. */
   expiresAt: Date;
   /** Set when Haven closed it early. */
   endedAt: Date | null;
-  /** Set once Haven deleted the track from storage. */
+  /** Set once the site deleted the track from the Blob store. */
   audioDeletedAt: Date | null;
 }
 
@@ -321,7 +324,7 @@ export interface ConsultationAccessDocument {
   _id: ObjectId;
   /** The link's secret: 32 random bytes, base64url. */
   token: string;
-  /** Where the page plays the track from (a Firebase download address). */
+  /** Where the page plays the track from: its public address in the Blob store. */
   audioUrl: string;
   waveform: string;
   /** The link's close, which deletes this. */
