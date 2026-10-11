@@ -45,12 +45,15 @@ the same names go in Vercel's environment variables for the live site.
 | `GOOGLE_CONNECT_KEY`                 | 32 random bytes, hex: the key to `/api/google/connect`             |
 | `GOOGLE_TOKEN_KEY`                   | 32 random bytes, base64: seals Candy's sign-in in the database     |
 | `BOOKING_NOTIFY_EMAIL`               | Optional: where Candy's booking notes go (his Gmail when unset)    |
+| `BLOB_READ_WRITE_TOKEN`              | The Blob store consultations' tracks are kept in (Vercel adds it)  |
+| `CRON_SECRET`                        | Any long random string: lets Vercel Cron run the daily sweep       |
 
 Without them the site still runs; the two forms say they couldn't send,
 the API answers that it isn't configured, and every release shows the
 placeholder cover. Without Stripe, the payment step says payment isn't
 open yet; without Google, open times come from Candy's hours and the
-bookings alone, and nothing is put on a calendar or emailed.
+bookings alone, and nothing is put on a calendar or emailed. Without a
+Blob store, Candy Haven can't share a track for feedback, and says so.
 
 The stores' database tests are opt-in, against a server you don't mind a
 scratch database on (each drops its own after):
@@ -154,11 +157,25 @@ the track, leaves notes at a moment or over a section, tries tools on it
 (EQ, compressor or limiter, sidechain, stereo width, saturation) and sends
 it. There's no account, and producers never see each other's feedback.
 
-The track itself is never here. Haven uploads it to the board's Firebase
-Storage and sends its address; the page plays it from there, which needs
-CORS set on that bucket for this site's address (Haven's
-`storage.cors.json`). The database keeps the record (`consultations`, no
-TTL), the page's way in (`consultation_access`) and the feedback
+The track is kept in the site's Vercel Blob store, a public one: create it
+in the Vercel project (Storage, then Blob, access Public) and connect it to
+Production, Preview and Development, which adds `BLOB_READ_WRITE_TOKEN`
+(`vercel env pull` brings it to `.env.local`). Haven never holds a key to
+it. It asks for a pass that uploads one named file, of one type and size,
+within the hour (`src/lib/consult/blob.ts`), uploads straight to the store,
+then opens the link with the track's address; the page plays it from
+there. The live site keeps its tracks under `consultation/`, every other
+copy under `consultation-dev/`. The free Hobby plan includes 1 GB of Blob
+storage and 10 GB of downloads a month; past either, Vercel pauses the
+store for 30 days rather than charging, so the site refuses an upload that
+wouldn't fit in the gigabyte.
+
+The site deletes the tracks itself: at once when a link is ended or
+removed, when Haven's check-in finds a closed link with its track still
+there, and once a day (`/api/cron/consultations`, run by Vercel Cron from
+`vercel.json` with `CRON_SECRET`), which also clears uploads whose link
+never opened. The database keeps the record (`consultations`, no TTL), the
+page's way in (`consultation_access`) and the feedback
 (`consultation_feedback`); the last two have TTL indexes on the link's
 close, and the store treats a link as closed from its dates the moment it
 is, whatever the TTL. The page is `noindex` and out of the sitemap.
@@ -173,11 +190,14 @@ field, a minimum fill time, 10 an hour per visitor), checked against the
 track's length and refused once the link has closed. Feedback is only ever
 handed over below, behind the sign-in.
 
-- `GET /api/haven/consultations`: every consultation, newest first; the open ones with their link and waveform.
+- `GET /api/haven/consultations`: every consultation, newest first, the open ones with their link and waveform; and `storage`, the room left in the store.
+- `POST /api/haven/consultations/upload`: `{ extension, contentType, bytes }`; answers with the pass, or 409 `no_store` / `no_room` with a sentence.
 - `POST /api/haven/consultations`: opens a link for a track Haven has uploaded.
-- `PATCH /api/haven/consultations/<id>`: `{ expiresAt }` moves when it closes (a week from sharing at most, never reopened); `{ audioDeletedAt }` records that Haven deleted the track.
-- `POST /api/haven/consultations/<id>/end`: closes it now, deleting its way in and its feedback.
-- `DELETE /api/haven/consultations/<id>`: forgets it altogether.
+- `POST /api/haven/consultations/discard`: `{ pathname }` deletes an upload whose link didn't open.
+- `PATCH /api/haven/consultations/<id>`: `{ expiresAt }` moves when it closes (a week from sharing at most, never reopened).
+- `POST /api/haven/consultations/<id>/end`: closes it now, deleting its way in, its feedback and its track.
+- `DELETE /api/haven/consultations/<id>`: forgets it altogether, its track included.
+- `POST /api/haven/consultations/sweep`: deletes closed links' tracks now, and answers with the list.
 - `GET /api/haven/consultations/feedback?since=`: feedback on open links sent at or after `since`, 200 a page.
 
 ## Bookings and payments
