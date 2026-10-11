@@ -17,7 +17,7 @@ import {
   listTracks,
   trackSize
 } from './blob';
-import { decodeWaveform, type Feedback } from './engine';
+import { decodeWaveform, parseChain, type Feedback } from './engine';
 import {
   ChangeConsultationSchema,
   DAY,
@@ -533,12 +533,17 @@ export async function feedbackSince(
     .toArray();
   const last = page.at(-1)?.submittedAt ?? since;
   return {
+    // Read through the chain's schema, so feedback filed before devices
+    // goes out as devices too.
     feedback: page.map((doc) => ({
       id: doc._id.toHexString(),
       consultationId: doc.consultationId.toHexString(),
       name: doc.name,
-      notes: doc.notes,
-      chain: doc.chain,
+      notes: doc.notes.map((note) => ({
+        ...note,
+        chain: note.chain === null ? null : parseChain(note.chain)
+      })),
+      chain: doc.chain === null ? null : parseChain(doc.chain),
       submittedAt: doc.submittedAt.toISOString()
     })),
     cursor: last.toISOString(),

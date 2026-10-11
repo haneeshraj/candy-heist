@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { consultCopy } from '@/content/consult/consult';
-import { emptyChain, newBand, type Note } from '@/lib/consult/engine';
+import { newBand, type Note } from '@/lib/consult/engine';
 import NoteList from './NoteList';
 
 const handlers = () => ({
@@ -19,7 +19,16 @@ const notes: Note[] = [
     at: 80,
     end: 105,
     text: 'Too dark',
-    chain: { ...emptyChain(), eq: [{ ...newBand('b', 'bell'), gain: 3 }] }
+    chain: {
+      devices: [
+        {
+          id: 'd1',
+          kind: 'eq',
+          on: true,
+          bands: [{ ...newBand('b', 'bell'), gain: 3 }]
+        }
+      ]
+    }
   },
   { id: 'early', at: 12, end: null, text: 'Nice intro', chain: null }
 ];

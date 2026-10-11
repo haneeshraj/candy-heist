@@ -56,7 +56,8 @@ export default function TrackStage({
   onToggle,
   onSeek,
   onMark,
-  onPick
+  onPick,
+  meters
 }: TrackStageProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const press = useRef<{ x: number; at: number; dragging: boolean } | null>(
@@ -237,6 +238,7 @@ export default function TrackStage({
         }}
         onKeyDown={key}
       />
+      {meters}
       <p className={styles.hint} data-failed={failed || undefined}>
         {failed ? copy.unplayable : copy.hint}
       </p>

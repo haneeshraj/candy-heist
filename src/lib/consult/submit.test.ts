@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DatabaseUnavailableError } from '@/lib/db/client';
 import { withinHourlyLimit } from '@/lib/forms/limits';
-import { emptyChain, newBand } from './engine';
+import { newBand } from './engine';
 import type { Room } from './model';
 import { fileFeedback, findRoom } from './store';
 import { submitFeedback } from './submit';
@@ -28,7 +28,16 @@ const room: Room = {
 const feedback = {
   name: 'Nasko',
   notes: [{ id: 'n1', at: 83, end: null, text: 'More high end', chain: null }],
-  chain: { ...emptyChain(), eq: [{ ...newBand('b1', 'bell', 1500), gain: 4 }] }
+  chain: {
+    devices: [
+      {
+        id: 'd1',
+        kind: 'eq' as const,
+        on: true,
+        bands: [{ ...newBand('b1', 'bell', 1500), gain: 4 }]
+      }
+    ]
+  }
 };
 /** What a person's form sends alongside: nothing in the trap, opened a while ago. */
 const human = () => ({ trap: '', startedAt: Date.now() - 60_000 });

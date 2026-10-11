@@ -6,6 +6,7 @@ import { NameGate } from '@/components/consult/NameGate';
 import { NoteList } from '@/components/consult/NoteList';
 import { SubmitBar } from '@/components/consult/SubmitBar';
 import { ToolRack, type ToolTarget } from '@/components/consult/ToolRack';
+import { TrackMeters } from '@/components/consult/TrackMeters';
 import { TrackStage, type Span } from '@/components/consult/TrackStage';
 import { useConsultAudio } from '@/hooks/useConsultAudio';
 import type { Tools } from '@/lib/consult/audio';
@@ -17,6 +18,7 @@ import {
   emptyChain,
   formatSpan,
   parseFeedback,
+  startingChain,
   type Chain,
   type Feedback,
   type Note
@@ -71,7 +73,7 @@ export default function ConsultRoom({
   const [name, setName] = useState<string | null>(null);
   const [draft, setDraft] = useState<Draft>(() => ({
     notes: [],
-    chain: emptyChain()
+    chain: startingChain(newId())
   }));
   const [activeId, setActiveId] = useState<string | null>(null);
   const [target, setTarget] = useState(WHOLE);
@@ -99,6 +101,7 @@ export default function ConsultRoom({
     elementRef,
     positionRef,
     analyserRef,
+    metersRef,
     second,
     duration,
     playing,
@@ -134,9 +137,15 @@ export default function ConsultRoom({
   const chain = picked ? (picked.chain ?? emptyChain()) : draft.chain;
 
   function start(entered: string) {
-    // Whatever was written here before carries on.
+    // Whatever was written here before carries on, with an EQ to start
+    // from if its chain was left empty.
     const saved = loadDraft(room.token);
-    if (saved) setDraft(saved);
+    if (saved)
+      setDraft(
+        saved.chain.devices.length
+          ? saved
+          : { ...saved, chain: startingChain(newId()) }
+      );
     setName(entered);
   }
 
@@ -174,7 +183,7 @@ export default function ConsultRoom({
       at: marking.from,
       end: marking.to,
       text: '',
-      chain: emptyChain()
+      chain: startingChain(newId())
     };
     setNotes((notes) => [...notes, note]);
     setActiveId(note.id);
@@ -213,7 +222,7 @@ export default function ConsultRoom({
       if (result.ok) {
         notifySuccess(copy.submit.sent.title, copy.submit.sent.text);
         clearDraft(room.token);
-        setDraft({ notes: [], chain: emptyChain() });
+        setDraft({ notes: [], chain: startingChain(newId()) });
         setActiveId(null);
         setTarget(WHOLE);
         return;
@@ -256,6 +265,13 @@ export default function ConsultRoom({
             <h1 className={styles.title}>{room.title}</h1>
             <p className={styles.meta}>
               <span>{copy.room.artist}</span>
+              {room.bpm ? (
+                <span>
+                  {fill(copy.room.bpm, {
+                    bpm: String(Number(room.bpm.toFixed(2)))
+                  })}
+                </span>
+              ) : null}
               <span className={styles.left}>{leftText}</span>
             </p>
             {room.message ? (
@@ -287,6 +303,13 @@ export default function ConsultRoom({
                   onSeek={seek}
                   onMark={setMarking}
                   onPick={(id) => pick(id, false)}
+                  meters={
+                    <TrackMeters
+                      copy={copy.room.meters}
+                      metersRef={metersRef}
+                      playing={playing}
+                    />
+                  }
                 />
               </div>
               <NoteList
@@ -326,7 +349,6 @@ export default function ConsultRoom({
                   if (id !== WHOLE) setActiveId(id);
                 }}
                 chain={chain}
-                bpm={room.bpm}
                 analyserRef={analyserRef}
                 playing={playing}
                 onChange={setChain}

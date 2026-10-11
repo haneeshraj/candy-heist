@@ -1,7 +1,8 @@
 @use '../../../styles/tokens' as t;
 
 // The EQ: its picture in a hairline box, a line of how to use it, the
-// points as a row of chips, and the picked point's controls in a grid.
+// points as a row of chips, and the picked point's controls in a grid,
+// its kind as a row of the shapes they make.
 
 .eq {
   display: flex;
@@ -17,6 +18,11 @@
   background-color: var(--color-obsidian-raised);
   cursor: crosshair;
   touch-action: none;
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 2px;
+  }
 
   @media #{t.$query-desktop} {
     height: 24rem;
@@ -40,7 +46,7 @@
 }
 
 .point,
-.add,
+.slope,
 .remove {
   min-height: 3.4rem;
   padding: 0 1.4rem;
@@ -70,17 +76,57 @@
   }
 }
 
-.point[aria-pressed='true'] {
+.point[aria-pressed='true'],
+.slope[aria-checked='true'] {
   border-color: var(--color-gilt);
   color: var(--color-gilt);
 }
 
-.add {
-  border-style: dashed;
+// The kind, across the whole grid: seven shapes in a row of square keys.
+.kindField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  grid-column: 1 / -1;
+}
 
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
+.kinds,
+.slopes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.kind {
+  display: grid;
+  place-items: center;
+  width: 4.4rem;
+  height: 3.8rem;
+  border: 1px solid rgb(182 158 124 / 24%);
+  color: var(--color-concrete-light);
+  background-color: transparent;
+  cursor: pointer;
+  transition:
+    border-color 0.35s t.$ease-signature,
+    color 0.35s t.$ease-signature,
+    background-color 0.35s t.$ease-signature;
+
+  &[aria-checked='true'] {
+    border-color: var(--color-gilt);
+    color: var(--color-gilt-bright);
+    background-color: rgb(210 169 97 / 8%);
+  }
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 2px;
+  }
+
+  @media #{t.$query-hover} {
+    &:not([aria-checked='true']):hover {
+      border-color: rgb(210 169 97 / 70%);
+      color: var(--color-cream);
+    }
   }
 }
 
@@ -108,22 +154,6 @@
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--color-concrete-light);
-}
-
-.select {
-  min-height: 3.6rem;
-  padding: 0 1.2rem;
-  border: 1px solid rgb(182 158 124 / 18%);
-  border-radius: 0;
-  font-family: var(--font-archivo), sans-serif;
-  font-size: 1.4rem;
-  color: var(--color-cream);
-  background-color: var(--color-obsidian-raised);
-
-  &:focus-visible {
-    outline: 1.5px solid rgb(227 194 134 / 90%);
-    outline-offset: 2px;
-  }
 }
 
 .remove {

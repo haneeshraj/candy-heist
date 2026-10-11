@@ -7,7 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
-  type MouseEvent,
+  type KeyboardEvent,
   type PointerEvent
 } from 'react';
 import { Slider, span } from '@/components/consult/Slider';
@@ -39,15 +39,17 @@ import {
   type EqBand,
   type EqBandType
 } from '@/lib/consult/engine';
+import BandIcon from './BandIcon';
 import styles from './EqEditor.module.scss';
 import type { EqEditorProps } from './EqEditor.types';
 
 // The EQ, drawn as a producer reads one: frequency across, gain up and
 // down, the track's spectrum moving behind it while it plays, and the
 // curve the points make over it, asked of the very filters being heard.
-// Double-click to add a point; drag one to move it; scroll over it to
-// widen or narrow it. Under the picture, the picked point's own controls,
-// which are the way in from the keyboard.
+// Press the picture to put a point there and drag it where it should go;
+// press a point to pick it and drag it; scroll over it to widen or narrow
+// it. Under the picture, the picked point's own controls, its kind as the
+// shapes they make, which are the way in from the keyboard too.
 
 const PALETTE: EqPalette = {
   grid: 'rgba(182, 158, 124, 0.12)',
@@ -67,6 +69,9 @@ const SPECTRUM = {
 const CURVE_POINTS = 320;
 /** A slider for frequency moves along the picture's own log axis, in thousandths. */
 const FREQUENCY_STEPS = 1000;
+/** An arrow key moves the picked point a 48th of the picture across, or half a dB. */
+const KEY_STEPS = 48;
+const KEY_GAIN = 0.5;
 
 const newId = () =>
   typeof crypto !== 'undefined' && 'randomUUID' in crypto
@@ -177,7 +182,22 @@ export default function EqEditor({
     };
   };
 
+  /** A new point, picked; null when the EQ holds as many as it can. */
+  function add(type: EqBandType, frequency?: number, gain = 0) {
+    if (bands.length >= MAX_EQ_BANDS) return null;
+    const band = {
+      ...newBand(newId(), type, frequency),
+      gain: EQ_BAND_READS[type].gain ? clampTo(RANGES.gain, gain) : 0
+    };
+    onChange([...bands, band]);
+    setPicked(band.id);
+    return band;
+  }
+
+  // A press on a point takes it; anywhere else puts a bell there and takes
+  // that, so one press and a drag makes and places a point.
   function down(event: PointerEvent<HTMLCanvasElement>) {
+    if (event.button !== 0) return;
     const { x, y, width, height } = local(event);
     const near = bands
       .map((band) => {
@@ -186,10 +206,17 @@ export default function EqEditor({
       })
       .filter(({ distance }) => distance <= POINT_REACH)
       .sort((a, b) => a.distance - b.distance)[0];
-    if (!near) return;
+    const taken =
+      near?.band ??
+      add(
+        'bell',
+        clampTo(RANGES.frequency, frequencyForX(x, width)),
+        gainForY(y, height)
+      );
+    if (!taken) return;
     event.currentTarget.setPointerCapture(event.pointerId);
-    dragging.current = near.band.id;
-    setPicked(near.band.id);
+    dragging.current = taken.id;
+    setPicked(taken.id);
   }
 
   function move(event: PointerEvent<HTMLCanvasElement>) {
@@ -205,29 +232,41 @@ export default function EqEditor({
     });
   }
 
-  function add(type: EqBandType, frequency?: number, gain = 0) {
-    if (bands.length >= MAX_EQ_BANDS) return;
-    const band = {
-      ...newBand(newId(), type, frequency),
-      gain: EQ_BAND_READS[type].gain ? clampTo(RANGES.gain, gain) : 0
-    };
-    onChange([...bands, band]);
-    setPicked(band.id);
-  }
-
-  function doubleClick(event: MouseEvent<HTMLCanvasElement>) {
-    const box = event.currentTarget.getBoundingClientRect();
-    add(
-      'bell',
-      frequencyForX(event.clientX - box.left, box.width),
-      gainForY(event.clientY - box.top, box.height)
-    );
-  }
-
   function remove(id: string) {
     const rest = bands.filter((band) => band.id !== id);
     onChange(rest);
     setPicked(rest.at(-1)?.id ?? null);
+  }
+
+  // From the keyboard: Enter puts a point in the middle, the arrows move
+  // the picked one, Delete takes it away.
+  function key(event: KeyboardEvent<HTMLCanvasElement>) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      add('bell');
+      return;
+    }
+    if (!selected) return;
+    if (event.key === 'Delete' || event.key === 'Backspace') {
+      event.preventDefault();
+      remove(selected.id);
+      return;
+    }
+    const across =
+      event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+    const up = event.key === 'ArrowUp' ? 1 : event.key === 'ArrowDown' ? -1 : 0;
+    if (!across && !up) return;
+    event.preventDefault();
+    if (across) {
+      const at = xForFrequency(selected.frequency, KEY_STEPS) + across;
+      update(selected.id, {
+        frequency: clampTo(RANGES.frequency, frequencyForX(at, KEY_STEPS))
+      });
+    } else if (EQ_BAND_READS[selected.type].gain) {
+      update(selected.id, {
+        gain: clampTo(RANGES.gain, selected.gain + up * KEY_GAIN)
+      });
+    }
   }
 
   const full = bands.length >= MAX_EQ_BANDS;
@@ -238,6 +277,7 @@ export default function EqEditor({
       <canvas
         ref={canvasRef}
         className={styles.canvas}
+        tabIndex={0}
         aria-label={copy.hint}
         onPointerDown={down}
         onPointerMove={move}
@@ -247,50 +287,53 @@ export default function EqEditor({
         onPointerCancel={() => {
           dragging.current = null;
         }}
-        onDoubleClick={doubleClick}
+        onKeyDown={key}
       />
       <p className={styles.hint}>{full ? copy.full : copy.hint}</p>
 
-      <div className={styles.points} role="group" aria-label={copy.add}>
-        {bands.map((band, i) => (
-          <button
-            key={band.id}
-            type="button"
-            className={styles.point}
-            aria-pressed={band.id === picked}
-            onClick={() => setPicked(band.id)}
-          >
-            {i + 1} · {EQ_BAND_LABEL[band.type]} {formatHz(band.frequency)}
-          </button>
-        ))}
-        <button
-          type="button"
-          className={styles.add}
-          disabled={full}
-          onClick={() => add('bell')}
-        >
-          + {copy.add}
-        </button>
-      </div>
+      {bands.length ? (
+        <div className={styles.points} role="group" aria-label={copy.points}>
+          {bands.map((band, i) => (
+            <button
+              key={band.id}
+              type="button"
+              className={styles.point}
+              aria-pressed={band.id === picked}
+              onClick={() => setPicked(band.id)}
+            >
+              {i + 1} · {EQ_BAND_LABEL[band.type]} {formatHz(band.frequency)}
+            </button>
+          ))}
+        </div>
+      ) : null}
 
       {selected && reads ? (
         <div className={styles.controls}>
-          <label className={styles.field}>
-            <span className={styles.fieldLabel}>{copy.type}</span>
-            <select
-              className={styles.select}
-              value={selected.type}
-              onChange={(event) =>
-                update(selected.id, { type: event.target.value as EqBandType })
-              }
+          <div className={styles.kindField}>
+            <span id={`${baseId}-kind`} className={styles.fieldLabel}>
+              {copy.type}
+            </span>
+            <div
+              className={styles.kinds}
+              role="radiogroup"
+              aria-labelledby={`${baseId}-kind`}
             >
               {EQ_BAND_TYPES.map((type) => (
-                <option key={type} value={type}>
-                  {EQ_BAND_LABEL[type]}
-                </option>
+                <button
+                  key={type}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected.type === type}
+                  aria-label={EQ_BAND_LABEL[type]}
+                  title={EQ_BAND_LABEL[type]}
+                  className={styles.kind}
+                  onClick={() => update(selected.id, { type })}
+                >
+                  <BandIcon type={type} />
+                </button>
               ))}
-            </select>
-          </label>
+            </div>
+          </div>
           <Slider
             id={`${baseId}-frequency`}
             label={copy.frequency}
@@ -331,24 +374,29 @@ export default function EqEditor({
             />
           ) : null}
           {reads.slope ? (
-            <label className={styles.field}>
-              <span className={styles.fieldLabel}>{copy.slope}</span>
-              <select
-                className={styles.select}
-                value={selected.slope}
-                onChange={(event) =>
-                  update(selected.id, {
-                    slope: Number(event.target.value) as EqBand['slope']
-                  })
-                }
+            <div className={styles.field}>
+              <span id={`${baseId}-slope`} className={styles.fieldLabel}>
+                {copy.slope}
+              </span>
+              <div
+                className={styles.slopes}
+                role="radiogroup"
+                aria-labelledby={`${baseId}-slope`}
               >
                 {CUT_SLOPES.map((slope) => (
-                  <option key={slope} value={slope}>
+                  <button
+                    key={slope}
+                    type="button"
+                    role="radio"
+                    aria-checked={selected.slope === slope}
+                    className={styles.slope}
+                    onClick={() => update(selected.id, { slope })}
+                  >
                     {slope} dB/oct
-                  </option>
+                  </button>
                 ))}
-              </select>
-            </label>
+              </div>
+            </div>
           ) : null}
           <button
             type="button"

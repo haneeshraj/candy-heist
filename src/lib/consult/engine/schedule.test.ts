@@ -1,14 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
-import { emptyChain, newSidechain, type Note } from './params';
-import {
-  chainedSections,
-  covers,
-  duckPeriod,
-  duckRecovery,
-  duckTimes,
-  edgesBetween
-} from './schedule';
+import { emptyChain, type Note } from './params';
+import { chainedSections, covers, edgesBetween } from './schedule';
 
 const section = (id: string, at: number, end: number): Note => ({
   id,
@@ -48,44 +41,5 @@ describe('sections', () => {
       { time: 30, on: true },
       { time: 60, on: false }
     ]);
-  });
-});
-
-describe('the sidechain', () => {
-  const sidechain = { ...newSidechain(120), rate: '1/4' as const };
-
-  it('ducks once a beat at 1/4, every half beat at 1/8, once a bar at 1/1', () => {
-    expect(duckPeriod(sidechain)).toBeCloseTo(0.5);
-    expect(duckPeriod({ ...sidechain, rate: '1/8' })).toBeCloseTo(0.25);
-    expect(duckPeriod({ ...sidechain, rate: '1/1' })).toBeCloseTo(2);
-  });
-
-  it('lands on the grid from the top of the track', () => {
-    expect(duckTimes(sidechain, 0, 2)).toEqual([0.5, 1, 1.5, 2]);
-    expect(duckTimes(sidechain, -0.1, 1)).toEqual([0, 0.5, 1]);
-  });
-
-  it('never lays the same duck twice across two windows', () => {
-    const first = duckTimes(sidechain, 0.3, 1.5);
-    const second = duckTimes(sidechain, 1.5, 3);
-    expect([...first, ...second]).toEqual([0.5, 1, 1.5, 2, 2.5, 3]);
-  });
-
-  it('slides with the offset, to land on the kick', () => {
-    const later = { ...sidechain, offset: 100 };
-    expect(duckTimes(later, 0, 1.2)).toEqual([0.1, 0.6, 1.1]);
-    const earlier = { ...sidechain, offset: -100 };
-    expect(duckTimes(earlier, 0, 1)).toEqual([0.4, 0.9]);
-  });
-
-  it('comes most of the way back by its release', () => {
-    const tc = duckRecovery({ ...sidechain, release: 0.6 });
-    // 0.6 of a 0.5 s step, at four time constants (98%).
-    expect(tc).toBeCloseTo(0.075);
-  });
-
-  it('has nothing to lay over an empty window', () => {
-    expect(duckTimes(sidechain, 2, 2)).toEqual([]);
-    expect(duckTimes(sidechain, 3, 2)).toEqual([]);
   });
 });

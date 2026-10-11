@@ -4,7 +4,7 @@ import { useId } from 'react';
 import {
   MAX_NOTE,
   chainIsEmpty,
-  describeChain,
+  deviceIsNeutral,
   formatClock,
   formatSpan
 } from '@/lib/consult/engine';
@@ -71,7 +71,11 @@ export default function NoteList({
       ) : (
         <ol className={styles.list}>
           {sorted.map((note) => {
-            const tools = describeChain(note.chain);
+            // The devices doing something to the sound: an EQ with no
+            // points yet doesn't count.
+            const tools = (note.chain?.devices ?? []).filter(
+              (device) => !deviceIsNeutral(device)
+            );
             return (
               <li
                 key={note.id}

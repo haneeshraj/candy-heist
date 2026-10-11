@@ -12,7 +12,7 @@ import {
   it,
   vi
 } from 'vitest';
-import { compactPeaks, emptyChain, encodeWaveform, newBand } from './engine';
+import { compactPeaks, encodeWaveform, newBand } from './engine';
 
 // The store against a real MongoDB, opt-in, as the inbox's is: set
 // TEST_MONGODB_URI to a server you don't mind a scratch database on. It
@@ -86,7 +86,16 @@ const opening = {
 const feedback = {
   name: 'Nasko',
   notes: [{ id: 'n1', at: 83, end: null, text: 'More high end', chain: null }],
-  chain: { ...emptyChain(), eq: [{ ...newBand('b1', 'bell', 1500), gain: 4 }] }
+  chain: {
+    devices: [
+      {
+        id: 'd1',
+        kind: 'eq' as const,
+        on: true,
+        bands: [{ ...newBand('b1', 'bell', 1500), gain: 4 }]
+      }
+    ]
+  }
 };
 
 describe.skipIf(!uri)('the consultation store, against a real database', () => {

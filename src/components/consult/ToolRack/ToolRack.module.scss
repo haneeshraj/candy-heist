@@ -1,8 +1,9 @@
 @use '../../../styles/tokens' as t;
 
-// The tools, one under another: each a hairline-ruled block with its name
-// in mono, Add or Remove on its right, and its controls in a grid. An
-// added tool's name is gilt; one waiting to be added is concrete.
+// The tools: where they go, the palette of devices, the chain they make
+// (tiles in a row, an arrow between each, left to right as they're heard)
+// and, under a hairline, the device open below it. A device switched on
+// lights gilt; one switched off is drawn back.
 
 .rack {
   display: flex;
@@ -18,8 +19,9 @@
 }
 
 .label,
-.toolName,
-.choiceLabel {
+.viewName,
+.choiceLabel,
+.rowLabel {
   font-family: var(--font-ibm-plex-mono), monospace;
   font-size: 1.1rem;
   font-weight: 500;
@@ -28,24 +30,27 @@
   color: var(--color-gold);
 }
 
-.toolName {
-  font-size: 1rem;
-  color: var(--color-concrete-light);
-
-  .tool[data-on] & {
-    color: var(--color-gilt);
-  }
-}
-
+.rowLabel,
 .choiceLabel {
   font-size: 1rem;
   letter-spacing: 0.3em;
   color: var(--color-concrete-light);
 }
 
+.viewName {
+  font-size: 1rem;
+  color: var(--color-gilt);
+
+  .view[data-off] & {
+    color: var(--color-concrete-light);
+  }
+}
+
 .target,
-.toggle,
-.chip {
+.switch,
+.chip,
+.step,
+.paletteItem {
   min-height: 3.4rem;
   padding: 0 1.4rem;
   border: 1px solid rgb(182 158 124 / 24%);
@@ -68,7 +73,7 @@
   }
 
   @media #{t.$query-hover} {
-    &:hover {
+    &:not(:disabled, [aria-disabled='true']):hover {
       border-color: rgb(210 169 97 / 70%);
       color: var(--color-cream);
     }
@@ -77,6 +82,12 @@
   &[aria-pressed='true'] {
     border-color: var(--color-gilt);
     color: var(--color-gilt);
+  }
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 }
 
@@ -97,7 +108,197 @@
   color: var(--color-concrete-light);
 }
 
-.tool {
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+// ---------------------------------------------------------------- palette
+
+.palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.paletteItem {
+  display: inline-flex;
+  gap: 1rem;
+  align-items: center;
+  border-style: dashed;
+  user-select: none;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.grip {
+  flex: none;
+  color: var(--color-concrete-light);
+}
+
+// ------------------------------------------------------------------ chain
+
+.chain {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem 2.4rem;
+  align-items: stretch;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tile,
+.slot {
+  position: relative;
+  min-height: 6.4rem;
+}
+
+.tile {
+  min-width: 11.2rem;
+}
+
+.tile {
+  display: flex;
+  border: 1px solid rgb(182 158 124 / 24%);
+  background-color: var(--color-obsidian-raised);
+  cursor: grab;
+  transition:
+    border-color 0.35s t.$ease-signature,
+    opacity 0.35s t.$ease-signature;
+
+  // The signal's way, from each device to the next.
+  & + &::before {
+    position: absolute;
+    top: 50%;
+    left: -1.9rem;
+    content: '→';
+    font-family: var(--font-ibm-plex-mono), monospace;
+    font-size: 1.2rem;
+    color: var(--color-concrete-dark);
+    transform: translateY(-50%);
+  }
+
+  &[data-open] {
+    border-color: var(--color-gilt);
+  }
+
+  &[data-off] {
+    opacity: 0.55;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+// Where a dragged device would land: a gilt line at the tile's leading
+// edge, or past the last one's far edge.
+.tile[data-drop]::after {
+  position: absolute;
+  top: -0.4rem;
+  bottom: -0.4rem;
+  left: -1.3rem;
+  width: 2px;
+  content: '';
+  background-color: var(--color-gilt-bright);
+}
+
+.tile[data-drop='after']::after {
+  right: -1.3rem;
+  left: auto;
+}
+
+.tileOpen {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.6rem;
+  justify-content: center;
+  min-width: 0;
+  padding: 1rem 1.2rem;
+  cursor: inherit;
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: -2px;
+  }
+}
+
+.tileName {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+
+  .tile[data-open] & {
+    color: var(--color-gilt-bright);
+  }
+}
+
+.tileSummary {
+  overflow: hidden;
+  max-width: 16rem;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  color: var(--color-concrete-light);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// The device's light: lit gilt when it's heard.
+.light {
+  flex: none;
+  align-self: flex-start;
+  width: 1rem;
+  height: 1rem;
+  margin: 1rem 1rem 0 0;
+  padding: 0;
+  border: 1px solid var(--color-concrete-light);
+  border-radius: 50%;
+  background-color: transparent;
+  cursor: pointer;
+
+  &[aria-pressed='true'] {
+    border-color: var(--color-gilt-bright);
+    background-color: var(--color-gilt-bright);
+    box-shadow: 0 0 6px rgb(227 194 134 / 55%);
+  }
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 3px;
+  }
+}
+
+// The empty chain, to drop on: the whole row.
+.slot {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  padding: 0 1.2rem;
+  border: 1px dashed rgb(182 158 124 / 24%);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-concrete-light);
+
+  &[data-drop] {
+    border-color: var(--color-gilt);
+  }
+}
+
+// ------------------------------------------------------------------- view
+
+.view {
   display: flex;
   flex-direction: column;
   gap: 1.6rem;
@@ -105,20 +306,39 @@
   border-top: 1px solid rgb(182 158 124 / 14%);
 }
 
-.toolHead {
+.viewHead {
   display: flex;
-  gap: 1.6rem;
+  flex-wrap: wrap;
+  gap: 1.2rem;
   align-items: center;
   justify-content: space-between;
 }
 
-.toggle {
-  min-height: 2.8rem;
-  border-style: dashed;
+.viewActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
 
-  .tool[data-on] & {
-    border-style: solid;
-    color: var(--color-concrete-light);
+.step {
+  display: grid;
+  place-items: center;
+  width: 3.4rem;
+  padding: 0;
+}
+
+.switch[aria-pressed='true'] {
+  color: var(--color-obsidian);
+  background-color: var(--color-gilt);
+}
+
+.viewBody {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+
+  .view[data-off] & {
+    opacity: 0.6;
   }
 }
 

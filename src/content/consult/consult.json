@@ -27,7 +27,19 @@
     "compare": "Hear it",
     "asItIs": "As it is",
     "withTools": "With my tools",
-    "compareHint": "Put a tool on to hear the before and after."
+    "compareHint": "Put a tool on to hear the before and after.",
+    "bpm": "{bpm} BPM",
+    "meters": {
+      "loudness": "Loudness",
+      "momentary": "M",
+      "shortTerm": "S",
+      "integrated": "I",
+      "unit": "LUFS",
+      "reset": "Start the integrated reading again",
+      "scope": "Scope",
+      "stereo": "Stereo",
+      "correlation": "Phase"
+    }
   },
   "notes": {
     "label": "Notes",
@@ -46,11 +58,21 @@
     "whole": "Whole song",
     "section": "Section {span}",
     "noSection": "Mark out a section on the waveform, or pick one from the notes, to put tools on just that part.",
-    "add": "Add",
     "remove": "Remove",
+    "devices": {
+      "label": "Devices",
+      "hint": "Drag one into the chain, or tap it to add it at the end.",
+      "full": "That's as many devices as one chain holds.",
+      "chain": "Chain",
+      "empty": "Nothing in the chain yet. Drag a device here.",
+      "on": "On",
+      "off": "Off",
+      "earlier": "Move it earlier in the chain",
+      "later": "Move it later in the chain"
+    },
     "eq": {
-      "hint": "Double-click to add a point. Drag it to move it, scroll over it for its width.",
-      "add": "Add a point",
+      "hint": "Press the line to add a point, and drag it where you want it. Scroll over a point to widen or narrow it.",
+      "points": "Points",
       "type": "Kind",
       "frequency": "Frequency",
       "gain": "Gain",
@@ -58,16 +80,9 @@
       "slope": "Slope",
       "full": "That's as many points as one EQ holds."
     },
-    "saturation": { "drive": "Drive", "mix": "Mix", "output": "Output" },
-    "sidechain": {
-      "bpm": "Tempo",
-      "rate": "Every",
-      "depth": "Depth",
-      "release": "Release",
-      "offset": "Nudge",
-      "hint": "Ducks on the beat, the way a kick would pull the track down. Nudge it until it lands on the kick."
+    "width": {
+      "width": "Width"
     },
-    "width": { "width": "Width" },
     "dynamics": {
       "mode": "Mode",
       "threshold": "Threshold",
@@ -81,8 +96,14 @@
   },
   "submit": {
     "summary": "{notes} and {tools}",
-    "notes": { "one": "1 note", "other": "{count} notes" },
-    "tools": { "one": "1 set of tools", "other": "{count} sets of tools" },
+    "notes": {
+      "one": "1 note",
+      "other": "{count} notes"
+    },
+    "tools": {
+      "one": "1 set of tools",
+      "other": "{count} sets of tools"
+    },
     "send": "Send to Candy",
     "sending": "Sending",
     "nothing": "Leave a note or put a tool on the track first.",

@@ -1,0 +1,136 @@
+@use '../../../styles/tokens' as t;
+
+// Three cells in a row under the waveform: loudness, the scope and the
+// stereo imager, each a hairline box with its name in mono. On a phone
+// the loudness goes across the top, the two pictures side by side under it.
+
+.meters {
+  display: grid;
+  grid-template-areas:
+    'loudness loudness'
+    'scope stereo';
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+
+  @media #{t.$query-tablet} {
+    grid-template-areas: 'loudness scope stereo';
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
+  }
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgb(182 158 124 / 14%);
+  background-color: var(--color-obsidian-raised);
+
+  &[data-cell='loudness'] {
+    grid-area: loudness;
+  }
+
+  &[data-cell='scope'] {
+    grid-area: scope;
+  }
+
+  &[data-cell='stereo'] {
+    grid-area: stereo;
+  }
+}
+
+.label {
+  display: flex;
+  gap: 0.8rem;
+  align-items: baseline;
+  justify-content: space-between;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-concrete-light);
+}
+
+.unit {
+  letter-spacing: 0.15em;
+  color: var(--color-concrete-dark);
+}
+
+.big {
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 2.2rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--color-cream);
+}
+
+.small {
+  display: flex;
+  gap: 1.4rem;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1.1rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-alabaster-light);
+}
+
+.key {
+  margin-right: 0.4rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+  color: var(--color-gold);
+}
+
+// Integrated, which starts again when pressed.
+.reset {
+  padding: 0;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 2px;
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      color: var(--color-cream);
+    }
+  }
+}
+
+.bar {
+  position: relative;
+  height: 0.4rem;
+  margin-top: auto;
+  background-color: rgb(182 158 124 / 12%);
+}
+
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background-color: var(--color-gilt);
+  transition: width 0.1s linear;
+}
+
+.target {
+  position: absolute;
+  top: -0.3rem;
+  bottom: -0.3rem;
+  width: 1px;
+  background-color: var(--color-cream);
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: 7.2rem;
+}

@@ -17,8 +17,6 @@ export interface ToolRackProps {
   onTarget: (id: string) => void;
   /** The picked target's tools. */
   chain: Chain;
-  /** The track's tempo, for a new sidechain; null when it isn't known. */
-  bpm: number | null;
   analyserRef: RefObject<AnalyserNode | null>;
   playing: boolean;
   onChange: (chain: Chain) => void;

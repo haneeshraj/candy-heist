@@ -36,7 +36,20 @@ export const consultCopySchema = z.object({
     asItIs: text,
     withTools: text,
     /** While there's nothing on to compare. */
-    compareHint: text
+    compareHint: text,
+    /** `{bpm}` is the track's tempo, as Candy gave it. */
+    bpm: text,
+    meters: z.object({
+      loudness: text,
+      momentary: text,
+      shortTerm: text,
+      integrated: text,
+      unit: text,
+      reset: text,
+      scope: text,
+      stereo: text,
+      correlation: text
+    })
   }),
   notes: z.object({
     label: text,
@@ -57,26 +70,27 @@ export const consultCopySchema = z.object({
     whole: text,
     section: text,
     noSection: text,
-    add: text,
     remove: text,
+    devices: z.object({
+      label: text,
+      hint: text,
+      full: text,
+      chain: text,
+      empty: text,
+      on: text,
+      off: text,
+      earlier: text,
+      later: text
+    }),
     eq: z.object({
       hint: text,
-      add: text,
+      points: text,
       type: text,
       frequency: text,
       gain: text,
       q: text,
       slope: text,
       full: text
-    }),
-    saturation: z.object({ drive: text, mix: text, output: text }),
-    sidechain: z.object({
-      bpm: text,
-      rate: text,
-      depth: text,
-      release: text,
-      offset: text,
-      hint: text
     }),
     width: z.object({ width: text }),
     dynamics: z.object({

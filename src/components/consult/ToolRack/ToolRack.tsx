@@ -1,36 +1,69 @@
 'use client';
 
-import { useId, type ReactNode } from 'react';
+import {
+  useId,
+  useState,
+  type DragEvent,
+  type KeyboardEvent,
+  type RefObject
+} from 'react';
 import { EqEditor } from '@/components/consult/EqEditor';
 import { Slider, span } from '@/components/consult/Slider';
 import {
+  DEVICE_KINDS,
+  DEVICE_LABEL,
   DYNAMICS_LABEL,
   DYNAMICS_MODES,
+  MAX_DEVICES,
   RANGES,
-  SIDECHAIN_RATES,
-  TOOL_LABEL,
+  deviceTitle,
   formatDb,
+  newDevice,
   newDynamics,
-  newSaturation,
-  newSidechain,
-  newWidth,
+  summarizeDevice,
   type Chain,
+  type Device,
+  type DeviceKind,
   type Dynamics,
-  type Saturation,
-  type Sidechain,
   type Width
 } from '@/lib/consult/engine';
 import styles from './ToolRack.module.scss';
 import type { ToolRackProps } from './ToolRack.types';
 
-// The tools, for whatever is picked: the whole song, or one section. The
-// EQ is always there; the other four are added and taken away, and what
-// isn't added isn't heard. The before and after is by the play button
+// The tools, for whatever is picked: the whole song, or one section. They
+// are a chain of devices, heard in order as a DAW's are: drag one in from
+// the palette (or tap it, to add it at the end), drag them about to change
+// the order, press one to set it, below. A chain starts with an EQ in it,
+// and can take more. The before and after is by the play button
 // (TrackStage), where it's heard.
+
+/** What a drag carries: a kind of device from the palette, or one already in the chain. */
+const NEW_DEVICE = 'application/x-consult-device';
+const MOVE_DEVICE = 'application/x-consult-move';
 
 const percent = (value: number) => `${Math.round(value * 100)}%`;
 const ms = (seconds: number) => `${Math.round(seconds * 1000)} ms`;
-const signedMs = (value: number) => `${value > 0 ? '+' : ''}${value} ms`;
+
+const newId = () =>
+  typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+/** The chain with `id` moved to sit before the device `to` (counted as the chain was). */
+function moved(devices: readonly Device[], id: string, to: number): Device[] {
+  const from = devices.findIndex((device) => device.id === id);
+  if (from < 0) return [...devices];
+  const rest = devices.filter((device) => device.id !== id);
+  const at = to > from ? to - 1 : to;
+  return [...rest.slice(0, at), devices[from], ...rest.slice(at)];
+}
+
+/** Enter and Space press a role="button" as they would a button. */
+const pressed = (event: KeyboardEvent) => {
+  if (event.key !== 'Enter' && event.key !== ' ') return false;
+  event.preventDefault();
+  return true;
+};
 
 export default function ToolRack({
   copy,
@@ -38,13 +71,85 @@ export default function ToolRack({
   target,
   onTarget,
   chain,
-  bpm,
   analyserRef,
   playing,
   onChange
 }: ToolRackProps) {
   const id = useId();
-  const set = (change: Partial<Chain>) => onChange({ ...chain, ...change });
+  // The device open below, for each place the tools go.
+  const [openBy, setOpenBy] = useState<Record<string, string>>({});
+  // Where a drag would land: before the device at this place, or at the end.
+  const [dropAt, setDropAt] = useState<number | null>(null);
+
+  const devices = chain.devices;
+  const open =
+    devices.find((device) => device.id === openBy[target]) ??
+    devices[0] ??
+    null;
+  const full = devices.length >= MAX_DEVICES;
+
+  const openDevice = (deviceId: string) =>
+    setOpenBy((current) => ({ ...current, [target]: deviceId }));
+  const setDevices = (next: Device[]) => onChange({ devices: next });
+
+  function add(kind: DeviceKind, at = devices.length) {
+    if (full) return;
+    const device = newDevice(kind, newId());
+    setDevices([...devices.slice(0, at), device, ...devices.slice(at)]);
+    openDevice(device.id);
+  }
+
+  const replace = (device: Device) =>
+    setDevices(devices.map((d) => (d.id === device.id ? device : d)));
+
+  function remove(deviceId: string) {
+    const index = devices.findIndex((device) => device.id === deviceId);
+    const rest = devices.filter((device) => device.id !== deviceId);
+    setDevices(rest);
+    const neighbour = rest[Math.min(index, rest.length - 1)];
+    if (neighbour) openDevice(neighbour.id);
+  }
+
+  const move = (deviceId: string, to: number) =>
+    setDevices(moved(devices, deviceId, to));
+
+  // ----------------------------------------------------------- dragging
+
+  const carries = (event: DragEvent) =>
+    event.dataTransfer.types.includes(NEW_DEVICE) ||
+    event.dataTransfer.types.includes(MOVE_DEVICE);
+
+  function over(event: DragEvent, at: number) {
+    if (!carries(event)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    event.dataTransfer.dropEffect = event.dataTransfer.types.includes(
+      MOVE_DEVICE
+    )
+      ? 'move'
+      : 'copy';
+    setDropAt(at);
+  }
+
+  /** Over a tile: before it from its left half, after it from its right. */
+  function overTile(event: DragEvent<HTMLElement>, index: number) {
+    const box = event.currentTarget.getBoundingClientRect();
+    over(event, event.clientX < box.left + box.width / 2 ? index : index + 1);
+  }
+
+  function drop(event: DragEvent) {
+    if (!carries(event)) return;
+    event.preventDefault();
+    const at = dropAt ?? devices.length;
+    setDropAt(null);
+    const moving = event.dataTransfer.getData(MOVE_DEVICE);
+    const kind = event.dataTransfer.getData(NEW_DEVICE);
+    if (moving) move(moving, at);
+    else if ((DEVICE_KINDS as readonly string[]).includes(kind))
+      add(kind as DeviceKind, at);
+  }
+
+  const index = open ? devices.indexOf(open) : -1;
 
   return (
     <section className={styles.rack} aria-labelledby={`${id}-label`}>
@@ -71,121 +176,264 @@ export default function ToolRack({
         <p className={styles.hint}>{copy.noSection}</p>
       ) : null}
 
-      <Tool name={TOOL_LABEL.eq}>
-        <EqEditor
-          // A new target is a new set of points: start from its first.
-          key={target}
-          copy={{ ...copy.eq, remove: copy.remove }}
-          bands={chain.eq}
+      <div className={styles.row}>
+        <span className={styles.rowLabel}>{copy.devices.label}</span>
+        <div
+          className={styles.palette}
+          role="group"
+          aria-label={copy.devices.label}
+        >
+          {DEVICE_KINDS.map((kind) => (
+            <div
+              key={kind}
+              role="button"
+              tabIndex={full ? -1 : 0}
+              aria-disabled={full || undefined}
+              className={styles.paletteItem}
+              draggable={!full}
+              onDragStart={(event) => {
+                event.dataTransfer.setData(NEW_DEVICE, kind);
+                event.dataTransfer.effectAllowed = 'copy';
+              }}
+              onDragEnd={() => setDropAt(null)}
+              onClick={() => add(kind)}
+              onKeyDown={(event) => {
+                if (pressed(event)) add(kind);
+              }}
+            >
+              <Grip />
+              {DEVICE_LABEL[kind]}
+            </div>
+          ))}
+        </div>
+        <p className={styles.hint}>
+          {full ? copy.devices.full : copy.devices.hint}
+        </p>
+      </div>
+
+      <div className={styles.row}>
+        <span id={`${id}-chain`} className={styles.rowLabel}>
+          {copy.devices.chain}
+        </span>
+        <ol
+          className={styles.chain}
+          aria-labelledby={`${id}-chain`}
+          onDragOver={(event) => over(event, dropAt ?? devices.length)}
+          onDragLeave={(event) => {
+            const into = event.relatedTarget;
+            if (!(into instanceof Node) || !event.currentTarget.contains(into))
+              setDropAt(null);
+          }}
+          onDrop={drop}
+        >
+          {devices.map((device, place) => {
+            const title = deviceTitle(chain, device);
+            const summary = device.on
+              ? summarizeDevice(device)
+              : copy.devices.off;
+            return (
+              <li
+                key={device.id}
+                className={styles.tile}
+                data-open={device.id === open?.id || undefined}
+                data-off={!device.on || undefined}
+                data-drop={
+                  dropAt === place
+                    ? 'before'
+                    : dropAt === devices.length && place === devices.length - 1
+                      ? 'after'
+                      : undefined
+                }
+                draggable
+                onDragStart={(event) => {
+                  event.dataTransfer.setData(MOVE_DEVICE, device.id);
+                  event.dataTransfer.effectAllowed = 'move';
+                }}
+                onDragEnd={() => setDropAt(null)}
+                onDragOver={(event) => overTile(event, place)}
+              >
+                <div
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={device.id === open?.id}
+                  aria-label={`${title}, ${summary}`}
+                  className={styles.tileOpen}
+                  onClick={() => openDevice(device.id)}
+                  onKeyDown={(event) => {
+                    if (pressed(event)) openDevice(device.id);
+                  }}
+                >
+                  <span className={styles.tileName}>{title}</span>
+                  <span className={styles.tileSummary}>{summary}</span>
+                </div>
+                <button
+                  type="button"
+                  className={styles.light}
+                  aria-pressed={device.on}
+                  aria-label={`${title}: ${device.on ? copy.devices.on : copy.devices.off}`}
+                  onClick={() => replace({ ...device, on: !device.on })}
+                />
+              </li>
+            );
+          })}
+          {/* An empty chain is one place to drop on; after that, a tile's
+              far half is the way to the end. */}
+          {devices.length === 0 ? (
+            <li
+              className={styles.slot}
+              data-drop={dropAt === 0 || undefined}
+              onDragOver={(event) => over(event, 0)}
+            >
+              {copy.devices.empty}
+            </li>
+          ) : null}
+        </ol>
+      </div>
+
+      {open ? (
+        <DeviceView
+          id={`${id}-${open.id}`}
+          copy={copy}
+          chain={chain}
+          device={open}
+          first={index === 0}
+          last={index === devices.length - 1}
           analyserRef={analyserRef}
           playing={playing}
-          onChange={(eq) => set({ eq })}
+          onChange={replace}
+          onEarlier={() => move(open.id, index - 1)}
+          onLater={() => move(open.id, index + 2)}
+          onRemove={() => remove(open.id)}
         />
-      </Tool>
-
-      <Tool
-        name={TOOL_LABEL.saturation}
-        on={chain.saturation !== null}
-        add={copy.add}
-        remove={copy.remove}
-        onToggle={(on) => set({ saturation: on ? newSaturation() : null })}
-      >
-        {chain.saturation ? (
-          <SaturationControls
-            id={`${id}-sat`}
-            copy={copy.saturation}
-            value={chain.saturation}
-            onChange={(saturation) => set({ saturation })}
-          />
-        ) : null}
-      </Tool>
-
-      <Tool
-        name={TOOL_LABEL.sidechain}
-        on={chain.sidechain !== null}
-        add={copy.add}
-        remove={copy.remove}
-        onToggle={(on) => set({ sidechain: on ? newSidechain(bpm) : null })}
-      >
-        {chain.sidechain ? (
-          <SidechainControls
-            id={`${id}-sc`}
-            copy={copy.sidechain}
-            value={chain.sidechain}
-            onChange={(sidechain) => set({ sidechain })}
-          />
-        ) : null}
-      </Tool>
-
-      <Tool
-        name={TOOL_LABEL.width}
-        on={chain.width !== null}
-        add={copy.add}
-        remove={copy.remove}
-        onToggle={(on) => set({ width: on ? newWidth() : null })}
-      >
-        {chain.width ? (
-          <WidthControls
-            id={`${id}-width`}
-            copy={copy.width}
-            value={chain.width}
-            onChange={(width) => set({ width })}
-          />
-        ) : null}
-      </Tool>
-
-      <Tool
-        name={TOOL_LABEL.dynamics}
-        on={chain.dynamics !== null}
-        add={copy.add}
-        remove={copy.remove}
-        onToggle={(on) =>
-          set({ dynamics: on ? newDynamics('compressor') : null })
-        }
-      >
-        {chain.dynamics ? (
-          <DynamicsControls
-            id={`${id}-dyn`}
-            copy={copy.dynamics}
-            value={chain.dynamics}
-            onChange={(dynamics) => set({ dynamics })}
-          />
-        ) : null}
-      </Tool>
+      ) : null}
     </section>
   );
 }
 
-function Tool({
-  name,
-  on = true,
-  add,
-  remove,
-  onToggle,
-  children
+/** The six dots a thing is picked up by. */
+function Grip() {
+  return (
+    <svg
+      className={styles.grip}
+      viewBox="0 0 6 10"
+      width="6"
+      height="10"
+      aria-hidden="true"
+    >
+      {[1, 5, 9].map((y) =>
+        [1, 5].map((x) => (
+          <circle key={`${x}-${y}`} cx={x} cy={y} r="0.9" fill="currentColor" />
+        ))
+      )}
+    </svg>
+  );
+}
+
+function Chevron({ back }: { back?: boolean }) {
+  return (
+    <svg viewBox="0 0 8 10" width="8" height="10" aria-hidden="true">
+      <path
+        d={back ? 'M6 1 2 5l4 4' : 'M2 1l4 4-4 4'}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.3"
+      />
+    </svg>
+  );
+}
+
+/** The device open below the chain: its name, its place and switch, and its controls. */
+function DeviceView({
+  id,
+  copy,
+  chain,
+  device,
+  first,
+  last,
+  analyserRef,
+  playing,
+  onChange,
+  onEarlier,
+  onLater,
+  onRemove
 }: {
-  name: string;
-  on?: boolean;
-  add?: string;
-  remove?: string;
-  onToggle?: (on: boolean) => void;
-  children: ReactNode;
+  id: string;
+  copy: ToolRackProps['copy'];
+  chain: Chain;
+  device: Device;
+  first: boolean;
+  last: boolean;
+  analyserRef: RefObject<AnalyserNode | null>;
+  playing: boolean;
+  onChange: (device: Device) => void;
+  onEarlier: () => void;
+  onLater: () => void;
+  onRemove: () => void;
 }) {
   return (
-    <div className={styles.tool} data-on={on || undefined}>
-      <div className={styles.toolHead}>
-        <h3 className={styles.toolName}>{name}</h3>
-        {onToggle ? (
+    <div className={styles.view} data-off={!device.on || undefined}>
+      <div className={styles.viewHead}>
+        <h3 className={styles.viewName}>{deviceTitle(chain, device)}</h3>
+        <div className={styles.viewActions}>
           <button
             type="button"
-            className={styles.toggle}
-            onClick={() => onToggle(!on)}
+            className={styles.step}
+            aria-label={copy.devices.earlier}
+            disabled={first}
+            onClick={onEarlier}
           >
-            {on ? remove : `+ ${add}`}
+            <Chevron back />
           </button>
-        ) : null}
+          <button
+            type="button"
+            className={styles.step}
+            aria-label={copy.devices.later}
+            disabled={last}
+            onClick={onLater}
+          >
+            <Chevron />
+          </button>
+          <button
+            type="button"
+            className={styles.switch}
+            aria-pressed={device.on}
+            onClick={() => onChange({ ...device, on: !device.on })}
+          >
+            {device.on ? copy.devices.on : copy.devices.off}
+          </button>
+          <button type="button" className={styles.target} onClick={onRemove}>
+            {copy.remove}
+          </button>
+        </div>
       </div>
-      {children}
+
+      <div className={styles.viewBody}>
+        {device.kind === 'eq' ? (
+          <EqEditor
+            // Another device is another set of points: start from its first.
+            key={device.id}
+            copy={{ ...copy.eq, remove: copy.remove }}
+            bands={device.bands}
+            analyserRef={analyserRef}
+            playing={playing}
+            onChange={(bands) => onChange({ ...device, bands })}
+          />
+        ) : device.kind === 'width' ? (
+          <WidthControls
+            id={id}
+            copy={copy.width}
+            value={device.width}
+            onChange={(width) => onChange({ ...device, width })}
+          />
+        ) : (
+          <DynamicsControls
+            id={id}
+            copy={copy.dynamics}
+            value={device.dynamics}
+            onChange={(dynamics) => onChange({ ...device, dynamics })}
+          />
+        )}
+      </div>
     </div>
   );
 }
@@ -195,106 +443,6 @@ interface ControlsProps<T, C> {
   copy: C;
   value: T;
   onChange: (value: T) => void;
-}
-
-function SaturationControls({
-  id,
-  copy,
-  value,
-  onChange
-}: ControlsProps<Saturation, ToolRackProps['copy']['saturation']>) {
-  return (
-    <div className={styles.controls}>
-      <Slider
-        id={`${id}-drive`}
-        label={copy.drive}
-        {...span(RANGES.drive)}
-        value={value.drive}
-        format={formatDb}
-        onChange={(drive) => onChange({ ...value, drive })}
-      />
-      <Slider
-        id={`${id}-mix`}
-        label={copy.mix}
-        {...span(RANGES.mix)}
-        value={value.mix}
-        format={percent}
-        onChange={(mix) => onChange({ ...value, mix })}
-      />
-      <Slider
-        id={`${id}-output`}
-        label={copy.output}
-        {...span(RANGES.output)}
-        value={value.output}
-        format={formatDb}
-        onChange={(output) => onChange({ ...value, output })}
-      />
-    </div>
-  );
-}
-
-function SidechainControls({
-  id,
-  copy,
-  value,
-  onChange
-}: ControlsProps<Sidechain, ToolRackProps['copy']['sidechain']>) {
-  return (
-    <>
-      <div className={styles.controls}>
-        <Slider
-          id={`${id}-bpm`}
-          label={copy.bpm}
-          {...span(RANGES.bpm)}
-          step={0.5}
-          value={value.bpm}
-          format={(bpm) => `${Number(bpm.toFixed(1))} BPM`}
-          onChange={(bpm) => onChange({ ...value, bpm })}
-        />
-        <div className={styles.choice}>
-          <span className={styles.choiceLabel}>{copy.rate}</span>
-          <div className={styles.chips} role="group" aria-label={copy.rate}>
-            {SIDECHAIN_RATES.map((rate) => (
-              <button
-                key={rate}
-                type="button"
-                className={styles.chip}
-                aria-pressed={value.rate === rate}
-                onClick={() => onChange({ ...value, rate })}
-              >
-                {rate}
-              </button>
-            ))}
-          </div>
-        </div>
-        <Slider
-          id={`${id}-depth`}
-          label={copy.depth}
-          {...span(RANGES.depth)}
-          value={value.depth}
-          format={percent}
-          onChange={(depth) => onChange({ ...value, depth })}
-        />
-        <Slider
-          id={`${id}-release`}
-          label={copy.release}
-          {...span(RANGES.release)}
-          value={value.release}
-          format={percent}
-          onChange={(release) => onChange({ ...value, release })}
-        />
-        <Slider
-          id={`${id}-offset`}
-          label={copy.offset}
-          {...span(RANGES.offset)}
-          value={value.offset}
-          format={signedMs}
-          onChange={(offset) => onChange({ ...value, offset })}
-        />
-      </div>
-      <p className={styles.hint}>{copy.hint}</p>
-    </>
-  );
 }
 
 function WidthControls({

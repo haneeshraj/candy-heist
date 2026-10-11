@@ -9,7 +9,9 @@ import {
 } from 'react';
 import {
   createConsultGraph,
+  createMeters,
   type ConsultGraph,
+  type Meters,
   type Tools
 } from '@/lib/consult/audio';
 
@@ -17,9 +19,10 @@ import {
 //
 // The audio context is made on the first press of play, as browsers ask,
 // and the track runs through it from then on: element → tools → analyser
-// → speakers. The playhead is kept in a ref and read by whatever draws
-// from it each frame; only the clock's whole seconds go through React,
-// so playing doesn't re-render the page sixty times a second.
+// → speakers, with the meters hung off the analyser. The playhead is kept
+// in a ref and read by whatever draws from it each frame; only the clock's
+// whole seconds go through React, so playing doesn't re-render the page
+// sixty times a second.
 
 export interface ConsultAudio {
   /** For the page's <audio>. */
@@ -34,6 +37,8 @@ export interface ConsultAudio {
   failed: boolean;
   /** Live reading for the spectrum; null until the first play. */
   analyserRef: RefObject<AnalyserNode | null>;
+  /** Loudness, scope and stereo on what's heard; null until the first play. */
+  metersRef: RefObject<Meters | null>;
   toggle: () => void;
   seek: (seconds: number) => void;
 }
@@ -46,6 +51,7 @@ export function useConsultAudio(
   const elementRef = useRef<HTMLAudioElement | null>(null);
   const positionRef = useRef(0);
   const analyserRef = useRef<AnalyserNode | null>(null);
+  const metersRef = useRef<Meters | null>(null);
   const contextRef = useRef<AudioContext | null>(null);
   const graphRef = useRef<ConsultGraph | null>(null);
   const toolsRef = useRef(tools);
@@ -109,6 +115,7 @@ export function useConsultAudio(
   // The graph goes with the page.
   useEffect(
     () => () => {
+      metersRef.current?.dispose();
       graphRef.current?.dispose();
       void contextRef.current?.close();
     },
@@ -132,6 +139,7 @@ export function useConsultAudio(
     contextRef.current = context;
     graphRef.current = graph;
     analyserRef.current = analyser;
+    metersRef.current = createMeters(context, analyser);
   }, []);
 
   const toggle = useCallback(() => {
@@ -160,6 +168,7 @@ export function useConsultAudio(
     playing,
     failed,
     analyserRef,
+    metersRef,
     toggle,
     seek
   };

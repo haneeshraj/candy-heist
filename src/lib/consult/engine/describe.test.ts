@@ -6,15 +6,16 @@ import {
   formatClock,
   formatDb,
   formatHz,
-  formatSpan
+  formatSpan,
+  summarizeDevice
 } from './describe';
 import {
   emptyChain,
   newBand,
+  newDevice,
   newDynamics,
-  newSaturation,
-  newSidechain,
-  newWidth
+  newWidth,
+  type Chain
 } from './params';
 
 describe('tools in words', () => {
@@ -45,22 +46,62 @@ describe('tools in words', () => {
     );
   });
 
-  it('lists every tool, the EQ low to high and then the rest in the order heard', () => {
+  it('lists every device in the order heard, an EQ low to high', () => {
     const lines = describeChain({
-      eq: [newBand('hi', 'highcut', 16000), newBand('lo', 'lowcut', 40)],
-      saturation: newSaturation(),
-      sidechain: newSidechain(124),
-      width: newWidth(),
-      dynamics: newDynamics('limiter')
+      devices: [
+        {
+          id: 'd1',
+          kind: 'eq',
+          on: true,
+          bands: [newBand('hi', 'highcut', 16000), newBand('lo', 'lowcut', 40)]
+        },
+        { id: 'd2', kind: 'width', on: true, width: newWidth() },
+        {
+          id: 'd3',
+          kind: 'dynamics',
+          on: true,
+          dynamics: newDynamics('limiter')
+        }
+      ]
     });
     expect(lines).toEqual([
       'Low cut 40 Hz, 24 dB/oct',
       'High cut 16 kHz, 24 dB/oct',
-      'Saturation +6 dB drive, 50% mix',
-      'Sidechain 1/4 at 124 BPM, 60% deep',
       'Stereo width 120%',
       'Limiter at −6 dB, +3 dB gain'
     ]);
+  });
+
+  it('names each of two of a kind, and says which is off', () => {
+    const chain: Chain = {
+      devices: [
+        { id: 'd1', kind: 'eq', on: true, bands: [newBand('a', 'lowcut', 40)] },
+        {
+          id: 'd2',
+          kind: 'eq',
+          on: false,
+          bands: [{ ...newBand('b', 'bell', 1500), gain: 4 }]
+        }
+      ]
+    };
+    expect(describeChain(chain)).toEqual([
+      'EQ: Low cut 40 Hz, 24 dB/oct',
+      'EQ 2: Bell +4 dB at 1.5 kHz, Q 0.9 (off)'
+    ]);
+  });
+
+  it('sums a device up in a few words for its tile', () => {
+    expect(summarizeDevice(newDevice('eq', 'd1'))).toBe('No points yet');
+    expect(
+      summarizeDevice({
+        id: 'd1',
+        kind: 'eq',
+        on: true,
+        bands: [newBand('a', 'notch', 3000), newBand('b', 'bell')]
+      })
+    ).toBe('2 points');
+    expect(summarizeDevice(newDevice('width', 'd2'))).toBe('120%');
+    expect(summarizeDevice(newDevice('dynamics', 'd3'))).toBe('4:1 at −18 dB');
   });
 
   it('has nothing to say about no tools', () => {

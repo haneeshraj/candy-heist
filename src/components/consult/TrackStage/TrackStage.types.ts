@@ -1,4 +1,4 @@
-import type { RefObject } from 'react';
+import type { ReactNode, RefObject } from 'react';
 import type { ConsultCopy } from '@/content/consult/consult';
 import type { Note } from '@/lib/consult/engine';
 
@@ -33,4 +33,6 @@ export interface TrackStageProps {
   onMark: (span: Span | null) => void;
   /** A note picked on the waveform. */
   onPick: (id: string) => void;
+  /** What's drawn right under the waveform: the meters. */
+  meters?: ReactNode;
 }
