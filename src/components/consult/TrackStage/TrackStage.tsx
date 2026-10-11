@@ -13,10 +13,11 @@ import { MIN_SECTION_SECONDS, formatClock } from '@/lib/consult/engine';
 import styles from './TrackStage.module.scss';
 import type { TrackStageProps } from './TrackStage.types';
 
-// The track, the only large thing on the page: play, the clock, and the
-// waveform with the notes on it. Press the waveform to move the playhead;
-// drag across it to mark out a section; press a note's pin or section to
-// pick it. The arrow keys move the playhead too, five seconds a press.
+// The track, the only large thing on the page: play, the clock, the
+// before and after, and the waveform with the notes on it. Press the
+// waveform to move the playhead; drag across it to mark out a section;
+// press a note's pin or section to pick it. The arrow keys move the
+// playhead too, five seconds a press.
 
 const PALETTE: WaveformPalette = {
   low: [163, 43, 35],
@@ -49,6 +50,9 @@ export default function TrackStage({
   notes,
   activeId,
   marking,
+  bypass,
+  canCompare,
+  onBypass,
   onToggle,
   onSeek,
   onMark,
@@ -187,6 +191,32 @@ export default function TrackStage({
           <span>{formatClock(second)}</span>
           <span className={styles.clockTotal}> / {formatClock(duration)}</span>
         </p>
+        {/* The before and after: the same track, with his tools and without. */}
+        <div
+          className={styles.compare}
+          role="group"
+          aria-label={copy.compare}
+          title={canCompare ? undefined : copy.compareHint}
+        >
+          <button
+            type="button"
+            className={styles.option}
+            aria-pressed={canCompare && bypass}
+            disabled={!canCompare}
+            onClick={() => onBypass(true)}
+          >
+            {copy.asItIs}
+          </button>
+          <button
+            type="button"
+            className={styles.option}
+            aria-pressed={canCompare && !bypass}
+            disabled={!canCompare}
+            onClick={() => onBypass(false)}
+          >
+            {copy.withTools}
+          </button>
+        </div>
       </div>
 
       <canvas

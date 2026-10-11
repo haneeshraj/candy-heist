@@ -1,9 +1,10 @@
 @use '../../../styles/tokens' as t;
 
-// The room: one column to 1200 wide, the header and the track across it,
-// then the notes and the tools side by side from the desktop breakpoint
-// up (the tools the wider, being the heavier), stacked below it. The send
-// holds at the foot.
+// The room, to 1400 wide: the header across it, then two columns from the
+// desktop breakpoint up. On the left the track, held at the top while the
+// notes under it go by; on the right the tools, held beside it and
+// scrolling on their own. Below the breakpoint it's one column: the track,
+// the notes, the tools. The send holds at the foot.
 
 .room {
   min-height: 100svh;
@@ -16,10 +17,16 @@
 }
 
 .work {
+  // The send bar's height (SubmitBar): what the held tools stop short of.
+  --send-height: 8.6rem;
+
+  // Where the held track and tools sit from the top of the screen.
+  --held-top: 1.6rem;
+
   display: flex;
   flex-direction: column;
   gap: 3.2rem;
-  width: min(100%, 120rem);
+  width: min(100%, 140rem);
   margin: 0 auto;
   padding-top: 5.6rem;
 }
@@ -84,11 +91,45 @@
 
 .columns {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 4rem;
   align-items: start;
 
   @media #{t.$query-desktop} {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 4.8rem;
+  }
+}
+
+.listen {
+  display: flex;
+  flex-direction: column;
+  gap: 3.2rem;
+}
+
+// Held at the top of its column on a desktop, on the room's own black, so
+// the notes pass under it rather than through it.
+.stage {
+  @media #{t.$query-desktop} {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: var(--held-top) 0 2rem;
+    background-color: var(--color-obsidian);
+  }
+}
+
+// As tall as the screen above the send bar, and scrolling inside that. Its
+// margin lines its top up with the track's, held or not.
+.rack {
+  @media #{t.$query-desktop} {
+    position: sticky;
+    top: var(--held-top);
+    margin-top: var(--held-top);
+    max-height: calc(100svh - var(--held-top) - var(--send-height) - 1.6rem);
+    padding-right: 1.2rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
   }
 }

@@ -30,7 +30,13 @@ export const consultCopySchema = z.object({
     pause: text,
     loading: text,
     unplayable: text,
-    hint: text
+    hint: text,
+    /** The before and after, by the play button. */
+    compare: text,
+    asItIs: text,
+    withTools: text,
+    /** While there's nothing on to compare. */
+    compareHint: text
   }),
   notes: z.object({
     label: text,
@@ -53,8 +59,6 @@ export const consultCopySchema = z.object({
     noSection: text,
     add: text,
     remove: text,
-    bypass: text,
-    bypassOn: text,
     eq: z.object({
       hint: text,
       add: text,

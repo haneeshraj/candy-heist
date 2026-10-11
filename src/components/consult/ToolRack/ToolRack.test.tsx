@@ -14,8 +14,6 @@ const renderRack = (chain: Chain, onChange = vi.fn(), extra = {}) =>
       onTarget={vi.fn()}
       chain={chain}
       bpm={124}
-      bypass={false}
-      onBypass={vi.fn()}
       analyserRef={createRef<AnalyserNode>()}
       playing={false}
       onChange={onChange}
@@ -59,14 +57,5 @@ describe('ToolRack', () => {
   it('says how to put tools on a section before there is one', () => {
     renderRack(emptyChain());
     expect(screen.getByText(consultCopy.tools.noSection)).toBeInTheDocument();
-  });
-
-  it('switches to hearing the track as it is, and says so', () => {
-    const onBypass = vi.fn();
-    renderRack(emptyChain(), vi.fn(), { onBypass });
-    fireEvent.click(
-      screen.getByRole('button', { name: consultCopy.tools.bypass })
-    );
-    expect(onBypass).toHaveBeenCalledWith(true);
   });
 });

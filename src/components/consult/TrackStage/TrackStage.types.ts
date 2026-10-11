@@ -22,6 +22,11 @@ export interface TrackStageProps {
   notes: Note[];
   activeId: string | null;
   marking: Span | null;
+  /** Hearing the track as it is, without his tools. */
+  bypass: boolean;
+  /** Whether any tool is on, so there's a before and after to hear. */
+  canCompare: boolean;
+  onBypass: (on: boolean) => void;
   onToggle: () => void;
   onSeek: (seconds: number) => void;
   /** A section being marked out, or none. */

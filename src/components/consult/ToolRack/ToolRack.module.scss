@@ -43,7 +43,6 @@
   color: var(--color-concrete-light);
 }
 
-.bypass,
 .target,
 .toggle,
 .chip {
@@ -79,13 +78,6 @@
     border-color: var(--color-gilt);
     color: var(--color-gilt);
   }
-}
-
-// Heard as it is: the switch reads lit, so the before is never mistaken
-// for the after.
-.bypass[aria-pressed='true'] {
-  color: var(--color-obsidian);
-  background-color: var(--color-gilt);
 }
 
 .targets,

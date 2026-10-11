@@ -25,8 +25,8 @@ import type { ToolRackProps } from './ToolRack.types';
 
 // The tools, for whatever is picked: the whole song, or one section. The
 // EQ is always there; the other four are added and taken away, and what
-// isn't added isn't heard. "Without my tools" plays the track as it is,
-// for the before and after.
+// isn't added isn't heard. The before and after is by the play button
+// (TrackStage), where it's heard.
 
 const percent = (value: number) => `${Math.round(value * 100)}%`;
 const ms = (seconds: number) => `${Math.round(seconds * 1000)} ms`;
@@ -39,8 +39,6 @@ export default function ToolRack({
   onTarget,
   chain,
   bpm,
-  bypass,
-  onBypass,
   analyserRef,
   playing,
   onChange
@@ -54,14 +52,6 @@ export default function ToolRack({
         <h2 id={`${id}-label`} className={styles.label}>
           {copy.label}
         </h2>
-        <button
-          type="button"
-          className={styles.bypass}
-          aria-pressed={bypass}
-          onClick={() => onBypass(!bypass)}
-        >
-          {bypass ? copy.bypassOn : copy.bypass}
-        </button>
       </div>
 
       <div className={styles.targets} role="group" aria-label={copy.label}>

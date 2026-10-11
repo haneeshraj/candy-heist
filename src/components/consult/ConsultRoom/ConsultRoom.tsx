@@ -30,9 +30,9 @@ import styles from './ConsultRoom.module.scss';
 import type { ConsultRoomProps } from './ConsultRoom.types';
 
 // A feedback link, once the producer has said who he is: the track and its
-// waveform, his notes beside the tools, and the send at the foot. What he
-// writes is kept in his browser as he goes, and sent as one piece of
-// feedback; he can send more after.
+// waveform with his notes under it, the tools beside them, and the send at
+// the foot. What he writes is kept in his browser as he goes, and sent as
+// one piece of feedback; he can send more after.
 
 const WHOLE = 'whole';
 
@@ -78,6 +78,15 @@ export default function ConsultRoom({
   const [marking, setMarking] = useState<Span | null>(null);
   const [bypass, setBypass] = useState(false);
   const [sending, setSending] = useState(false);
+
+  const ready = outgoing(name ?? '', draft);
+  const toolCount =
+    ready.notes.filter((note) => note.chain !== null).length +
+    (ready.chain ? 1 : 0);
+  // With no tool on there's no before and after; the next one put on is
+  // heard at once, not behind a switch left at "as it is".
+  const canCompare = toolCount > 0;
+  if (!canCompare && bypass) setBypass(false);
 
   const tools = useMemo<Tools>(
     () => ({ notes: draft.notes, chain: draft.chain }),
@@ -187,11 +196,6 @@ export default function ConsultRoom({
     if (target === id) setTarget(WHOLE);
   }
 
-  const ready = outgoing(name ?? '', draft);
-  const toolCount =
-    ready.notes.filter((note) => note.chain !== null).length +
-    (ready.chain ? 1 : 0);
-
   async function send() {
     if (name === null || sending) return;
     const feedback = outgoing(name, draft);
@@ -262,63 +266,72 @@ export default function ConsultRoom({
             ) : null}
           </header>
 
-          <TrackStage
-            copy={copy.room}
-            waveform={waveform}
-            duration={duration}
-            positionRef={positionRef}
-            second={second}
-            playing={playing}
-            failed={failed}
-            notes={draft.notes}
-            activeId={activeId}
-            marking={marking}
-            onToggle={toggle}
-            onSeek={seek}
-            onMark={setMarking}
-            onPick={(id) => pick(id, false)}
-          />
-
           <div className={styles.columns}>
-            <NoteList
-              copy={copy.notes}
-              notes={draft.notes}
-              activeId={activeId}
-              marking={marking}
-              position={second}
-              full={draft.notes.length >= MAX_NOTES}
-              onAddMoment={addMoment}
-              onAddSection={addSection}
-              onText={(id, text) =>
-                setNotes((notes) =>
-                  notes.map((note) =>
-                    note.id === id ? { ...note, text } : note
+            <div className={styles.listen}>
+              <div className={styles.stage}>
+                <TrackStage
+                  copy={copy.room}
+                  waveform={waveform}
+                  duration={duration}
+                  positionRef={positionRef}
+                  second={second}
+                  playing={playing}
+                  failed={failed}
+                  notes={draft.notes}
+                  activeId={activeId}
+                  marking={marking}
+                  bypass={bypass}
+                  canCompare={canCompare}
+                  onBypass={setBypass}
+                  onToggle={toggle}
+                  onSeek={seek}
+                  onMark={setMarking}
+                  onPick={(id) => pick(id, false)}
+                />
+              </div>
+              <NoteList
+                copy={copy.notes}
+                notes={draft.notes}
+                activeId={activeId}
+                marking={marking}
+                position={second}
+                full={draft.notes.length >= MAX_NOTES}
+                onAddMoment={addMoment}
+                onAddSection={addSection}
+                onText={(id, text) =>
+                  setNotes((notes) =>
+                    notes.map((note) =>
+                      note.id === id ? { ...note, text } : note
+                    )
                   )
-                )
-              }
-              onRemove={remove}
-              onPick={pick}
-              onTools={(id) => {
-                setActiveId(id);
-                setTarget(id);
-              }}
-            />
-            <ToolRack
-              copy={copy.tools}
-              targets={targets}
-              target={picked ? picked.id : WHOLE}
-              onTarget={(id) => {
-                setTarget(id);
-                if (id !== WHOLE) setActiveId(id);
-              }}
-              chain={chain}
-              bpm={room.bpm}
-              bypass={bypass}
-              onBypass={setBypass}
-              analyserRef={analyserRef}
-              playing={playing}
-              onChange={setChain}
-            />
+                }
+                onRemove={remove}
+                onPick={pick}
+                onTools={(id) => {
+                  setActiveId(id);
+                  setTarget(id);
+                }}
+              />
+            </div>
+
+            {/* Scrolls on its own beside the track: the site's smooth
+                scrolling leaves its wheel to it. */}
+            <div className={styles.rack} data-lenis-prevent>
+              <ToolRack
+                copy={copy.tools}
+                targets={targets}
+                target={picked ? picked.id : WHOLE}
+                onTarget={(id) => {
+                  setTarget(id);
+                  if (id !== WHOLE) setActiveId(id);
+                }}
+                chain={chain}
+                bpm={room.bpm}
+                analyserRef={analyserRef}
+                playing={playing}
+                onChange={setChain}
+              />
+            </div>
           </div>
 
           <SubmitBar

@@ -23,7 +23,11 @@
     "pause": "Pause",
     "loading": "Loading the track",
     "unplayable": "This track can't be played here. Try another browser.",
-    "hint": "Press the waveform to move through the track. Drag across it to mark out a section."
+    "hint": "Press the waveform to move through the track. Drag across it to mark out a section.",
+    "compare": "Hear it",
+    "asItIs": "As it is",
+    "withTools": "With my tools",
+    "compareHint": "Put a tool on to hear the before and after."
   },
   "notes": {
     "label": "Notes",
@@ -44,8 +48,6 @@
     "noSection": "Mark out a section on the waveform, or pick one from the notes, to put tools on just that part.",
     "add": "Add",
     "remove": "Remove",
-    "bypass": "Without my tools",
-    "bypassOn": "Hearing it as it is",
     "eq": {
       "hint": "Double-click to add a point. Drag it to move it, scroll over it for its width.",
       "add": "Add a point",

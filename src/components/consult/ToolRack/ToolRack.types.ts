@@ -19,8 +19,6 @@ export interface ToolRackProps {
   chain: Chain;
   /** The track's tempo, for a new sidechain; null when it isn't known. */
   bpm: number | null;
-  bypass: boolean;
-  onBypass: (on: boolean) => void;
   analyserRef: RefObject<AnalyserNode | null>;
   playing: boolean;
   onChange: (chain: Chain) => void;
