@@ -145,6 +145,41 @@ service that's no longer offered drops off it, and off its testimonials.
 How long a time is held while someone pays stays the site's
 (`hours.json`'s `holdMinutes`).
 
+## Consultations from Candy Haven
+
+A consultation is a track Candy shares from Candy Haven's CONSULTATION
+department for another producer's feedback, through a link here that stays
+open for 1 to 7 days: `/consult/<token>`. The producer types a name, plays
+the track, leaves notes at a moment or over a section, tries tools on it
+(EQ, compressor or limiter, sidechain, stereo width, saturation) and sends
+it. There's no account, and producers never see each other's feedback.
+
+The track itself is never here. Haven uploads it to the board's Firebase
+Storage and sends its address; the page plays it from there, which needs
+CORS set on that bucket for this site's address (Haven's
+`storage.cors.json`). The database keeps the record (`consultations`, no
+TTL), the page's way in (`consultation_access`) and the feedback
+(`consultation_feedback`); the last two have TTL indexes on the link's
+close, and the store treats a link as closed from its dates the moment it
+is, whatever the TTL. The page is `noindex` and out of the sitemap.
+
+What feedback is, the check it passes, and the Web Audio graph it's heard
+through are in `src/lib/consult/engine` and `src/lib/consult/audio`. Haven
+plays feedback back through a copy of the same folders, so edit them here
+and run Haven's `npm run sync:consult`.
+
+Submitting is a Server Action with the contact form's guards (a hidden
+field, a minimum fill time, 10 an hour per visitor), checked against the
+track's length and refused once the link has closed. Feedback is only ever
+handed over below, behind the sign-in.
+
+- `GET /api/haven/consultations`: every consultation, newest first; the open ones with their link and waveform.
+- `POST /api/haven/consultations`: opens a link for a track Haven has uploaded.
+- `PATCH /api/haven/consultations/<id>`: `{ expiresAt }` moves when it closes (a week from sharing at most, never reopened); `{ audioDeletedAt }` records that Haven deleted the track.
+- `POST /api/haven/consultations/<id>/end`: closes it now, deleting its way in and its feedback.
+- `DELETE /api/haven/consultations/<id>`: forgets it altogether.
+- `GET /api/haven/consultations/feedback?since=`: feedback on open links sent at or after `since`, 200 a page.
+
 ## Bookings and payments
 
 "Book me as a music producer" (`/services/producer`) and "Pay an
