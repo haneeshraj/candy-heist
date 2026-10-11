@@ -1,0 +1,91 @@
+@use '../../../styles/tokens' as t;
+
+// A tool's control: the name and its reading on one line, in mono, over a
+// hairline track that fills gilt up to the thumb.
+
+.slider {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.head {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.label,
+.value {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.label {
+  color: var(--color-concrete-light);
+  transition: color 0.35s t.$ease-signature;
+
+  .slider:focus-within & {
+    color: var(--color-gilt);
+  }
+}
+
+.value {
+  letter-spacing: 0.1em;
+  color: var(--color-cream);
+}
+
+.range {
+  width: 100%;
+  height: 2rem;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+
+  &::-webkit-slider-runnable-track {
+    height: 2px;
+    background: linear-gradient(
+      to right,
+      var(--color-gilt) var(--fill, 0%),
+      rgb(182 158 124 / 22%) var(--fill, 0%)
+    );
+  }
+
+  &::-moz-range-track {
+    height: 2px;
+    background: rgb(182 158 124 / 22%);
+  }
+
+  &::-moz-range-progress {
+    height: 2px;
+    background: var(--color-gilt);
+  }
+
+  &::-webkit-slider-thumb {
+    width: 1.4rem;
+    height: 1.4rem;
+    margin-top: -0.6rem;
+    border: 1px solid var(--color-gilt);
+    border-radius: 50%;
+    background: var(--color-obsidian);
+    appearance: none;
+  }
+
+  &::-moz-range-thumb {
+    width: 1.4rem;
+    height: 1.4rem;
+    border: 1px solid var(--color-gilt);
+    border-radius: 50%;
+    background: var(--color-obsidian);
+  }
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 3px;
+  }
+}

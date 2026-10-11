@@ -1,0 +1,63 @@
+@use '../../../styles/tokens' as t;
+
+// Held at the foot of the screen: the count of what's going on the left,
+// the solid gilt send on the right, over a band of obsidian.
+
+.bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  gap: 1.6rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.6rem 0;
+  border-top: 1px solid rgb(182 158 124 / 18%);
+  background-color: rgb(12 12 12 / 94%);
+  backdrop-filter: blur(6px);
+}
+
+.summary {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  line-height: 1.6;
+  text-transform: uppercase;
+  color: var(--color-concrete-light);
+}
+
+.send {
+  flex: none;
+  min-height: 5.2rem;
+  padding: 0 3.2rem;
+  border: 1px solid var(--color-gilt);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--color-obsidian);
+  background-color: var(--color-gilt);
+  cursor: pointer;
+  transition:
+    background-color 0.35s t.$ease-signature,
+    border-color 0.35s t.$ease-signature;
+
+  &:disabled {
+    border-color: rgb(182 158 124 / 28%);
+    color: var(--color-concrete-light);
+    background-color: transparent;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 3px;
+  }
+
+  @media #{t.$query-hover} {
+    &:not(:disabled):hover {
+      border-color: var(--color-gilt-bright);
+      background-color: var(--color-gilt-bright);
+    }
+  }
+}

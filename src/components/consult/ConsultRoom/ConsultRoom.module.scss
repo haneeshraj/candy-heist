@@ -1,0 +1,94 @@
+@use '../../../styles/tokens' as t;
+
+// The room: one column to 1200 wide, the header and the track across it,
+// then the notes and the tools side by side from the desktop breakpoint
+// up (the tools the wider, being the heavier), stacked below it. The send
+// holds at the foot.
+
+.room {
+  min-height: 100svh;
+  padding: 0 2rem;
+  background-color: var(--color-obsidian);
+
+  @media #{t.$query-tablet} {
+    padding: 0 4rem;
+  }
+}
+
+.work {
+  display: flex;
+  flex-direction: column;
+  gap: 3.2rem;
+  width: min(100%, 120rem);
+  margin: 0 auto;
+  padding-top: 5.6rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.label,
+.meta,
+.from {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+}
+
+.label {
+  color: var(--color-gilt);
+}
+
+.title {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: clamp(3.2rem, 6vw, 5.6rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7em 2em;
+  color: var(--color-gold);
+}
+
+.left {
+  color: var(--color-concrete-light);
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  max-width: 64rem;
+  margin-top: 0.8rem;
+  padding: 1.4rem 2rem;
+  border-left: 1px solid var(--color-gilt-deep);
+  font-size: 1.6rem;
+  line-height: 1.5;
+  color: var(--color-alabaster-light);
+}
+
+.from {
+  color: var(--color-concrete-light);
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4rem;
+  align-items: start;
+
+  @media #{t.$query-desktop} {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  }
+}

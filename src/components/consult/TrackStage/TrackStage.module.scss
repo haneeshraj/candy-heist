@@ -1,0 +1,100 @@
+@use '../../../styles/tokens' as t;
+
+// The transport over the waveform: a gilt ring to play, the clock in mono,
+// then the waveform the width of the room, and one line of how to use it.
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.transport {
+  display: flex;
+  gap: 1.6rem;
+  align-items: center;
+}
+
+.play {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 5.2rem;
+  height: 5.2rem;
+  border: 1px solid var(--color-gilt);
+  border-radius: 50%;
+  color: var(--color-obsidian);
+  background-color: var(--color-gilt);
+  cursor: pointer;
+  transition:
+    background-color 0.35s t.$ease-signature,
+    border-color 0.35s t.$ease-signature;
+
+  svg {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
+  &:disabled {
+    border-color: var(--color-concrete-dark);
+    color: var(--color-concrete-light);
+    background-color: transparent;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 3px;
+  }
+
+  @media #{t.$query-hover} {
+    &:not(:disabled):hover {
+      border-color: var(--color-gilt-bright);
+      background-color: var(--color-gilt-bright);
+    }
+  }
+}
+
+.clock {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1.4rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: var(--color-cream);
+}
+
+.clockTotal {
+  color: var(--color-concrete-light);
+}
+
+.waveform {
+  display: block;
+  width: 100%;
+  height: 11rem;
+  border-block: 1px solid rgb(182 158 124 / 14%);
+  cursor: crosshair;
+  touch-action: none;
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 3px;
+  }
+
+  @media #{t.$query-desktop} {
+    height: 16rem;
+  }
+}
+
+.hint {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  line-height: 1.6;
+  text-transform: uppercase;
+  color: var(--color-concrete-light);
+
+  &[data-failed] {
+    color: var(--color-crimson-light);
+  }
+}

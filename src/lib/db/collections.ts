@@ -1,5 +1,6 @@
 import type { Db, ObjectId } from 'mongodb';
 import type { BookingDetails, FlowKind } from '@/lib/booking/bookingState';
+import type { Chain, Note } from '@/lib/consult/engine';
 import type { ContactMessage } from '@/lib/contact/message';
 import type { DjEnquiry } from '@/lib/enquiry/enquiry';
 import type { PlanetSpec } from '@/lib/planets/engine';
@@ -51,7 +52,21 @@ export const COLLECTIONS = {
   /** The other half of each commission, paid on /services/pay. */
   invoices: 'invoices',
   /** Candy's Google sign-in, sealed: one document, `candy`. */
-  googleAccount: 'google_account'
+  googleAccount: 'google_account',
+  /**
+   * Each track Candy shared from Haven for feedback, kept after its link
+   * closes as the record that it was: its title and dates, never the
+   * feedback, which goes with the link.
+   */
+  consultations: 'consultations',
+  /**
+   * How a consultation's page is reached, while it's open: its link's
+   * token, where the track plays from and its waveform. Deleted when the
+   * link closes (TTL on expireAt).
+   */
+  consultationAccess: 'consultation_access',
+  /** What producers sent on a consultation's page, until the link closes (TTL). */
+  consultationFeedback: 'consultation_feedback'
 } as const;
 
 interface Filed {
@@ -282,6 +297,48 @@ export interface GoogleAccountDocument {
   connectedAt: Date;
 }
 
+export interface ConsultationDocument {
+  _id: ObjectId;
+  title: string;
+  /** What Candy asked the producers, shown on the page. */
+  message: string;
+  durationMs: number;
+  bpm: number | null;
+  /** Where the track is in storage, for Haven to delete it and count it. */
+  audio: { path: string; bytes: number; contentType: string };
+  createdAt: Date;
+  createdBy: Uid;
+  /** When the link closes: moved from Haven, never past a week from createdAt. */
+  expiresAt: Date;
+  /** Set when Haven closed it early. */
+  endedAt: Date | null;
+  /** Set once Haven deleted the track from storage. */
+  audioDeletedAt: Date | null;
+}
+
+/** Shares the consultation's _id: one each, while the link is open. */
+export interface ConsultationAccessDocument {
+  _id: ObjectId;
+  /** The link's secret: 32 random bytes, base64url. */
+  token: string;
+  /** Where the page plays the track from (a Firebase download address). */
+  audioUrl: string;
+  waveform: string;
+  /** The link's close, which deletes this. */
+  expireAt: Date;
+}
+
+export interface ConsultationFeedbackDocument {
+  _id: ObjectId;
+  consultationId: ObjectId;
+  name: string;
+  notes: Note[];
+  chain: Chain | null;
+  submittedAt: Date;
+  /** The link's close, which deletes this. */
+  expireAt: Date;
+}
+
 export interface RateLimitDocument {
   /** A hash of the visitor's address and what they used it for. */
   key: string;
@@ -348,7 +405,23 @@ export function ensureIndexes(db: Db): Promise<void> {
       .createIndex({ ref: 1 }, { unique: true }),
     db
       .collection(COLLECTIONS.invoices)
-      .createIndex({ bookingRef: 1 }, { unique: true })
+      .createIndex({ bookingRef: 1 }, { unique: true }),
+    db.collection(COLLECTIONS.consultations).createIndex({ createdAt: -1 }),
+    db
+      .collection(COLLECTIONS.consultationAccess)
+      .createIndex({ token: 1 }, { unique: true }),
+    db
+      .collection(COLLECTIONS.consultationAccess)
+      .createIndex({ expireAt: 1 }, { expireAfterSeconds: 0 }),
+    db
+      .collection(COLLECTIONS.consultationFeedback)
+      .createIndex({ consultationId: 1, submittedAt: 1 }),
+    db
+      .collection(COLLECTIONS.consultationFeedback)
+      .createIndex({ submittedAt: 1 }),
+    db
+      .collection(COLLECTIONS.consultationFeedback)
+      .createIndex({ expireAt: 1 }, { expireAfterSeconds: 0 })
   ]).then(() => undefined);
   indexed.catch(() => {
     indexed = null;

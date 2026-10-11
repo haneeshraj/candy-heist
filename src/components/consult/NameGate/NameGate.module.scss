@@ -1,0 +1,117 @@
+@use '../../../styles/tokens' as t;
+
+// The way in, centred: the label in mono, the lead in the accent italic,
+// the title in Archivo, Candy's question as a quote, the name, and a
+// solid gilt button, the share page's own.
+
+.gate {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  align-items: center;
+  width: min(100%, 52rem);
+  margin: 0 auto;
+  padding: 8rem 0 6rem;
+  text-align: center;
+}
+
+.label,
+.left,
+.small {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--color-concrete-light);
+}
+
+.label {
+  color: var(--color-gilt);
+}
+
+.lead {
+  margin-top: 1.2rem;
+  font-family: var(--font-cormorant-garamond), serif;
+  font-size: 2.2rem;
+  font-style: italic;
+  color: var(--color-gold);
+}
+
+.title {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: clamp(3.2rem, 7vw, 5.6rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  max-width: 44rem;
+  margin: 1.2rem 0;
+  padding: 1.6rem 2rem;
+  border-left: 1px solid var(--color-gilt-deep);
+  font-size: 1.6rem;
+  line-height: 1.5;
+  text-align: left;
+  color: var(--color-alabaster-light);
+}
+
+.from {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--color-concrete-light);
+}
+
+.name {
+  width: 100%;
+  margin-top: 1.6rem;
+  text-align: left;
+}
+
+.start {
+  width: 100%;
+  min-height: 5.2rem;
+  border: 1px solid var(--color-gilt);
+  font-family: var(--font-archivo), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--color-obsidian);
+  background-color: var(--color-gilt);
+  cursor: pointer;
+  transition:
+    background-color 0.35s t.$ease-signature,
+    border-color 0.35s t.$ease-signature;
+
+  &:disabled {
+    border-color: rgb(182 158 124 / 28%);
+    color: var(--color-concrete-light);
+    background-color: transparent;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 3px;
+  }
+
+  @media #{t.$query-hover} {
+    &:not(:disabled):hover {
+      border-color: var(--color-gilt-bright);
+      background-color: var(--color-gilt-bright);
+    }
+  }
+}
+
+.small {
+  letter-spacing: 0.2em;
+  line-height: 1.6;
+}

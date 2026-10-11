@@ -1,0 +1,58 @@
+@use '../../../styles/mixins' as m;
+
+// A closed link: the mark, one line in Archivo, and what to do about it,
+// centred on obsidian.
+
+.srOnly {
+  @include m.visually-hidden;
+}
+
+.screen {
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  padding: 4rem 2.4rem;
+  background-color: var(--color-obsidian);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+  align-items: center;
+  max-width: 48rem;
+  text-align: center;
+}
+
+.logo {
+  display: block;
+  width: 4rem;
+  color: var(--color-gilt);
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 4px;
+  }
+}
+
+.logoMark {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.headline {
+  font-family: var(--font-archivo), sans-serif;
+  font-size: 3.2rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: var(--color-cream);
+}
+
+.text {
+  font-size: 1.6rem;
+  line-height: 1.5;
+  color: var(--color-gold);
+}

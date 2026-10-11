@@ -1,0 +1,113 @@
+{
+  "meta": {
+    "title": "Feedback for Candy Heist",
+    "description": "An unreleased track, shared for your notes."
+  },
+  "label": "Feedback",
+  "gate": {
+    "lead": "Candy Heist would like your ears on",
+    "name": {
+      "label": "Your name",
+      "placeholder": "So Candy knows who it's from"
+    },
+    "start": "Start listening",
+    "private": "Only Candy reads what you send. Nobody else with this link sees it.",
+    "unreleased": "Unreleased. Please keep it to yourself."
+  },
+  "room": {
+    "artist": "Candy Heist",
+    "from": "From Candy",
+    "closes": "Open for {left}",
+    "closesSoon": "Closes in {left}",
+    "play": "Play",
+    "pause": "Pause",
+    "loading": "Loading the track",
+    "unplayable": "This track can't be played here. Try another browser.",
+    "hint": "Press the waveform to move through the track. Drag across it to mark out a section."
+  },
+  "notes": {
+    "label": "Notes",
+    "empty": "Nothing yet. Leave a note at the playhead, or mark out a section and put tools on it.",
+    "addMoment": "Note at {time}",
+    "addSection": "Section {span}",
+    "placeholder": "What do you hear?",
+    "remove": "Remove",
+    "tools": "Tools",
+    "toolsCount": "{count} on it",
+    "play": "Play from here",
+    "full": "That's as many notes as one send holds."
+  },
+  "tools": {
+    "label": "Tools",
+    "whole": "Whole song",
+    "section": "Section {span}",
+    "noSection": "Mark out a section on the waveform, or pick one from the notes, to put tools on just that part.",
+    "add": "Add",
+    "remove": "Remove",
+    "bypass": "Without my tools",
+    "bypassOn": "Hearing it as it is",
+    "eq": {
+      "hint": "Double-click to add a point. Drag it to move it, scroll over it for its width.",
+      "add": "Add a point",
+      "type": "Kind",
+      "frequency": "Frequency",
+      "gain": "Gain",
+      "q": "Width (Q)",
+      "slope": "Slope",
+      "full": "That's as many points as one EQ holds."
+    },
+    "saturation": { "drive": "Drive", "mix": "Mix", "output": "Output" },
+    "sidechain": {
+      "bpm": "Tempo",
+      "rate": "Every",
+      "depth": "Depth",
+      "release": "Release",
+      "offset": "Nudge",
+      "hint": "Ducks on the beat, the way a kick would pull the track down. Nudge it until it lands on the kick."
+    },
+    "width": { "width": "Width" },
+    "dynamics": {
+      "mode": "Mode",
+      "threshold": "Threshold",
+      "ratio": "Ratio",
+      "knee": "Knee",
+      "attack": "Attack",
+      "release": "Release",
+      "makeup": "Gain",
+      "hint": "A guide to what you mean, not a mastering processor."
+    }
+  },
+  "submit": {
+    "summary": "{notes} and {tools}",
+    "notes": { "one": "1 note", "other": "{count} notes" },
+    "tools": { "one": "1 set of tools", "other": "{count} sets of tools" },
+    "send": "Send to Candy",
+    "sending": "Sending",
+    "nothing": "Leave a note or put a tool on the track first.",
+    "sent": {
+      "title": "Sent to Candy",
+      "text": "Thank you. You can keep listening and send more."
+    },
+    "invalid": {
+      "title": "That couldn't be sent",
+      "text": "Something in it doesn't fit. Check your notes and try again."
+    },
+    "limited": {
+      "title": "That's a lot of sends",
+      "text": "Wait a while and send again. Nothing you've written is lost."
+    },
+    "closed": {
+      "title": "This link has closed",
+      "text": "It closed before your notes arrived. Ask Candy for a new one."
+    },
+    "failed": {
+      "title": "That didn't send",
+      "text": "Something went wrong on our side. Nothing you've written is lost; try again in a moment."
+    }
+  },
+  "closed": {
+    "headline": "This link has closed.",
+    "text": "Feedback links stay open for a few days. If you were asked for your notes, ask Candy for a new link.",
+    "home": "Candy Heist"
+  }
+}

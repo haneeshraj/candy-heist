@@ -1,0 +1,147 @@
+@use '../../../styles/tokens' as t;
+
+// The tools, one under another: each a hairline-ruled block with its name
+// in mono, Add or Remove on its right, and its controls in a grid. An
+// added tool's name is gilt; one waiting to be added is concrete.
+
+.rack {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.head {
+  display: flex;
+  gap: 1.6rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.label,
+.toolName,
+.choiceLabel {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+.toolName {
+  font-size: 1rem;
+  color: var(--color-concrete-light);
+
+  .tool[data-on] & {
+    color: var(--color-gilt);
+  }
+}
+
+.choiceLabel {
+  font-size: 1rem;
+  letter-spacing: 0.3em;
+  color: var(--color-concrete-light);
+}
+
+.bypass,
+.target,
+.toggle,
+.chip {
+  min-height: 3.4rem;
+  padding: 0 1.4rem;
+  border: 1px solid rgb(182 158 124 / 24%);
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  background-color: transparent;
+  cursor: pointer;
+  transition:
+    border-color 0.35s t.$ease-signature,
+    background-color 0.35s t.$ease-signature,
+    color 0.35s t.$ease-signature;
+
+  &:focus-visible {
+    outline: 1.5px solid rgb(227 194 134 / 90%);
+    outline-offset: 2px;
+  }
+
+  @media #{t.$query-hover} {
+    &:hover {
+      border-color: rgb(210 169 97 / 70%);
+      color: var(--color-cream);
+    }
+  }
+
+  &[aria-pressed='true'] {
+    border-color: var(--color-gilt);
+    color: var(--color-gilt);
+  }
+}
+
+// Heard as it is: the switch reads lit, so the before is never mistaken
+// for the after.
+.bypass[aria-pressed='true'] {
+  color: var(--color-obsidian);
+  background-color: var(--color-gilt);
+}
+
+.targets,
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.hint {
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  line-height: 1.6;
+  text-transform: uppercase;
+  color: var(--color-concrete-light);
+}
+
+.tool {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  padding-top: 1.6rem;
+  border-top: 1px solid rgb(182 158 124 / 14%);
+}
+
+.toolHead {
+  display: flex;
+  gap: 1.6rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toggle {
+  min-height: 2.8rem;
+  border-style: dashed;
+
+  .tool[data-on] & {
+    border-style: solid;
+    color: var(--color-concrete-light);
+  }
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.6rem 2.4rem;
+
+  @media #{t.$query-tablet} {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.choice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
